@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) + [Sanity](https://www.sanity.io) project with embedded Studio at `/studio`, branded for Sensational League.
 
 ## Getting Started
 
@@ -14,11 +14,41 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the site and [http://localhost:3000/studio](http://localhost:3000/studio) for the Sanity Studio.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Branding notes:
+
+- Brand colors and typography are defined as CSS variables in `src/app/globals.css`.
+- The site uses Inter via `next/font` and applies brand background/contrast on the landing page using the white wordmark in `/public`.
+- Sanity Studio is branded with the Sensational League wordmark in the header (see `src/sanity/StudioLogo.tsx`).
+- A `Site Settings` singleton document is available in Studio for basic site configuration.
+
+## Content Management
+
+All site policies and homepage content are fully editable through Sanity Studio:
+
+- **Home Page**: `/` - hero, signup waitlist, about, how-we-play, and partners sections (document type `homePage`)
+- **Policies page**: `/policies` - displays all policies with anchor navigation
+- **Editable in Studio**: Release of Liability, Terms & Conditions, Data Protection Policy, Child Protection Policy, Guidelines for Playing
+- **Rich text editing**: Use Sanity's Portable Text editor for formatting
+
+### First-time setup: Seed policies
+
+To populate the initial policy content:
+
+1. Get a Sanity API token from https://sanity.io/manage (Editor or Admin permissions)
+2. Add it to `.env.local`: `SANITY_API_TOKEN=your_token_here`
+3. Run: `pnpm seed:policies`
+
+To populate the home page document:
+
+```bash
+pnpm seed:home
+```
+
+See [SEEDING.md](./SEEDING.md) for detailed instructions.
 
 ## Learn More
 

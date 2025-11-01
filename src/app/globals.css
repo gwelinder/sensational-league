@@ -1,26 +1,620 @@
 @import "tailwindcss";
 
+/* Tailwind CSS 4 Custom Colors */
+@theme {
+  --color-volt-yellow: #D4FF00;
+  --color-brand-black: #232324;
+  --color-brand-off-white: #F7F7F7;
+  --color-brand-orange: #FF4400;
+  --color-brand-purple: #AE00FF;
+  --color-brand-cyan: #00FBFF;
+}
+
+/* Sensational League Brand System - Fast. Rebellious. Female. */
+
+/* GT Standard Font Declarations */
+@font-face {
+	font-family: 'GT Standard';
+	src: url('/fonts/gt-standard/GTStandard-Expanded-Light.woff2') format('woff2');
+	font-weight: 300;
+	font-style: normal;
+	font-stretch: expanded;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'GT Standard';
+	src: url('/fonts/gt-standard/GTStandard-Expanded-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: expanded;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'GT Standard Narrow';
+	src: url('/fonts/gt-standard/GTStandard-Narrow-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-stretch: condensed;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'GT Standard Narrow';
+	src: url('/fonts/gt-standard/GTStandard-Narrow-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: condensed;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'GT Standard Mono';
+	src: url('/fonts/gt-standard/GTStandard-Mono-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* Brand Color System */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	/* Primary Palette - Fast. Rebellious. Female. */
+	--color-black: #232324;        /* Primary black */
+	--color-off-white: #F7F7F7;    /* Primary off-white background */
+	--color-white: #FFFFFF;        /* Pure white */
+	--color-volt: #D4FF00;         /* Signature volt yellow - THE spark */
+	--color-gray-light: #D9D9D9;   /* Light gray */
+	--color-gray-medium: #878787;   /* Medium gray */
+	
+	/* Secondary Palette - Used when volt lacks contrast */
+	--color-orange: #FF4400;       /* Rebellious orange */
+	--color-purple: #AE00FF;       /* Bold purple */
+	--color-cyan: #00FBFF;         /* Electric cyan */
+	
+	/* Semantic Color Mappings */
+	--color-brand: var(--color-black);
+	--color-brand-contrast: var(--color-off-white);
+	--color-brand-accent: var(--color-volt);
+	--color-text: var(--color-black);
+	--color-text-muted: var(--color-gray-medium);
+	--color-surface: var(--color-off-white);
+	--color-surface-2: var(--color-white);
+	--color-surface-contrast: var(--color-black);
+
+	/* Typography System - GT Standard */
+	--font-expanded: 'GT Standard', var(--font-app, ui-sans-serif, system-ui, sans-serif);
+	--font-narrow: 'GT Standard Narrow', var(--font-app, ui-sans-serif, system-ui, sans-serif);
+	--font-mono: 'GT Standard Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+	--font-sans: var(--font-narrow); /* Default to narrow for body text */
+	
+	/* Typography Scale - Following brand guidelines */
+	--type-headline-large-size: clamp(3rem, 10vw, 6rem);
+	--type-headline-large-leading: 0.9;
+	--type-headline-large-tracking: 0;
+	
+	--type-headline-medium-size: clamp(2rem, 6vw, 3.5rem);
+	--type-headline-medium-leading: 0.9;
+	--type-headline-medium-tracking: 0;
+	
+	--type-headline-small-size: clamp(1.5rem, 4vw, 2.5rem);
+	--type-headline-small-leading: 0.9;
+	--type-headline-small-tracking: 0;
+	
+	--type-subhead-size: clamp(1.25rem, 3vw, 1.75rem);
+	--type-subhead-leading: 1;
+	--type-subhead-tracking: 0;
+	
+	--type-body-size: 1rem;
+	--type-body-leading: 1.5;
+	--type-body-tracking: 0;
+	
+	--type-caption-size: 0.875rem;
+	--type-caption-leading: 1.15;
+	--type-caption-tracking: 0.05em;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+:root { color-scheme: light dark; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+	height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--color-surface);
+	color: var(--color-text);
+	font-family: var(--font-sans);
+	text-rendering: optimizeLegibility;
+	font-feature-settings: "kern" 1, "liga" 1;
 }
+
+/* Brand Typography Classes - Following Sensational League Guidelines */
+
+/* Headlines - Large (GT Standard Expanded Bold) */
+.brand-headline-large {
+	font-family: var(--font-expanded);
+	font-weight: 700;
+	font-size: var(--type-headline-large-size);
+	line-height: var(--type-headline-large-leading);
+	letter-spacing: var(--type-headline-large-tracking);
+	text-transform: uppercase;
+}
+
+/* Headlines - Medium (GT Standard Expanded Bold) */
+.brand-headline {
+	font-family: var(--font-expanded);
+	font-weight: 700;
+	font-size: var(--type-headline-medium-size);
+	line-height: var(--type-headline-medium-leading);
+	letter-spacing: var(--type-headline-medium-tracking);
+	text-transform: uppercase;
+}
+
+/* Headlines - Small (GT Standard Expanded Bold) */
+.brand-headline-small {
+	font-family: var(--font-expanded);
+	font-weight: 700;
+	font-size: var(--type-headline-small-size);
+	line-height: var(--type-headline-small-leading);
+	letter-spacing: var(--type-headline-small-tracking);
+	text-transform: uppercase;
+}
+
+/* Subheads - Bold (GT Standard Expanded Bold) */
+.brand-subhead {
+	font-family: var(--font-expanded);
+	font-weight: 700;
+	font-size: var(--type-subhead-size);
+	line-height: var(--type-subhead-leading);
+	letter-spacing: var(--type-subhead-tracking);
+	text-transform: uppercase;
+}
+
+/* Subheads - Light (GT Standard Expanded Light) */
+.brand-subhead-light {
+	font-family: var(--font-expanded);
+	font-weight: 300;
+	font-size: var(--type-subhead-size);
+	line-height: var(--type-subhead-leading);
+	letter-spacing: var(--type-subhead-tracking);
+}
+
+.brand-body {
+	font-family: var(--font-narrow);
+	font-weight: 500;
+	font-size: var(--type-body-size);
+	line-height: var(--type-body-leading);
+	letter-spacing: var(--type-body-tracking);
+}
+
+.brand-caption {
+	font-family: var(--font-mono);
+	font-weight: 400;
+	font-size: var(--type-caption-size);
+	line-height: var(--type-caption-leading);
+	letter-spacing: var(--type-caption-tracking);
+	text-transform: uppercase;
+}
+
+/* Brand Color Classes */
+.brand-bg {
+	background: var(--color-brand);
+	color: var(--color-brand-contrast);
+}
+
+.brand-bg-volt {
+	background: var(--color-volt);
+	color: var(--color-black);
+}
+
+.brand-bg-off-white {
+	background: var(--color-off-white);
+	color: var(--color-black);
+}
+
+.brand-text-volt {
+	color: var(--color-volt);
+}
+
+.brand-text-muted {
+	color: var(--color-text-muted);
+}
+
+.brand-link {
+	color: var(--color-brand);
+	transition: color 0.2s ease;
+}
+
+.brand-link:hover {
+	color: var(--color-volt);
+}
+
+/* Brand Motion Classes - Right-leaning movement following brand guidelines */
+.brand-motion-right {
+	transform: translateX(0);
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brand-motion-right:hover {
+	transform: translateX(4px);
+}
+
+.brand-motion-left:hover {
+	transform: translateX(-4px);
+}
+
+.brand-motion-container {
+	transform-style: preserve-3d;
+}
+
+/* Enhanced brand movement patterns */
+.brand-motion-forward {
+	position: relative;
+	overflow: hidden;
+}
+
+.brand-motion-forward::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: -100%;
+	width: 100%;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, var(--color-volt), transparent);
+	transform: translateY(-50%);
+	transition: left 0.4s ease;
+}
+
+.brand-motion-forward:hover::before {
+	left: 100%;
+}
+
+/* Directional emphasis - always moving right per brand guidelines */
+.brand-direction-right {
+	position: relative;
+}
+
+.brand-direction-right::after {
+	content: '→';
+	margin-left: 0.5rem;
+	transition: transform 0.2s ease;
+}
+
+.brand-direction-right:hover::after {
+	transform: translateX(4px);
+}
+
+.brand-spark-trail {
+	position: relative;
+	overflow: hidden;
+}
+
+.brand-spark-trail::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: -100%;
+	width: 100%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--color-volt), transparent);
+	transform: translateY(-50%);
+	transition: left 0.5s ease;
+}
+
+.brand-spark-trail:hover::after {
+	left: 100%;
+}
+
+/* Fast transition utilities for speed emphasis */
+.brand-fast {
+	transition-duration: 0.15s;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brand-rebellious {
+	transition-duration: 0.25s;
+	transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Advanced Animations */
+@keyframes fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fade-down {
+	from {
+		opacity: 0;
+		transform: translateY(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fade-left {
+	from {
+		opacity: 0;
+		transform: translateX(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fade-right {
+	from {
+		opacity: 0;
+		transform: translateX(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes scale-in {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes spark-glow {
+	0%, 100% {
+		filter: drop-shadow(0 0 5px var(--color-volt));
+	}
+	50% {
+		filter: drop-shadow(0 0 20px var(--color-volt));
+	}
+}
+
+@keyframes float-1 {
+	0%, 100% { transform: translateY(0px) rotate(0deg); }
+	33% { transform: translateY(-10px) rotate(1deg); }
+	66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+@keyframes float-2 {
+	0%, 100% { transform: translateY(0px) rotate(0deg); }
+	33% { transform: translateY(8px) rotate(-1deg); }
+	66% { transform: translateY(-12px) rotate(1deg); }
+}
+
+@keyframes float-3 {
+	0%, 100% { transform: translateY(0px) rotate(0deg); }
+	33% { transform: translateY(-6px) rotate(0.5deg); }
+	66% { transform: translateY(10px) rotate(-0.5deg); }
+}
+
+@keyframes spark-energy {
+	0% { 
+		transform: translateX(0) scale(1);
+		opacity: 0.6;
+	}
+	50% { 
+		transform: translateX(20px) scale(1.2);
+		opacity: 1;
+	}
+	100% { 
+		transform: translateX(40px) scale(0.8);
+		opacity: 0;
+	}
+}
+
+@keyframes gradient-shift {
+	0%, 100% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+}
+
+@keyframes typewriter-cursor {
+	0%, 50% { border-color: var(--color-volt); }
+	51%, 100% { border-color: transparent; }
+}
+
+/* Animation Classes */
+.animate-fade-up {
+	animation: fade-up 0.8s ease-out forwards;
+}
+
+.animate-fade-down {
+	animation: fade-down 0.8s ease-out forwards;
+}
+
+.animate-fade-left {
+	animation: fade-left 0.8s ease-out forwards;
+}
+
+.animate-fade-right {
+	animation: fade-right 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+	animation: fade-up 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+	animation: scale-in 0.6s ease-out forwards;
+}
+
+.animate-spark-glow {
+	animation: spark-glow 2s ease-in-out infinite;
+}
+
+.animate-float-1 {
+	animation: float-1 6s ease-in-out infinite;
+}
+
+.animate-float-2 {
+	animation: float-2 8s ease-in-out infinite;
+}
+
+.animate-float-3 {
+	animation: float-3 7s ease-in-out infinite;
+}
+
+.animate-spark-energy {
+	animation: spark-energy 3s ease-out infinite;
+}
+
+.animate-gradient-shift {
+	animation: gradient-shift 8s ease-in-out infinite;
+	background-size: 200% 200%;
+}
+
+/* Typewriter Effect */
+.typewriter-effect {
+	position: relative;
+}
+
+.typewriter-effect::after {
+	content: '|';
+	border-right: 2px solid var(--color-volt);
+	animation: typewriter-cursor 1s infinite;
+	margin-left: 4px;
+}
+
+/* Masonry Grid Support */
+.masonry {
+	columns: 1;
+	column-gap: 1rem;
+}
+
+@media (min-width: 640px) {
+	.masonry {
+		columns: 2;
+	}
+}
+
+@media (min-width: 768px) {
+	.masonry {
+		columns: 3;
+	}
+}
+
+@media (min-width: 1024px) {
+	.masonry {
+		columns: 4;
+	}
+}
+
+.masonry > * {
+	break-inside: avoid;
+	margin-bottom: 1rem;
+}
+
+/* Scroll-triggered animations */
+@media (prefers-reduced-motion: no-preference) {
+	.animate-on-scroll {
+		opacity: 0;
+		transform: translateY(30px);
+		transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+	}
+	
+	.animate-on-scroll.in-view {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Brand Layout Classes - Inspired by brand guidelines */
+.brand-layout-centered {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.brand-layout-split {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+	.brand-layout-split {
+		grid-template-columns: 1fr 1fr;
+		gap: 3rem;
+	}
+}
+
+.brand-layout-hero {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.brand-layout-asymmetric {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+	.brand-layout-asymmetric {
+		grid-template-columns: 2fr 1fr;
+	}
+}
+
+/* Brand spacing system */
+.brand-spacing-xs { padding: 0.5rem; }
+.brand-spacing-sm { padding: 1rem; }
+.brand-spacing-md { padding: 2rem; }
+.brand-spacing-lg { padding: 3rem; }
+.brand-spacing-xl { padding: 4rem; }
+.brand-spacing-2xl { padding: 6rem; }
+
+/* Brand margins */
+.brand-margin-xs { margin: 0.5rem; }
+.brand-margin-sm { margin: 1rem; }
+.brand-margin-md { margin: 2rem; }
+.brand-margin-lg { margin: 3rem; }
+.brand-margin-xl { margin: 4rem; }
+
+/* Responsive typography scale */
+@media (max-width: 768px) {
+	:root {
+		--type-headline-large-size: clamp(2rem, 8vw, 3rem);
+		--type-headline-medium-size: clamp(1.5rem, 6vw, 2rem);
+		--type-headline-small-size: clamp(1.25rem, 4vw, 1.75rem);
+		--type-subhead-size: clamp(1rem, 3vw, 1.25rem);
+	}
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+	:root {
+		--color-volt: #000000;
+		--color-text-muted: var(--color-black);
+	}
+}
+
+/* Dark mode - respecting brand guidelines */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-surface: var(--color-black);
+		--color-surface-2: #1a1a1a;
+		--color-text: var(--color-off-white);
+		--color-brand-contrast: var(--color-black);
+	}
+	
+	body {
+		background: var(--color-surface);
+		color: var(--color-text);
+	}
+}
+

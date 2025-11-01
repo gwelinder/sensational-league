@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  /* Disable React Compiler for now: Sanity Studio uploads may break under it */
+  reactCompiler: false,
 };
 
 export default nextConfig;
