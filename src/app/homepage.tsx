@@ -252,80 +252,60 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 						<SignupForm />
 					</div>
 
-					{/* Dynamic Spark Logo Animation - Moments of Greatness */}
-					<div className="relative h-[600px] md:h-[800px] overflow-visible">
-						{/* Animated Sparks with Secondary Colors */}
-						<div className="absolute inset-0 flex items-center justify-center">
-							{/* Large Center Spark - Volt Yellow - MASSIVE */}
-							<div className="absolute spark-pulse">
-								<img
-									src="/logos/SL-SPARK-LARGE.svg"
-									alt=""
-									className="w-[400px] h-[400px] md:w-[600px] md:h-[600px]"
-									style={{ filter: 'brightness(0) saturate(100%) invert(88%) sepia(85%) saturate(2000%) hue-rotate(30deg) brightness(104%) contrast(104%)' }}
-								/>
-							</div>
+					{/* Image Grid - Bold, Dynamic with Rightward Movement */}
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+						{content?.hero?.images && content.hero.images.length > 0
+							? content.hero.images.slice(0, 8).map((image, index) => {
+									const imageProps = getImageProps(image, 800);
 
-							{/* Top Left - Orange */}
-							<div className="absolute top-4 left-8 md:top-8 md:left-16 spark-float-1">
-								<img
-									src="/logos/SL-SPARK-MEDIUM.svg"
-									alt=""
-									className="w-32 h-32 md:w-48 md:h-48 opacity-70"
-									style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(4578%) hue-rotate(1deg) brightness(103%) contrast(107%)' }}
-								/>
-							</div>
-
-							{/* Top Right - Cyan */}
-							<div className="absolute top-8 right-12 md:top-16 md:right-24 spark-float-2">
-								<img
-									src="/logos/SL-SPARK-SMALL.svg"
-									alt=""
-									className="w-28 h-28 md:w-40 md:h-40 opacity-80"
-									style={{ filter: 'brightness(0) saturate(100%) invert(65%) sepia(89%) saturate(2578%) hue-rotate(157deg) brightness(102%) contrast(106%)' }}
-								/>
-							</div>
-
-							{/* Bottom Left - Purple */}
-							<div className="absolute bottom-20 left-12 md:bottom-32 md:left-24 spark-float-3">
-								<img
-									src="/logos/SL-SPARK-MEDIUM.svg"
-									alt=""
-									className="w-36 h-36 md:w-52 md:h-52 opacity-60"
-									style={{ filter: 'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(6234%) hue-rotate(280deg) brightness(97%) contrast(109%)' }}
-								/>
-							</div>
-
-							{/* Bottom Right - Orange */}
-							<div className="absolute bottom-12 right-16 md:bottom-24 md:right-32 spark-float-4">
-								<img
-									src="/logos/SL-SPARK-SMALL.svg"
-									alt=""
-									className="w-24 h-24 md:w-36 md:h-36 opacity-70"
-									style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(4578%) hue-rotate(1deg) brightness(103%) contrast(107%)' }}
-								/>
-							</div>
-
-							{/* Middle Right - Cyan */}
-							<div className="absolute top-1/2 right-8 md:right-16 -translate-y-1/2 spark-spin">
-								<img
-									src="/logos/SL-SPARK-MEDIUM.svg"
-									alt=""
-									className="w-32 h-32 md:w-44 md:h-44 opacity-50"
-									style={{ filter: 'brightness(0) saturate(100%) invert(65%) sepia(89%) saturate(2578%) hue-rotate(157deg) brightness(102%) contrast(106%)' }}
-								/>
-							</div>
-
-							{/* Middle Left - Purple */}
-							<div className="absolute top-1/3 left-4 md:left-12 spark-float-5">
-								<img
-									src="/logos/SL-SPARK-SMALL.svg"
-									alt=""
-									className="w-28 h-28 md:w-40 md:h-40 opacity-60"
-									style={{ filter: 'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(6234%) hue-rotate(280deg) brightness(97%) contrast(109%)' }}
-								/>
-							</div>
-						</div>
+									return (
+										<div
+											key={index}
+											className={cn(
+												"relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
+												index % 2 === 1 && "md:mt-8",
+											)}
+										>
+											<img
+												{...imageProps}
+												alt={
+													image.alt || `Sensational League image ${index + 1}`
+												}
+												className={cn(
+													"w-full h-full group-hover:scale-110 transition-all duration-500",
+													!image.objectFit && "object-cover",
+												)}
+												style={{
+													...imageProps.style,
+													objectFit: image.objectFit || "cover",
+												}}
+											/>
+											<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+										</div>
+									);
+								})
+							: // Fallback to default images when no Sanity images are available
+								[
+									"/logos/image_046_page_39.jpeg",
+									"/logos/image_063_page_42.jpeg",
+									"/logos/image_067_page_43.jpeg",
+									"/logos/image_073_page_44.jpeg",
+								].map((src, index) => (
+									<div
+										key={index}
+										className={cn(
+											"relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
+											index % 2 === 1 && "md:mt-8",
+										)}
+									>
+										<img
+											src={src}
+											alt={`Sensational League image ${index + 1}`}
+											className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+										/>
+										<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+									</div>
+								))}
 					</div>
 				</div>
 			</section>
