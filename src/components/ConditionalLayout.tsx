@@ -1,6 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useOptimistic } from '@sanity/visual-editing';
+import type { SanityDocument } from '@sanity/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
@@ -26,9 +28,26 @@ interface ConditionalLayoutProps {
   };
 }
 
-export default function ConditionalLayout({ children, settings }: ConditionalLayoutProps) {
+export default function ConditionalLayout({ children, settings: initialSettings }: ConditionalLayoutProps) {
   const pathname = usePathname();
   const isStudioRoute = pathname.startsWith('/studio');
+
+  // Use optimistic updates for settings to prevent reloads
+  const settings = useOptimistic<ConditionalLayoutProps['settings'], SanityDocument>(
+    initialSettings,
+    (currentSettings, action) => {
+      // Only update if this is the siteSettings document
+      if (!currentSettings || action.id !== currentSettings._id) {
+        return currentSettings;
+      }
+
+      // Merge the updated document
+      return {
+        ...currentSettings,
+        ...action.document,
+      } as ConditionalLayoutProps['settings'];
+    }
+  );
 
   if (isStudioRoute) {
     return <div id={SKIP_TO_CONTENT_ID}>{children}</div>;
