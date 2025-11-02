@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { SKIP_TO_CONTENT_ID } from "@/constants/accessibility";
 import { cn } from "@/lib/utils";
-import { createDataAttribute } from "@sanity/visual-editing";
+import { createDataAttribute, useOptimistic } from "@sanity/visual-editing";
+import type { SanityDocument } from '@sanity/client';
 
 interface HeaderProps {
 	settings?: {
@@ -18,7 +19,24 @@ interface HeaderProps {
 	};
 }
 
-export default function Header({ settings }: HeaderProps) {
+export default function Header({ settings: initialSettings }: HeaderProps) {
+	// Use optimistic updates to prevent page reloads on every edit
+	const settings = useOptimistic<HeaderProps['settings'], SanityDocument>(
+		initialSettings,
+		(currentSettings, action) => {
+			// Only update if this is the same document
+			if (!currentSettings || action.id !== currentSettings._id) {
+				return currentSettings;
+			}
+
+			// Return the updated document data
+			return {
+				...currentSettings,
+				...action.document,
+			} as HeaderProps['settings'];
+		}
+	);
+
 	const defaultLinks = [
 		{ href: "/policies", label: "Policies" },
 		{ href: "/dashboard", label: "Dashboard" },

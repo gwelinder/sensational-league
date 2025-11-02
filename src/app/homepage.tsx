@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { createDataAttribute } from "@sanity/visual-editing";
+import { createDataAttribute, useOptimistic } from "@sanity/visual-editing";
 import type { PortableTextBlock } from '@portabletext/types';
+import type { SanityDocument } from '@sanity/client';
 import StyledTextRenderer from "@/components/StyledTextRenderer";
 
 interface Stat {
@@ -93,7 +94,24 @@ function SignupForm() {
   );
 }
 
-export default function HomePage({ content }: HomePageProps) {
+export default function HomePage({ content: initialContent }: HomePageProps) {
+  // Use optimistic updates to prevent page reloads on every edit
+  const content = useOptimistic<HomePageProps['content'], SanityDocument>(
+    initialContent,
+    (currentContent, action) => {
+      // Only update if this is the same document
+      if (!currentContent || action.id !== currentContent._id) {
+        return currentContent;
+      }
+
+      // Return the updated document data
+      return {
+        ...currentContent,
+        ...action.document,
+      } as HomePageProps['content'];
+    }
+  );
+
   // Hero section attributes
   const heroDataAttribute = content?._id ? createDataAttribute({
     id: content._id,

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { createDataAttribute } from "@sanity/visual-editing";
+import { createDataAttribute, useOptimistic } from "@sanity/visual-editing";
+import type { SanityDocument } from '@sanity/client';
 
 interface FooterProps {
 	settings?: {
@@ -17,7 +18,24 @@ interface FooterProps {
 	};
 }
 
-export default function Footer({ settings }: FooterProps) {
+export default function Footer({ settings: initialSettings }: FooterProps) {
+	// Use optimistic updates to prevent page reloads on every edit
+	const settings = useOptimistic<FooterProps['settings'], SanityDocument>(
+		initialSettings,
+		(currentSettings, action) => {
+			// Only update if this is the same document
+			if (!currentSettings || action.id !== currentSettings._id) {
+				return currentSettings;
+			}
+
+			// Return the updated document data
+			return {
+				...currentSettings,
+				...action.document,
+			} as FooterProps['settings'];
+		}
+	);
+
 	const footerAttribute = settings?._id ? createDataAttribute({
 		id: settings._id,
 		type: settings._type,
