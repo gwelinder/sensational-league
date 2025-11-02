@@ -611,10 +611,117 @@ body {
 		--color-text: var(--color-off-white);
 		--color-brand-contrast: var(--color-black);
 	}
-	
+
 	body {
 		background: var(--color-surface);
 		color: var(--color-text);
 	}
+}
+
+/* Spark Logo Animations - Moments of Greatness */
+@keyframes spark-pulse {
+	0%, 100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.05);
+		opacity: 0.9;
+	}
+}
+
+@keyframes spark-float-1 {
+	0%, 100% {
+		transform: translate(0, 0) rotate(0deg);
+	}
+	25% {
+		transform: translate(30px, -20px) rotate(8deg);
+	}
+	50% {
+		transform: translate(60px, 0px) rotate(0deg);
+	}
+	75% {
+		transform: translate(30px, 20px) rotate(-8deg);
+	}
+}
+
+@keyframes spark-float-2 {
+	0%, 100% {
+		transform: translate(0, 0) rotate(0deg) scale(1);
+	}
+	33% {
+		transform: translate(25px, 25px) rotate(12deg) scale(1.15);
+	}
+	66% {
+		transform: translate(50px, -15px) rotate(-8deg) scale(0.9);
+	}
+}
+
+@keyframes spark-float-3 {
+	0%, 100% {
+		transform: translate(0, 0) scale(1) rotate(0deg);
+	}
+	50% {
+		transform: translate(40px, -30px) scale(1.2) rotate(10deg);
+	}
+}
+
+@keyframes spark-float-4 {
+	0%, 100% {
+		transform: translate(0, 0) rotate(0deg);
+	}
+	50% {
+		transform: translate(50px, 25px) rotate(20deg);
+	}
+}
+
+@keyframes spark-float-5 {
+	0%, 100% {
+		transform: translate(0, 0) rotate(0deg) scale(1);
+	}
+	40% {
+		transform: translate(35px, 15px) rotate(-10deg) scale(1.1);
+	}
+	80% {
+		transform: translate(20px, -20px) rotate(5deg) scale(0.95);
+	}
+}
+
+@keyframes spark-spin {
+	from {
+		transform: translateY(-50%) rotate(0deg);
+	}
+	to {
+		transform: translateY(-50%) rotate(360deg);
+	}
+}
+
+/* Apply animations */
+.spark-pulse {
+	animation: spark-pulse 3s ease-in-out infinite;
+}
+
+.spark-float-1 {
+	animation: spark-float-1 7s ease-in-out infinite;
+}
+
+.spark-float-2 {
+	animation: spark-float-2 8s ease-in-out infinite 1s;
+}
+
+.spark-float-3 {
+	animation: spark-float-3 9s ease-in-out infinite 2s;
+}
+
+.spark-float-4 {
+	animation: spark-float-4 6.5s ease-in-out infinite 1.5s;
+}
+
+.spark-float-5 {
+	animation: spark-float-5 10s ease-in-out infinite 3s;
+}
+
+.spark-spin {
+	animation: spark-spin 25s linear infinite;
 }
 

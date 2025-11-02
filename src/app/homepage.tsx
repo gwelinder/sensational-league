@@ -253,141 +253,80 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 					</div>
 
 					{/* Dynamic Spark Logo Animation - Moments of Greatness */}
-					<div className="relative h-[400px] md:h-[500px] overflow-hidden">
+					<div className="relative h-[600px] md:h-[800px] overflow-visible">
 						{/* Animated Sparks with Secondary Colors */}
 						<div className="absolute inset-0 flex items-center justify-center">
-							{/* Large Center Spark - Volt Yellow */}
-							<div className="absolute animate-pulse" style={{ animation: 'pulse 3s ease-in-out infinite' }}>
+							{/* Large Center Spark - Volt Yellow - MASSIVE */}
+							<div className="absolute spark-pulse">
 								<img
 									src="/logos/SL-SPARK-LARGE.svg"
 									alt=""
-									className="w-64 h-64 md:w-96 md:h-96"
+									className="w-[400px] h-[400px] md:w-[600px] md:h-[600px]"
 									style={{ filter: 'brightness(0) saturate(100%) invert(88%) sepia(85%) saturate(2000%) hue-rotate(30deg) brightness(104%) contrast(104%)' }}
 								/>
 							</div>
 
 							{/* Top Left - Orange */}
-							<div
-								className="absolute top-8 left-8 animate-bounce"
-								style={{
-									animation: 'float-right-1 6s ease-in-out infinite',
-									animationDelay: '0s'
-								}}
-							>
+							<div className="absolute top-4 left-8 md:top-8 md:left-16 spark-float-1">
 								<img
 									src="/logos/SL-SPARK-MEDIUM.svg"
 									alt=""
-									className="w-24 h-24 md:w-32 md:h-32 opacity-60"
+									className="w-32 h-32 md:w-48 md:h-48 opacity-70"
 									style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(4578%) hue-rotate(1deg) brightness(103%) contrast(107%)' }}
 								/>
 							</div>
 
 							{/* Top Right - Cyan */}
-							<div
-								className="absolute top-12 right-12"
-								style={{
-									animation: 'float-right-2 7s ease-in-out infinite',
-									animationDelay: '1s'
-								}}
-							>
+							<div className="absolute top-8 right-12 md:top-16 md:right-24 spark-float-2">
 								<img
 									src="/logos/SL-SPARK-SMALL.svg"
 									alt=""
-									className="w-20 h-20 md:w-28 md:h-28 opacity-70"
+									className="w-28 h-28 md:w-40 md:h-40 opacity-80"
 									style={{ filter: 'brightness(0) saturate(100%) invert(65%) sepia(89%) saturate(2578%) hue-rotate(157deg) brightness(102%) contrast(106%)' }}
 								/>
 							</div>
 
 							{/* Bottom Left - Purple */}
-							<div
-								className="absolute bottom-16 left-16"
-								style={{
-									animation: 'float-right-3 8s ease-in-out infinite',
-									animationDelay: '2s'
-								}}
-							>
+							<div className="absolute bottom-20 left-12 md:bottom-32 md:left-24 spark-float-3">
 								<img
 									src="/logos/SL-SPARK-MEDIUM.svg"
 									alt=""
-									className="w-28 h-28 md:w-36 md:h-36 opacity-50"
+									className="w-36 h-36 md:w-52 md:h-52 opacity-60"
 									style={{ filter: 'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(6234%) hue-rotate(280deg) brightness(97%) contrast(109%)' }}
 								/>
 							</div>
 
 							{/* Bottom Right - Orange */}
-							<div
-								className="absolute bottom-8 right-20"
-								style={{
-									animation: 'float-right-4 5.5s ease-in-out infinite',
-									animationDelay: '1.5s'
-								}}
-							>
+							<div className="absolute bottom-12 right-16 md:bottom-24 md:right-32 spark-float-4">
 								<img
 									src="/logos/SL-SPARK-SMALL.svg"
 									alt=""
-									className="w-16 h-16 md:w-24 md:h-24 opacity-60"
+									className="w-24 h-24 md:w-36 md:h-36 opacity-70"
 									style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(4578%) hue-rotate(1deg) brightness(103%) contrast(107%)' }}
 								/>
 							</div>
 
 							{/* Middle Right - Cyan */}
-							<div
-								className="absolute top-1/2 right-8 -translate-y-1/2"
-								style={{
-									animation: 'spin-slow 20s linear infinite'
-								}}
-							>
+							<div className="absolute top-1/2 right-8 md:right-16 -translate-y-1/2 spark-spin">
 								<img
 									src="/logos/SL-SPARK-MEDIUM.svg"
 									alt=""
-									className="w-20 h-20 md:w-28 md:h-28 opacity-40"
+									className="w-32 h-32 md:w-44 md:h-44 opacity-50"
 									style={{ filter: 'brightness(0) saturate(100%) invert(65%) sepia(89%) saturate(2578%) hue-rotate(157deg) brightness(102%) contrast(106%)' }}
 								/>
 							</div>
 
 							{/* Middle Left - Purple */}
-							<div
-								className="absolute top-1/3 left-4"
-								style={{
-									animation: 'float-right-1 9s ease-in-out infinite',
-									animationDelay: '3s'
-								}}
-							>
+							<div className="absolute top-1/3 left-4 md:left-12 spark-float-5">
 								<img
 									src="/logos/SL-SPARK-SMALL.svg"
 									alt=""
-									className="w-18 h-18 md:w-24 md:h-24 opacity-50"
+									className="w-28 h-28 md:w-40 md:h-40 opacity-60"
 									style={{ filter: 'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(6234%) hue-rotate(280deg) brightness(97%) contrast(109%)' }}
 								/>
 							</div>
 						</div>
 					</div>
-
-					<style jsx>{`
-						@keyframes float-right-1 {
-							0%, 100% { transform: translate(0, 0) rotate(0deg); }
-							25% { transform: translate(20px, -10px) rotate(5deg); }
-							50% { transform: translate(40px, 0px) rotate(0deg); }
-							75% { transform: translate(20px, 10px) rotate(-5deg); }
-						}
-						@keyframes float-right-2 {
-							0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-							33% { transform: translate(15px, 15px) rotate(10deg) scale(1.1); }
-							66% { transform: translate(30px, -10px) rotate(-5deg) scale(0.95); }
-						}
-						@keyframes float-right-3 {
-							0%, 100% { transform: translate(0, 0) scale(1); }
-							50% { transform: translate(25px, -20px) scale(1.15); }
-						}
-						@keyframes float-right-4 {
-							0%, 100% { transform: translate(0, 0) rotate(0deg); }
-							50% { transform: translate(35px, 15px) rotate(15deg); }
-						}
-						@keyframes spin-slow {
-							from { transform: translateY(-50%) rotate(0deg); }
-							to { transform: translateY(-50%) rotate(360deg); }
-						}
-					`}</style>
 				</div>
 			</section>
 
