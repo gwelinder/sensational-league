@@ -44,19 +44,6 @@ interface HomePageProps {
       description?: string;
       pillars?: Pillar[];
     };
-    impact?: {
-      headline?: PortableTextBlock[] | null;
-      backgroundImages?: SanityImage[];
-      stats?: Stat[];
-      quoteText?: string;
-      quoteAttribution?: string;
-    };
-    cta?: {
-      logo?: SanityImage;
-      headline?: string;
-      description?: string;
-      buttonText?: string;
-    };
   };
 }
 
@@ -164,56 +151,6 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
     path: 'about.description',
   }) : undefined;
 
-  // Impact section attributes
-  const impactDataAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'impact',
-  }) : undefined;
-
-  const impactHeadlineAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'impact.headline',
-  }) : undefined;
-
-  const impactQuoteAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'impact.quoteText',
-  }) : undefined;
-
-  const impactQuoteAttrAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'impact.quoteAttribution',
-  }) : undefined;
-
-  // CTA section attributes
-  const ctaDataAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'cta',
-  }) : undefined;
-
-  const ctaHeadlineAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'cta.headline',
-  }) : undefined;
-
-  const ctaDescriptionAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'cta.description',
-  }) : undefined;
-
-  const ctaButtonAttribute = content?._id ? createDataAttribute({
-    id: content._id,
-    type: content._type || 'homePage',
-    path: 'cta.buttonText',
-  }) : undefined;
-
   // Default data
   const defaultHeroStats: Stat[] = [
     { value: "300+", label: "Athletes" },
@@ -234,13 +171,6 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
       title: "Digital Innovation",
       description: "Multi-metric tracking including social media growth and viral moments."
     }
-  ];
-
-  const defaultImpactStats: Stat[] = [
-    { value: "24", label: "Teams" },
-    { value: "300+", label: "Athletes" },
-    { value: "50K", label: "Community" },
-    { value: "12", label: "SDG Goals" }
   ];
 
   return (
@@ -313,8 +243,8 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 
           {/* Image Grid - Bold, Dynamic with Rightward Movement */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {(content?.hero?.images && content.hero.images.length > 0 ? content.hero.images.slice(0, 8) : []).length > 0 ? (
-              content.hero.images!.map((image, index) => {
+            {content?.hero?.images && content.hero.images.length > 0 ? (
+              content.hero.images.slice(0, 8).map((image, index) => {
                 const imageUrl = getImageUrl(image, 800);
 
                 return (
@@ -422,170 +352,6 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
               {content?.about?.description ||
                "We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female."}
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Section - With Bold Dynamic Images */}
-      <section
-        className="relative py-32 md:py-48 bg-black text-white overflow-hidden"
-        data-sanity={impactDataAttribute?.toString()}
-      >
-        {/* Background Images Grid - High Contrast */}
-        <div className="absolute inset-0 grid grid-cols-2">
-          {(content?.impact?.backgroundImages && content.impact.backgroundImages.length > 0 ? content.impact.backgroundImages.slice(0, 2) : []).length > 0 ? (
-            content.impact.backgroundImages!.slice(0, 2).map((image, index) => {
-              const imageUrl = getImageUrl(image, 1200);
-
-              return (
-                <div key={index} className="relative">
-                  <img
-                    src={imageUrl || undefined}
-                    alt={image.alt || ""}
-                    className="w-full h-full object-cover opacity-40 contrast-125 saturate-150"
-                  />
-                  <div className={cn(
-                    "absolute inset-0",
-                    index === 0 ? "bg-gradient-to-r from-black/80 to-transparent" : "bg-gradient-to-l from-black/80 to-transparent"
-                  )}></div>
-                </div>
-              );
-            })
-          ) : (
-            // Fallback to default background images
-            ["/logos/image_046_page_39.jpeg", "/logos/image_063_page_42.jpeg"].map((src, index) => (
-              <div key={index} className="relative">
-                <img
-                  src={src}
-                  alt=""
-                  className="w-full h-full object-cover opacity-40 contrast-125 saturate-150"
-                />
-                <div className={cn(
-                  "absolute inset-0",
-                  index === 0 ? "bg-gradient-to-r from-black/80 to-transparent" : "bg-gradient-to-l from-black/80 to-transparent"
-                )}></div>
-              </div>
-            ))
-          )}
-        </div>
-        <div className="absolute inset-0 bg-black/40"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4">
-          {/* Dynamic Headline */}
-          <h2
-            className="brand-headline text-5xl md:text-7xl lg:text-9xl font-black mb-24 text-center leading-[0.9] uppercase"
-            data-sanity={impactHeadlineAttribute?.toString()}
-          >
-            {content?.impact?.headline ? (
-              <StyledTextRenderer value={content.impact.headline} />
-            ) : (
-              <>
-                <span className="text-white">LEAGUE</span><br/>
-                <span className="text-[var(--color-volt)] text-6xl md:text-8xl lg:text-[10rem]">IMPACT</span>
-              </>
-            )}
-          </h2>
-
-          {/* Stats - Clean Grid with Rightward Movement */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-32 max-w-6xl mx-auto">
-            {(content?.impact?.stats || defaultImpactStats).map((stat, index) => (
-              <div
-                key={index}
-                className="bg-black border-4 border-[var(--color-volt)] p-8 md:p-10 text-center hover:bg-[var(--color-volt)] hover:text-black hover:translate-x-2 hover:-translate-y-2 transition-all duration-300 group aspect-square flex flex-col items-center justify-center transform skew-x-[-2deg]"
-              >
-                <div className="text-5xl md:text-6xl lg:text-7xl font-black text-[var(--color-volt)] mb-3 group-hover:text-black transform skew-x-[2deg]">
-                  {stat.value}
-                </div>
-                <div className="brand-caption text-xs uppercase tracking-widest text-white group-hover:text-black transform skew-x-[2deg]">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Quote Box with Rightward Accent */}
-          <div className="max-w-4xl mx-auto bg-[var(--color-volt)] border-4 border-black p-12 text-black relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-2 h-full bg-black transform skew-x-[-12deg] origin-top"></div>
-            <div className="relative z-10">
-              <p
-                className="brand-headline text-2xl md:text-4xl font-black mb-4 uppercase leading-tight"
-                data-sanity={impactQuoteAttribute?.toString()}
-              >
-                {content?.impact?.quoteText || '"This isn\'t just football - it\'s a movement."'}
-              </p>
-              <p
-                className="brand-caption text-sm uppercase tracking-widest flex items-center gap-2"
-                data-sanity={impactQuoteAttrAttribute?.toString()}
-              >
-                <span className="w-8 h-0.5 bg-black transform skew-x-[-12deg]"></span>
-                {content?.impact?.quoteAttribution || "League Founder"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section
-        className="py-40 md:py-48 bg-[var(--color-volt)] text-black border-t-4 border-black"
-        data-sanity={ctaDataAttribute?.toString()}
-      >
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          {content?.cta?.logo && getImageUrl(content.cta.logo) ? (
-            <img
-              src={getImageUrl(content.cta.logo) || undefined}
-              alt="Sensational League"
-              className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-20"
-            />
-          ) : (
-            <img
-              src="/logos/SL-SPARK-LARGE.svg"
-              alt="Sensational League"
-              className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-20"
-            />
-          )}
-
-          <h2
-            className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black mb-12 leading-tight uppercase"
-            data-sanity={ctaHeadlineAttribute?.toString()}
-          >
-            {content?.cta?.headline || "JOIN THE REVOLUTION"}
-          </h2>
-
-          <p
-            className="brand-body text-2xl md:text-3xl mb-16 max-w-3xl mx-auto font-bold"
-            data-sanity={ctaDescriptionAttribute?.toString()}
-          >
-            {content?.cta?.description || "Be notified when registration opens for the next season."}
-          </p>
-
-          <div className="max-w-3xl mx-auto">
-            <form onSubmit={(e) => { e.preventDefault(); }} className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                required
-                className={cn(
-                  "flex-1 px-8 py-5 border-4 border-black rounded-none",
-                  "text-black placeholder-gray-700 brand-body text-lg",
-                  "focus:outline-none focus:ring-4 focus:ring-black",
-                  "bg-white"
-                )}
-              />
-
-              <button
-                type="submit"
-                className={cn(
-                  "px-12 py-5 font-black uppercase tracking-wider text-lg relative overflow-hidden",
-                  "brand-caption transition-all duration-300 border-4 border-black group",
-                  "bg-black text-[var(--color-volt)] hover:bg-white hover:text-black hover:translate-x-1"
-                )}
-                data-sanity={ctaButtonAttribute?.toString()}
-              >
-                <span className="relative z-10">{content?.cta?.buttonText || "JOIN →"}</span>
-                <div className="absolute inset-0 bg-white transform translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
-              </button>
-            </form>
           </div>
         </div>
       </section>

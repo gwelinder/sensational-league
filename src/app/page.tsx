@@ -41,19 +41,6 @@ interface HomePageContent {
 		description?: string;
 		pillars?: Pillar[];
 	};
-	impact?: {
-		headline?: PortableTextBlock[] | null;
-		backgroundImages?: SanityImage[];
-		stats?: Stat[];
-		quoteText?: string;
-		quoteAttribution?: string;
-	};
-	cta?: {
-		logo?: SanityImage;
-		headline?: string;
-		description?: string;
-		buttonText?: string;
-	};
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
@@ -87,28 +74,6 @@ async function getHomePageData(): Promise<HomePageContent | null> {
           title,
           description
         }
-      },
-      impact {
-        headline,
-        backgroundImages[] {
-          asset,
-          alt
-        },
-        stats[] {
-          value,
-          label
-        },
-        quoteText,
-        quoteAttribution
-      },
-      cta {
-        logo {
-          asset,
-          alt
-        },
-        headline,
-        description,
-        buttonText
       }
     }`,
 		stega: true, // Enable stega encoding for this query
