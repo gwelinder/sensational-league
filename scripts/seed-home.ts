@@ -171,8 +171,18 @@ async function seed() {
 	console.log("🌱 Seeding home page...");
 
 	try {
+		// Create/update the published version
 		await client.createOrReplace(homePageContent);
-		console.log("✅ Created/updated: Home Page");
+		console.log("✅ Created/updated: Published Home Page");
+
+		// Delete any existing draft to ensure it uses published version
+		try {
+			await client.delete(`drafts.${homePageContent._id}`);
+			console.log("✅ Deleted draft (will use published version)");
+		} catch {
+			// Draft doesn't exist, which is fine
+			console.log("ℹ️  No draft to delete");
+		}
 	} catch (error) {
 		console.error("❌ Failed to create home page:", error);
 	}
