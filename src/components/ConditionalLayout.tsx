@@ -14,6 +14,9 @@ interface SanityImage {
     _type?: string;
   };
   alt?: string;
+  width?: number;
+  height?: number;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
 interface ConditionalLayoutProps {

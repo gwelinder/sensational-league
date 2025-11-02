@@ -7,7 +7,7 @@ import type { PortableTextBlock } from '@portabletext/types';
 import type { SanityDocument } from '@sanity/client';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import StyledTextRenderer from "@/components/StyledTextRenderer";
-import { getImageUrl } from "@/lib/sanity-image";
+import { getImageUrl, getImageProps } from "@/lib/sanity-image";
 
 interface Stat {
   value: string;
@@ -25,6 +25,9 @@ interface SanityImage {
     _type?: string;
   };
   alt?: string;
+  width?: number;
+  height?: number;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
 interface HomePageProps {
@@ -185,9 +188,12 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
           <div className="text-center mb-12">
             {content?.hero?.logo && getImageUrl(content.hero.logo) ? (
               <img
-                src={getImageUrl(content.hero.logo) || undefined}
-                alt="Sensational League"
-                className="w-48 h-48 md:w-56 md:h-56 mx-auto"
+                {...getImageProps(content.hero.logo, 800)}
+                alt={content.hero.logo.alt || "Sensational League"}
+                className={cn(
+                  "mx-auto",
+                  !content.hero.logo.width && !content.hero.logo.height && "w-48 h-48 md:w-56 md:h-56"
+                )}
               />
             ) : (
               <img
@@ -245,7 +251,7 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {content?.hero?.images && content.hero.images.length > 0 ? (
               content.hero.images.slice(0, 8).map((image, index) => {
-                const imageUrl = getImageUrl(image, 800);
+                const imageProps = getImageProps(image, 800);
 
                 return (
                   <div
@@ -256,9 +262,16 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
                     )}
                   >
                     <img
-                      src={imageUrl || undefined}
+                      {...imageProps}
                       alt={image.alt || `Sensational League image ${index + 1}`}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+                      className={cn(
+                        "w-full h-full group-hover:scale-110 transition-all duration-500",
+                        !image.objectFit && "object-cover"
+                      )}
+                      style={{
+                        ...imageProps.style,
+                        objectFit: image.objectFit || 'cover',
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>

@@ -48,6 +48,42 @@ export const homePage = defineType({
           options: {
             hotspot: true,
           },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+              description: 'Alternative text for accessibility',
+            },
+            {
+              name: 'width',
+              type: 'number',
+              title: 'Width (pixels)',
+              description: 'Custom width in pixels (e.g., 200). Leave empty for responsive default.',
+            },
+            {
+              name: 'height',
+              type: 'number',
+              title: 'Height (pixels)',
+              description: 'Custom height in pixels (e.g., 200). Leave empty for responsive default.',
+            },
+            {
+              name: 'objectFit',
+              type: 'string',
+              title: 'Image Fit',
+              description: 'How the image should fit within its container',
+              options: {
+                list: [
+                  { title: 'Cover (fill container, may crop)', value: 'cover' },
+                  { title: 'Contain (fit within container, no crop)', value: 'contain' },
+                  { title: 'Fill (stretch to fit)', value: 'fill' },
+                  { title: 'None (original size)', value: 'none' },
+                  { title: 'Scale Down (smaller of contain or none)', value: 'scale-down' },
+                ],
+              },
+              initialValue: 'cover',
+            },
+          ],
         },
         {
           name: 'headline',
@@ -97,6 +133,32 @@ export const homePage = defineType({
                 type: 'string',
                 title: 'Alt Text',
                 description: 'Alternative text for accessibility',
+              },
+              {
+                name: 'width',
+                type: 'number',
+                title: 'Width (pixels)',
+                description: 'Custom width. Leave empty for responsive default.',
+              },
+              {
+                name: 'height',
+                type: 'number',
+                title: 'Height (pixels)',
+                description: 'Custom height. Leave empty for responsive default.',
+              },
+              {
+                name: 'objectFit',
+                type: 'string',
+                title: 'Image Fit',
+                description: 'How the image should fit',
+                options: {
+                  list: [
+                    { title: 'Cover (fill, may crop)', value: 'cover' },
+                    { title: 'Contain (fit, no crop)', value: 'contain' },
+                    { title: 'Fill (stretch)', value: 'fill' },
+                  ],
+                },
+                initialValue: 'cover',
               },
             ],
           }],

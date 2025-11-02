@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SKIP_TO_CONTENT_ID } from "@/constants/accessibility";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
-import { getImageUrl } from "@/lib/sanity-image";
+import { getImageUrl, getImageProps } from "@/lib/sanity-image";
 
 interface SanityImage {
 	asset?: {
@@ -12,6 +12,9 @@ interface SanityImage {
 		_type?: string;
 	};
 	alt?: string;
+	width?: number;
+	height?: number;
+	objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
 interface HeaderProps {
@@ -65,9 +68,11 @@ export default function Header({ settings }: HeaderProps) {
 				>
 					{settings?.navigation?.sparkLogo && getImageUrl(settings.navigation.sparkLogo) ? (
 						<img
-							src={getImageUrl(settings.navigation.sparkLogo) || undefined}
-							alt="Sensational League"
-							className="w-10 h-10"
+							{...getImageProps(settings.navigation.sparkLogo, 200)}
+							alt={settings.navigation.sparkLogo.alt || "Sensational League"}
+							className={cn(
+								!settings.navigation.sparkLogo.width && !settings.navigation.sparkLogo.height && "w-10 h-10"
+							)}
 						/>
 					) : (
 						<img
@@ -79,10 +84,15 @@ export default function Header({ settings }: HeaderProps) {
 					<div className="hidden sm:block">
 						{settings?.navigation?.wordmarkLogo && getImageUrl(settings.navigation.wordmarkLogo) ? (
 							<img
-								src={getImageUrl(settings.navigation.wordmarkLogo) || undefined}
-								alt="Sensational League"
-								className="h-6"
-								style={{ filter: 'brightness(0) invert(1)' }}
+								{...getImageProps(settings.navigation.wordmarkLogo, 400)}
+								alt={settings.navigation.wordmarkLogo.alt || "Sensational League"}
+								className={cn(
+									!settings.navigation.wordmarkLogo.width && !settings.navigation.wordmarkLogo.height && "h-6"
+								)}
+								style={{
+									...getImageProps(settings.navigation.wordmarkLogo, 400).style,
+									filter: 'brightness(0) invert(1)',
+								}}
 							/>
 						) : (
 							<img

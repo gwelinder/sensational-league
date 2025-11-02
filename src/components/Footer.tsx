@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
-import { getImageUrl } from "@/lib/sanity-image";
+import { getImageUrl, getImageProps } from "@/lib/sanity-image";
 
 interface SanityImage {
 	asset?: {
@@ -11,6 +11,9 @@ interface SanityImage {
 		_type?: string;
 	};
 	alt?: string;
+	width?: number;
+	height?: number;
+	objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
 interface FooterProps {
@@ -67,9 +70,11 @@ export default function Footer({ settings }: FooterProps) {
           <div className="flex items-center gap-6 mb-10">
             {settings?.footer?.sparkLogo && getImageUrl(settings.footer.sparkLogo) ? (
               <img
-                src={getImageUrl(settings.footer.sparkLogo) || undefined}
-                alt=""
-                className="w-20 h-20"
+                {...getImageProps(settings.footer.sparkLogo, 400)}
+                alt={settings.footer.sparkLogo.alt || ""}
+                className={cn(
+                  !settings.footer.sparkLogo.width && !settings.footer.sparkLogo.height && "w-20 h-20"
+                )}
               />
             ) : (
               <img
@@ -80,9 +85,11 @@ export default function Footer({ settings }: FooterProps) {
             )}
             {settings?.footer?.wordmarkLogo && getImageUrl(settings.footer.wordmarkLogo) ? (
               <img
-                src={getImageUrl(settings.footer.wordmarkLogo) || undefined}
-                alt="Sensational League"
-                className="h-10"
+                {...getImageProps(settings.footer.wordmarkLogo, 600)}
+                alt={settings.footer.wordmarkLogo.alt || "Sensational League"}
+                className={cn(
+                  !settings.footer.wordmarkLogo.width && !settings.footer.wordmarkLogo.height && "h-10"
+                )}
               />
             ) : (
               <img

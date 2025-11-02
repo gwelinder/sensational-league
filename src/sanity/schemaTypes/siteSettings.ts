@@ -34,6 +34,39 @@ export const siteSettings = defineType({
           title: 'Spark Logo',
           description: 'The spark icon logo for the header',
           options: {hotspot: true},
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+              description: 'Alternative text for accessibility',
+            },
+            {
+              name: 'width',
+              type: 'number',
+              title: 'Width (pixels)',
+              description: 'Custom width. Leave empty for default (40px).',
+            },
+            {
+              name: 'height',
+              type: 'number',
+              title: 'Height (pixels)',
+              description: 'Custom height. Leave empty for default (40px).',
+            },
+            {
+              name: 'objectFit',
+              type: 'string',
+              title: 'Image Fit',
+              options: {
+                list: [
+                  { title: 'Cover', value: 'cover' },
+                  { title: 'Contain', value: 'contain' },
+                  { title: 'Fill', value: 'fill' },
+                ],
+              },
+              initialValue: 'contain',
+            },
+          ],
         }),
         defineField({
           name: 'wordmarkLogo',
@@ -41,6 +74,39 @@ export const siteSettings = defineType({
           title: 'Wordmark Logo',
           description: 'The wordmark logo for the header (desktop)',
           options: {hotspot: true},
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+              description: 'Alternative text for accessibility',
+            },
+            {
+              name: 'width',
+              type: 'number',
+              title: 'Width (pixels)',
+              description: 'Custom width. Leave empty for responsive default.',
+            },
+            {
+              name: 'height',
+              type: 'number',
+              title: 'Height (pixels)',
+              description: 'Custom height. Leave empty for default (24px).',
+            },
+            {
+              name: 'objectFit',
+              type: 'string',
+              title: 'Image Fit',
+              options: {
+                list: [
+                  { title: 'Cover', value: 'cover' },
+                  { title: 'Contain', value: 'contain' },
+                  { title: 'Fill', value: 'fill' },
+                ],
+              },
+              initialValue: 'contain',
+            },
+          ],
         }),
         defineField({
           name: 'links',
@@ -69,6 +135,39 @@ export const siteSettings = defineType({
           title: 'Spark Logo',
           description: 'The spark icon logo for the footer',
           options: {hotspot: true},
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+              description: 'Alternative text for accessibility',
+            },
+            {
+              name: 'width',
+              type: 'number',
+              title: 'Width (pixels)',
+              description: 'Custom width. Leave empty for default (80px).',
+            },
+            {
+              name: 'height',
+              type: 'number',
+              title: 'Height (pixels)',
+              description: 'Custom height. Leave empty for default (80px).',
+            },
+            {
+              name: 'objectFit',
+              type: 'string',
+              title: 'Image Fit',
+              options: {
+                list: [
+                  { title: 'Cover', value: 'cover' },
+                  { title: 'Contain', value: 'contain' },
+                  { title: 'Fill', value: 'fill' },
+                ],
+              },
+              initialValue: 'contain',
+            },
+          ],
         }),
         defineField({
           name: 'wordmarkLogo',
@@ -76,6 +175,39 @@ export const siteSettings = defineType({
           title: 'Wordmark Logo',
           description: 'The wordmark logo for the footer',
           options: {hotspot: true},
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+              description: 'Alternative text for accessibility',
+            },
+            {
+              name: 'width',
+              type: 'number',
+              title: 'Width (pixels)',
+              description: 'Custom width. Leave empty for responsive default.',
+            },
+            {
+              name: 'height',
+              type: 'number',
+              title: 'Height (pixels)',
+              description: 'Custom height. Leave empty for default (40px).',
+            },
+            {
+              name: 'objectFit',
+              type: 'string',
+              title: 'Image Fit',
+              options: {
+                list: [
+                  { title: 'Cover', value: 'cover' },
+                  { title: 'Contain', value: 'contain' },
+                  { title: 'Fill', value: 'fill' },
+                ],
+              },
+              initialValue: 'contain',
+            },
+          ],
         }),
         defineField({
           name: 'tagline',

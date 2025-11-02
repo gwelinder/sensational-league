@@ -4,6 +4,12 @@ import { client } from '@/sanity/lib/client';
 
 const builder = imageUrlBuilder(client);
 
+interface ImageMetadata {
+  width?: number;
+  height?: number;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
+}
+
 /**
  * Generate an optimized image URL from a Sanity image reference
  * @param source - Sanity image object
@@ -53,4 +59,41 @@ export function getImageDimensions(source: any): { width: number; height: number
   }
 
   return null;
+}
+
+/**
+ * Get image styles from metadata
+ * @param metadata - Image metadata including width, height, objectFit
+ * @returns CSS style object and className
+ */
+export function getImageStyles(metadata?: ImageMetadata) {
+  const style: React.CSSProperties = {};
+
+  if (metadata?.width) {
+    style.width = `${metadata.width}px`;
+  }
+
+  if (metadata?.height) {
+    style.height = `${metadata.height}px`;
+  }
+
+  if (metadata?.objectFit) {
+    style.objectFit = metadata.objectFit;
+  }
+
+  return style;
+}
+
+/**
+ * Get image props (src, style, alt) from a Sanity image with metadata
+ * @param image - Sanity image object with metadata
+ * @param defaultWidth - Default width for image URL generation
+ * @returns Object with src, style, and alt (src is undefined if URL generation fails)
+ */
+export function getImageProps(image: any, defaultWidth?: number) {
+  const src = getImageUrl(image, defaultWidth) || undefined;
+  const style = getImageStyles(image);
+  const alt = image?.alt || '';
+
+  return { src, style, alt };
 }

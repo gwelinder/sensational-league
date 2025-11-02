@@ -29,22 +29,34 @@ async function getSiteSettings() {
       navigation {
         sparkLogo {
           asset,
-          alt
+          alt,
+          width,
+          height,
+          objectFit
         },
         wordmarkLogo {
           asset,
-          alt
+          alt,
+          width,
+          height,
+          objectFit
         },
         links
       },
       footer {
         sparkLogo {
           asset,
-          alt
+          alt,
+          width,
+          height,
+          objectFit
         },
         wordmarkLogo {
           asset,
-          alt
+          alt,
+          width,
+          height,
+          objectFit
         },
         tagline,
         description,
