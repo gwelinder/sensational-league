@@ -3,15 +3,6 @@
 import { PortableText, PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 
-const colorMap: Record<string, string> = {
-  black: 'text-black',
-  volt: 'text-[var(--color-volt)]',
-  white: 'text-white',
-  orange: 'text-[var(--color-orange)]',
-  purple: 'text-[var(--color-purple)]',
-  cyan: 'text-[var(--color-cyan)]',
-};
-
 const components: PortableTextComponents = {
   marks: {
     colorBlack: ({ children }) => <span className="text-black">{children}</span>,
@@ -27,12 +18,25 @@ const components: PortableTextComponents = {
 };
 
 interface StyledTextRendererProps {
-  value: PortableTextBlock[];
+  value?: PortableTextBlock[] | null;
   className?: string;
 }
 
 export default function StyledTextRenderer({ value, className }: StyledTextRendererProps) {
-  if (!value || value.length === 0) return null;
+  // Handle null, undefined, or empty arrays
+  if (!value || !Array.isArray(value) || value.length === 0) {
+    return null;
+  }
+
+  // Validate that we have proper Portable Text blocks
+  const hasValidBlocks = value.every(
+    (block) => block && typeof block === 'object' && '_type' in block
+  );
+
+  if (!hasValidBlocks) {
+    console.warn('StyledTextRenderer received invalid Portable Text data:', value);
+    return null;
+  }
 
   return <PortableText value={value} components={components} />;
 }

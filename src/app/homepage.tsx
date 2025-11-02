@@ -22,18 +22,18 @@ interface HomePageProps {
     _id?: string;
     _type?: string;
     hero?: {
-      headline?: PortableTextBlock[];
+      headline?: PortableTextBlock[] | null;
       subline?: string;
       ctaText?: string;
       stats?: Stat[];
     };
     about?: {
-      title?: PortableTextBlock[];
+      title?: PortableTextBlock[] | null;
       description?: string;
       pillars?: Pillar[];
     };
     impact?: {
-      headline?: PortableTextBlock[];
+      headline?: PortableTextBlock[] | null;
       stats?: Stat[];
       quoteText?: string;
       quoteAttribution?: string;
