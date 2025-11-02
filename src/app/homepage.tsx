@@ -155,12 +155,6 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
   }) : undefined;
 
   // Default data
-  const defaultHeroStats: Stat[] = [
-    { value: "300+", label: "Athletes" },
-    { value: "24", label: "Teams" },
-    { value: "12", label: "SDG Goals" }
-  ];
-
   const defaultPillars: Pillar[] = [
     {
       title: "Elite Competition",
@@ -184,39 +178,39 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
         data-sanity={heroDataAttribute?.toString()}
       >
         <div className="w-full max-w-6xl mx-auto">
-          {/* Logo */}
-          <div className="text-center mb-12">
+          {/* Logo - Large and Prominent */}
+          <div className="text-center mb-16 md:mb-20">
             {content?.hero?.logo && getImageUrl(content.hero.logo) ? (
               <img
-                {...getImageProps(content.hero.logo, 800)}
+                {...getImageProps(content.hero.logo, 2400)}
                 alt={content.hero.logo.alt || "Sensational League"}
                 className={cn(
-                  "mx-auto",
-                  !content.hero.logo.width && !content.hero.logo.height && "w-48 h-48 md:w-56 md:h-56"
+                  "mx-auto max-w-full",
+                  !content.hero.logo.width && !content.hero.logo.height && "w-full max-w-4xl h-auto md:max-w-6xl"
                 )}
               />
             ) : (
               <img
                 src="/logos/SL-SPARK-LARGE.svg"
                 alt="Sensational League"
-                className="w-48 h-48 md:w-56 md:h-56 mx-auto"
+                className="w-full max-w-4xl h-auto md:max-w-6xl mx-auto"
               />
             )}
           </div>
 
-          {/* Headline */}
+          {/* Headline with Yellow Background */}
           <h1
-            className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-none mb-8 text-center"
+            className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] mb-12 text-center"
             data-sanity={heroHeadlineAttribute?.toString()}
           >
             {content?.hero?.headline ? (
-              <StyledTextRenderer value={content.hero.headline} />
+              <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+                <StyledTextRenderer value={content.hero.headline} />
+              </div>
             ) : (
-              <>
-                <span className="text-black">FAST.</span><br />
-                <span className="text-black">REBELLIOUS.</span><br />
-                <span className="text-[var(--color-volt)]">FEMALE.</span>
-              </>
+              <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+                <span className="text-black">FAST. REBELLIOUS. FEMALE.</span>
+              </div>
             )}
           </h1>
 
@@ -230,21 +224,8 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
           </p>
 
           {/* Form */}
-          <div className="mb-12">
+          <div className="mb-16">
             <SignupForm />
-          </div>
-
-          {/* Stats */}
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-16 text-sm uppercase tracking-wider brand-caption">
-            {(content?.hero?.stats || defaultHeroStats).map((stat, index) => (
-              <div key={index} className="flex items-center gap-6 md:gap-8">
-                {index > 0 && <div className="w-px h-6 bg-gray-300"></div>}
-                <div>
-                  <span className="text-2xl font-black text-black">{stat.value}</span>
-                  <span className="ml-2 text-gray-600">{stat.label}</span>
-                </div>
-              </div>
-            ))}
           </div>
 
           {/* Image Grid - Bold, Dynamic with Rightward Movement */}
