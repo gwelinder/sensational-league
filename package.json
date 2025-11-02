@@ -10,7 +10,8 @@
     "seed:policies": "tsx scripts/seed-policies.ts",
     "seed:home": "tsx scripts/seed-home.ts",
     "seed:homepage-sections": "tsx scripts/seed-homepage-sections.ts",
-    "seed:logos": "node scripts/seed-logos.js"
+    "seed:logos": "node scripts/seed-logos.js",
+    "seed:settings": "tsx scripts/seed-site-settings.ts"
   },
   "dependencies": {
     "@sanity/image-url": "^1.2.0",

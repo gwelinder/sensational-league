@@ -3,7 +3,7 @@ import "./globals.css";
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { DisableDraftMode } from "@/components/DisableDraftMode";
-import { SanityLive } from "@/sanity/lib/live";
+import { SanityLive, sanityFetch } from "@/sanity/lib/live";
 import ConditionalLayout from "@/components/ConditionalLayout";
 
 // GT Standard fonts are loaded via @font-face in globals.css
@@ -20,17 +20,31 @@ export const metadata: Metadata = {
   },
 };
 
+async function getSiteSettings() {
+	const { data } = await sanityFetch({
+		query: `*[_type == "siteSettings"][0] {
+      _id,
+      _type,
+      title,
+      navigation,
+      footer
+    }`,
+	});
+	return data;
+}
+
 export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
 	const isEnabled = (await draftMode()).isEnabled;
-	
+	const settings = await getSiteSettings();
+
 	return (
 		<html lang="en">
 			<body className="min-h-dvh antialiased bg-[var(--color-surface)] text-[var(--color-text)]">
-				<ConditionalLayout>{children}</ConditionalLayout>
+				<ConditionalLayout settings={settings}>{children}</ConditionalLayout>
 				<SanityLive />
 				{isEnabled && (
 					<>

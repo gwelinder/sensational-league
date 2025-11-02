@@ -23,6 +23,57 @@ export const siteSettings = defineType({
       title: 'Description',
       rows: 3,
     }),
+    defineField({
+      name: 'navigation',
+      type: 'object',
+      title: 'Header Navigation',
+      fields: [
+        defineField({
+          name: 'links',
+          type: 'array',
+          title: 'Navigation Links',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                defineField({name: 'label', type: 'string', title: 'Label'}),
+                defineField({name: 'href', type: 'string', title: 'Link'}),
+              ],
+            },
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: 'footer',
+      type: 'object',
+      title: 'Footer',
+      fields: [
+        defineField({
+          name: 'tagline',
+          type: 'string',
+          title: 'Tagline',
+          description: 'e.g., "Fast. Rebellious. Female."',
+        }),
+        defineField({
+          name: 'description',
+          type: 'text',
+          title: 'Description',
+          rows: 3,
+        }),
+        defineField({
+          name: 'copyrightText',
+          type: 'string',
+          title: 'Copyright Text',
+        }),
+        defineField({
+          name: 'additionalText',
+          type: 'string',
+          title: 'Additional Text',
+          description: 'Secondary footer text',
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {title: 'title', media: 'logo'},

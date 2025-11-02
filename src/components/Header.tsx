@@ -1,9 +1,40 @@
+'use client';
+
 import Link from "next/link";
 import { SKIP_TO_CONTENT_ID } from "@/constants/accessibility";
-import { ResponsiveLogo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
+import { createDataAttribute } from "@sanity/visual-editing";
 
-export default function Header() {
+interface HeaderProps {
+	settings?: {
+		_id: string;
+		_type: string;
+		navigation?: {
+			links?: Array<{
+				label: string;
+				href: string;
+			}>;
+		};
+	};
+}
+
+export default function Header({ settings }: HeaderProps) {
+	const defaultLinks = [
+		{ href: "/policies", label: "Policies" },
+		{ href: "/dashboard", label: "Dashboard" },
+		{ href: "/#about", label: "About" }
+	];
+
+	const links = settings?.navigation?.links?.length
+		? settings.navigation.links
+		: defaultLinks;
+
+	const navAttribute = settings?._id ? createDataAttribute({
+		id: settings._id,
+		type: settings._type,
+		path: 'navigation',
+	}) : undefined;
+
 	return (
 		<header className="brand-bg">
 			<a
@@ -35,47 +66,38 @@ export default function Header() {
 						/>
 					</div>
 				</Link>
-				
-				<nav aria-label="Primary" className="hidden gap-6 md:flex">
-					{[
-						{ href: "#seasons", label: "Seasons" },
-						{ href: "#teams", label: "For Teams" },
-						{ href: "#clubs", label: "For Clubs" },
-						{ href: "#partners", label: "For Partners" },
-						{ href: "#shop", label: "Shop" },
-						{ href: "#about", label: "About" }
-					].map(({ href, label }) => (
-						<Link
-							key={href}
-							href={href}
-							className={cn(
-								"brand-body text-[var(--color-off-white)] text-sm",
-								"hover:text-[var(--color-volt)]",
-								"focus:outline-none focus:text-[var(--color-volt)]",
-								"transition-colors duration-200"
-							)}
-						>
-							{label}
-						</Link>
-					))}
+
+				<nav
+					aria-label="Primary"
+					className="hidden gap-6 md:flex"
+					data-sanity={navAttribute?.toString()}
+				>
+					{links.map(({ href, label }, index) => {
+						const linkAttribute = settings?._id ? createDataAttribute({
+							id: settings._id,
+							type: settings._type,
+							path: `navigation.links[${index}].label`,
+						}) : undefined;
+
+						return (
+							<Link
+								key={href}
+								href={href}
+								data-sanity={linkAttribute?.toString()}
+								className={cn(
+									"brand-body text-[var(--color-off-white)] text-sm",
+									"hover:text-[var(--color-volt)]",
+									"focus:outline-none focus:text-[var(--color-volt)]",
+									"transition-colors duration-200"
+								)}
+							>
+								{label}
+							</Link>
+						);
+					})}
 				</nav>
-				
+
 				<div className="flex items-center gap-4">
-					{/* CTA Button */}
-					<Link
-						href="#waitlist"
-						className={cn(
-							"hidden sm:inline-flex",
-							"bg-[var(--color-volt)] text-black",
-							"px-5 py-2.5 uppercase",
-							"brand-caption font-black tracking-wider text-sm",
-							"hover:bg-black hover:text-[var(--color-volt)] transition-colors",
-							"focus:outline-none focus:ring-2 focus:ring-[var(--color-volt)] focus:ring-offset-2 focus:ring-offset-black"
-						)}
-					>
-						JOIN WAITLIST
-					</Link>
-					
 					{/* Studio Link */}
 					<Link
 						href="/studio"
@@ -89,19 +111,14 @@ export default function Header() {
 					</Link>
 				</div>
 			</div>
-			
-			{/* Mobile Navigation - TODO: Implement mobile menu */}
+
+			{/* Mobile Navigation */}
 			<div className="md:hidden px-4 pb-3">
 				<nav className="flex flex-wrap gap-4" aria-label="Mobile Navigation">
-					{[
-						{ href: "#seasons", label: "Seasons" },
-						{ href: "#teams", label: "Teams" },
-						{ href: "#clubs", label: "Clubs" },
-						{ href: "#partners", label: "Partners" }
-					].map(({ href, label }) => (
-						<Link 
+					{links.slice(0, 4).map(({ href, label }) => (
+						<Link
 							key={href}
-							href={href} 
+							href={href}
 							className={cn(
 								"brand-caption text-[var(--color-off-white)]",
 								"hover:text-[var(--color-volt)] brand-fast",

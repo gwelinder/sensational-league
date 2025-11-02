@@ -8,9 +8,25 @@ import { SKIP_TO_CONTENT_ID } from '@/constants/accessibility';
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
+  settings?: {
+    _id: string;
+    _type: string;
+    navigation?: {
+      links?: Array<{
+        label: string;
+        href: string;
+      }>;
+    };
+    footer?: {
+      tagline?: string;
+      description?: string;
+      copyrightText?: string;
+      additionalText?: string;
+    };
+  };
 }
 
-export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
+export default function ConditionalLayout({ children, settings }: ConditionalLayoutProps) {
   const pathname = usePathname();
   const isStudioRoute = pathname.startsWith('/studio');
 
@@ -20,9 +36,9 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
 
   return (
     <>
-      <Header />
+      <Header settings={settings} />
       <div id={SKIP_TO_CONTENT_ID}>{children}</div>
-      <Footer />
+      <Footer settings={settings} />
       <CookieBanner />
     </>
   );

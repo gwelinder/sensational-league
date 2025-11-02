@@ -1,9 +1,55 @@
+'use client';
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { createDataAttribute } from "@sanity/visual-editing";
 
-export default function Footer() {
+interface FooterProps {
+	settings?: {
+		_id: string;
+		_type: string;
+		footer?: {
+			tagline?: string;
+			description?: string;
+			copyrightText?: string;
+			additionalText?: string;
+		};
+	};
+}
+
+export default function Footer({ settings }: FooterProps) {
+	const footerAttribute = settings?._id ? createDataAttribute({
+		id: settings._id,
+		type: settings._type,
+		path: 'footer',
+	}) : undefined;
+
+	const taglineAttribute = settings?._id ? createDataAttribute({
+		id: settings._id,
+		type: settings._type,
+		path: 'footer.tagline',
+	}) : undefined;
+
+	const descriptionAttribute = settings?._id ? createDataAttribute({
+		id: settings._id,
+		type: settings._type,
+		path: 'footer.description',
+	}) : undefined;
+
+	const copyrightAttribute = settings?._id ? createDataAttribute({
+		id: settings._id,
+		type: settings._type,
+		path: 'footer.copyrightText',
+	}) : undefined;
+
+	const additionalAttribute = settings?._id ? createDataAttribute({
+		id: settings._id,
+		type: settings._type,
+		path: 'footer.additionalText',
+	}) : undefined;
+
   return (
-    <footer className="bg-white border-t-4 border-black">
+    <footer className="bg-white border-t-4 border-black" data-sanity={footerAttribute?.toString()}>
       <div className="mx-auto max-w-7xl px-6 py-20">
         {/* Brand Section */}
         <div className="mb-20">
@@ -19,8 +65,11 @@ export default function Footer() {
               className="h-10"
             />
           </div>
-          <p className="brand-body text-xl md:text-2xl text-black max-w-3xl font-medium leading-relaxed">
-            Women's 7v7 football league combining athletic excellence with social impact.
+          <p
+            className="brand-body text-xl md:text-2xl text-black max-w-3xl font-medium leading-relaxed"
+            data-sanity={descriptionAttribute?.toString()}
+          >
+            {settings?.footer?.description || "Women's 7v7 football league combining athletic excellence with social impact."}
           </p>
         </div>
 
@@ -52,12 +101,18 @@ export default function Footer() {
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-12">
-          <p className="brand-caption text-sm text-black uppercase tracking-wider font-bold">
-            © {new Date().getFullYear()} Sensational League
+          <p
+            className="brand-caption text-sm text-black uppercase tracking-wider font-bold"
+            data-sanity={copyrightAttribute?.toString()}
+          >
+            {settings?.footer?.copyrightText || `© ${new Date().getFullYear()} Sensational League`}
           </p>
 
-          <p className="brand-caption text-sm text-black uppercase tracking-wider text-center font-bold">
-            Built for women's football
+          <p
+            className="brand-caption text-sm text-black uppercase tracking-wider text-center font-bold"
+            data-sanity={additionalAttribute?.toString()}
+          >
+            {settings?.footer?.additionalText || "Built for women's football"}
           </p>
 
           <Link
@@ -73,8 +128,11 @@ export default function Footer() {
 
         {/* Slogan - At Bottom */}
         <div className="text-center pt-8 border-t-2 border-black">
-          <p className="brand-headline text-2xl md:text-3xl font-black uppercase tracking-wide text-black">
-            Fast. Rebellious. Female.
+          <p
+            className="brand-headline text-2xl md:text-3xl font-black uppercase tracking-wide text-black"
+            data-sanity={taglineAttribute?.toString()}
+          >
+            {settings?.footer?.tagline || "Fast. Rebellious. Female."}
           </p>
         </div>
       </div>
