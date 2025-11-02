@@ -75,9 +75,9 @@ const homePageContent = {
 		subline: "Women's 7v7 football league that combines athletic excellence with social impact.",
 		ctaText: "JOIN →",
 		stats: [
-			{ value: "300+", label: "Athletes" },
-			{ value: "24", label: "Teams" },
-			{ value: "12", label: "SDG Goals" }
+			{ _key: 'stat-1', value: "300+", label: "Athletes" },
+			{ _key: 'stat-2', value: "24", label: "Teams" },
+			{ _key: 'stat-3', value: "12", label: "SDG Goals" }
 		],
 	},
 	about: {
@@ -112,14 +112,17 @@ const homePageContent = {
 		description: "We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female.",
 		pillars: [
 			{
+				_key: 'pillar-1',
 				title: "Elite Competition",
 				description: "7v7 format with professional standards and innovative scoring systems."
 			},
 			{
+				_key: 'pillar-2',
 				title: "Social Impact",
 				description: "Teams earn points for community engagement and UN SDG contributions."
 			},
 			{
+				_key: 'pillar-3',
 				title: "Digital Innovation",
 				description: "Multi-metric tracking including social media growth and viral moments."
 			}
@@ -149,10 +152,10 @@ const homePageContent = {
 			},
 		],
 		stats: [
-			{ value: "24", label: "Teams" },
-			{ value: "300+", label: "Athletes" },
-			{ value: "50K", label: "Community" },
-			{ value: "12", label: "SDG Goals" }
+			{ _key: 'impact-stat-1', value: "24", label: "Teams" },
+			{ _key: 'impact-stat-2', value: "300+", label: "Athletes" },
+			{ _key: 'impact-stat-3', value: "50K", label: "Community" },
+			{ _key: 'impact-stat-4', value: "12", label: "SDG Goals" }
 		],
 		quoteText: "\"This isn't just football - it's a movement.\"",
 		quoteAttribution: "League Founder",
