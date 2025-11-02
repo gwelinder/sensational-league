@@ -63,7 +63,7 @@ function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row gap-3">
         <input
           type="email"
@@ -178,14 +178,14 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
         data-sanity={heroDataAttribute?.toString()}
       >
         <div className="w-full max-w-[1400px] mx-auto">
-          {/* Logo - Extra Large and Prominent */}
-          <div className="mb-8 md:mb-12">
+          {/* Logo - Extra Large and Prominent, Centered */}
+          <div className="mb-8 md:mb-12 text-center">
             {content?.hero?.logo && getImageUrl(content.hero.logo) ? (
               <img
                 {...getImageProps(content.hero.logo, 3000)}
                 alt={content.hero.logo.alt || "Sensational League"}
                 className={cn(
-                  "w-full h-auto",
+                  "mx-auto w-full h-auto",
                   !content.hero.logo.width && !content.hero.logo.height && "max-w-full"
                 )}
               />
@@ -193,40 +193,43 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
               <img
                 src="/logos/SL-PRIMARY LOCKUP-CROPPED.svg"
                 alt="Sensational League"
-                className="w-full h-auto max-w-full"
+                className="mx-auto w-full h-auto max-w-full"
               />
             )}
           </div>
 
-          {/* Headline with Yellow Background - Left aligned */}
-          <div className="mb-8 md:mb-12">
-            <h1
-              className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1]"
-              data-sanity={heroHeadlineAttribute?.toString()}
-            >
-              {content?.hero?.headline ? (
-                <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
-                  <StyledTextRenderer value={content.hero.headline} />
-                </div>
-              ) : (
-                <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
-                  <span className="text-black">FAST. REBELLIOUS. FEMALE.</span>
-                </div>
-              )}
-            </h1>
+          {/* Headline with Yellow Background - Left aligned to match logo "S" position */}
+          <div className="mb-8 md:mb-12 flex justify-center">
+            <div className="w-full flex">
+              <h1
+                className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1]"
+                data-sanity={heroHeadlineAttribute?.toString()}
+                style={{ marginLeft: '5%' }}
+              >
+                {content?.hero?.headline ? (
+                  <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+                    <StyledTextRenderer value={content.hero.headline} />
+                  </div>
+                ) : (
+                  <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+                    <span className="text-black">FAST. REBELLIOUS. FEMALE.</span>
+                  </div>
+                )}
+              </h1>
+            </div>
           </div>
 
-          {/* Subline - Left aligned */}
+          {/* Subline - Centered */}
           <p
-            className="brand-body text-lg md:text-xl text-gray-700 mb-8 md:mb-12 max-w-2xl"
+            className="brand-body text-lg md:text-xl text-gray-700 mb-8 md:mb-12 max-w-2xl mx-auto text-center"
             data-sanity={heroSublineAttribute?.toString()}
           >
             {content?.hero?.subline ||
              "Women's 7v7 football league that combines athletic excellence with social impact."}
           </p>
 
-          {/* Form - Left aligned */}
-          <div className="mb-16 max-w-2xl">
+          {/* Form - Centered */}
+          <div className="mb-16">
             <SignupForm />
           </div>
 
