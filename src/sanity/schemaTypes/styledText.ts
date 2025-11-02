@@ -19,93 +19,14 @@ export const styledText = defineType({
         decorators: [
           { title: 'Strong', value: 'strong' },
           { title: 'Emphasis', value: 'em' },
+          { title: '⬛ Black', value: 'colorBlack' },
+          { title: '🟨 Volt', value: 'colorVolt' },
+          { title: '⬜ White', value: 'colorWhite' },
+          { title: '🟧 Orange', value: 'colorOrange' },
+          { title: '🟪 Purple', value: 'colorPurple' },
+          { title: '🟦 Cyan', value: 'colorCyan' },
         ],
-        annotations: [
-          {
-            name: 'colorBlack',
-            type: 'object',
-            title: 'Black',
-            icon: () => '⬛',
-            fields: [
-              {
-                name: 'color',
-                type: 'string',
-                initialValue: 'black',
-                hidden: true,
-              },
-            ],
-          },
-          {
-            name: 'colorVolt',
-            type: 'object',
-            title: 'Volt Yellow',
-            icon: () => '🟨',
-            fields: [
-              {
-                name: 'color',
-                type: 'string',
-                initialValue: 'volt',
-                hidden: true,
-              },
-            ],
-          },
-          {
-            name: 'colorWhite',
-            type: 'object',
-            title: 'White',
-            icon: () => '⬜',
-            fields: [
-              {
-                name: 'color',
-                type: 'string',
-                initialValue: 'white',
-                hidden: true,
-              },
-            ],
-          },
-          {
-            name: 'colorOrange',
-            type: 'object',
-            title: 'Orange',
-            icon: () => '🟧',
-            fields: [
-              {
-                name: 'color',
-                type: 'string',
-                initialValue: 'orange',
-                hidden: true,
-              },
-            ],
-          },
-          {
-            name: 'colorPurple',
-            type: 'object',
-            title: 'Purple',
-            icon: () => '🟪',
-            fields: [
-              {
-                name: 'color',
-                type: 'string',
-                initialValue: 'purple',
-                hidden: true,
-              },
-            ],
-          },
-          {
-            name: 'colorCyan',
-            type: 'object',
-            title: 'Cyan',
-            icon: () => '🟦',
-            fields: [
-              {
-                name: 'color',
-                type: 'string',
-                initialValue: 'cyan',
-                hidden: true,
-              },
-            ],
-          },
-        ],
+        annotations: [],
       },
     },
   ],

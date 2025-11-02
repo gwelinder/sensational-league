@@ -34,9 +34,5 @@ interface StyledTextRendererProps {
 export default function StyledTextRenderer({ value, className }: StyledTextRendererProps) {
   if (!value || value.length === 0) return null;
 
-  return (
-    <div className={className}>
-      <PortableText value={value} components={components} />
-    </div>
-  );
+  return <PortableText value={value} components={components} />;
 }
