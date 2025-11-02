@@ -7,11 +7,19 @@ import { client } from './client'
 const token = process.env.SANITY_VIEWER_TOKEN;
 
 if (!token) {
-  throw new Error('Missing SANITY_VIEWER_TOKEN environment variable, which is required for visual editing.');
+  console.warn('Missing SANITY_VIEWER_TOKEN - visual editing features will be limited');
 }
 
 export const { sanityFetch, SanityLive } = defineLive({
-  client,
+  client: client.withConfig({
+    token,
+    perspective: 'previewDrafts',
+    useCdn: false,
+    stega: {
+      enabled: true,
+      studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || '/studio',
+    },
+  }),
   serverToken: token,
   browserToken: token,
 });
