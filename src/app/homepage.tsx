@@ -4,6 +4,16 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
 
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Pillar {
+  title: string;
+  description: string;
+}
+
 interface HomePageProps {
   content?: {
     _id?: string;
@@ -12,10 +22,23 @@ interface HomePageProps {
       headline?: string;
       subline?: string;
       ctaText?: string;
+      stats?: Stat[];
     };
     about?: {
       title?: string;
       description?: string;
+      pillars?: Pillar[];
+    };
+    impact?: {
+      headline?: string;
+      stats?: Stat[];
+      quoteText?: string;
+      quoteAttribution?: string;
+    };
+    cta?: {
+      headline?: string;
+      description?: string;
+      buttonText?: string;
     };
   };
 }
@@ -69,17 +92,122 @@ function SignupForm() {
 }
 
 export default function HomePage({ content }: HomePageProps) {
+  // Hero section attributes
   const heroDataAttribute = content?._id ? createDataAttribute({
     id: content._id,
     type: content._type || 'homePage',
     path: 'hero',
   }) : undefined;
 
+  const heroHeadlineAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'hero.headline',
+  }) : undefined;
+
+  const heroSublineAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'hero.subline',
+  }) : undefined;
+
+  // About section attributes
   const aboutDataAttribute = content?._id ? createDataAttribute({
     id: content._id,
     type: content._type || 'homePage',
     path: 'about',
   }) : undefined;
+
+  const aboutTitleAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'about.title',
+  }) : undefined;
+
+  const aboutDescriptionAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'about.description',
+  }) : undefined;
+
+  // Impact section attributes
+  const impactDataAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'impact',
+  }) : undefined;
+
+  const impactHeadlineAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'impact.headline',
+  }) : undefined;
+
+  const impactQuoteAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'impact.quoteText',
+  }) : undefined;
+
+  const impactQuoteAttrAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'impact.quoteAttribution',
+  }) : undefined;
+
+  // CTA section attributes
+  const ctaDataAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'cta',
+  }) : undefined;
+
+  const ctaHeadlineAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'cta.headline',
+  }) : undefined;
+
+  const ctaDescriptionAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'cta.description',
+  }) : undefined;
+
+  const ctaButtonAttribute = content?._id ? createDataAttribute({
+    id: content._id,
+    type: content._type || 'homePage',
+    path: 'cta.buttonText',
+  }) : undefined;
+
+  // Default data
+  const defaultHeroStats: Stat[] = [
+    { value: "300+", label: "Athletes" },
+    { value: "24", label: "Teams" },
+    { value: "12", label: "SDG Goals" }
+  ];
+
+  const defaultPillars: Pillar[] = [
+    {
+      title: "Elite Competition",
+      description: "7v7 format with professional standards and innovative scoring systems."
+    },
+    {
+      title: "Social Impact",
+      description: "Teams earn points for community engagement and UN SDG contributions."
+    },
+    {
+      title: "Digital Innovation",
+      description: "Multi-metric tracking including social media growth and viral moments."
+    }
+  ];
+
+  const defaultImpactStats: Stat[] = [
+    { value: "24", label: "Teams" },
+    { value: "300+", label: "Athletes" },
+    { value: "50K", label: "Community" },
+    { value: "12", label: "SDG Goals" }
+  ];
 
   return (
     <main className="min-h-screen bg-white">
@@ -99,14 +227,26 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
 
           {/* Headline */}
-          <h1 className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-none mb-8 text-center">
-            <span className="text-black">FAST.</span><br />
-            <span className="text-black">REBELLIOUS.</span><br />
-            <span className="text-[var(--color-volt)]">FEMALE.</span>
+          <h1
+            className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-none mb-8 text-center"
+            data-sanity={heroHeadlineAttribute?.toString()}
+          >
+            {content?.hero?.headline ? (
+              <span className="text-black whitespace-pre-line">{content.hero.headline}</span>
+            ) : (
+              <>
+                <span className="text-black">FAST.</span><br />
+                <span className="text-black">REBELLIOUS.</span><br />
+                <span className="text-[var(--color-volt)]">FEMALE.</span>
+              </>
+            )}
           </h1>
 
           {/* Subline */}
-          <p className="brand-body text-lg md:text-xl text-gray-700 mb-12 max-w-2xl mx-auto text-center">
+          <p
+            className="brand-body text-lg md:text-xl text-gray-700 mb-12 max-w-2xl mx-auto text-center"
+            data-sanity={heroSublineAttribute?.toString()}
+          >
             {content?.hero?.subline ||
              "Women's 7v7 football league that combines athletic excellence with social impact."}
           </p>
@@ -118,20 +258,15 @@ export default function HomePage({ content }: HomePageProps) {
 
           {/* Stats */}
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-16 text-sm uppercase tracking-wider brand-caption">
-            <div>
-              <span className="text-2xl font-black text-black">300+</span>
-              <span className="ml-2 text-gray-600">Athletes</span>
-            </div>
-            <div className="w-px h-6 bg-gray-300"></div>
-            <div>
-              <span className="text-2xl font-black text-black">24</span>
-              <span className="ml-2 text-gray-600">Teams</span>
-            </div>
-            <div className="w-px h-6 bg-gray-300"></div>
-            <div>
-              <span className="text-2xl font-black text-black">12</span>
-              <span className="ml-2 text-gray-600">SDG Goals</span>
-            </div>
+            {(content?.hero?.stats || defaultHeroStats).map((stat, index) => (
+              <div key={index} className="flex items-center gap-6 md:gap-8">
+                {index > 0 && <div className="w-px h-6 bg-gray-300"></div>}
+                <div>
+                  <span className="text-2xl font-black text-black">{stat.value}</span>
+                  <span className="ml-2 text-gray-600">{stat.label}</span>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Image Grid - Bold, Dynamic with Rightward Movement */}
@@ -189,8 +324,13 @@ export default function HomePage({ content }: HomePageProps) {
         <div className="max-w-7xl mx-auto px-4">
           {/* Headline - Bold and Clean */}
           <div className="mb-28">
-            <h2 className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black text-center leading-tight uppercase">
-              {content?.about?.title || (
+            <h2
+              className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black text-center leading-tight uppercase"
+              data-sanity={aboutTitleAttribute?.toString()}
+            >
+              {content?.about?.title ? (
+                <span className="whitespace-pre-line">{content.about.title}</span>
+              ) : (
                 <>
                   <span className="block text-black">PLAY FOOTBALL.</span>
                   <span className="block text-[var(--color-volt)]">DRIVE IMPACT.</span>
@@ -202,40 +342,28 @@ export default function HomePage({ content }: HomePageProps) {
 
           {/* Three Pillars - Clean Cards with Rightward Movement */}
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-20 max-w-6xl mx-auto">
-            <div className="bg-white border-4 border-black p-8 hover:bg-[var(--color-volt)] hover:translate-x-2 transition-all duration-300 group">
-              <div className="w-20 h-3 bg-black mb-6 transform skew-x-[-12deg] group-hover:w-24 transition-all duration-300"></div>
-              <h3 className="brand-subhead text-xl md:text-2xl font-black mb-4 uppercase tracking-wider text-black">
-                Elite Competition
-              </h3>
-              <p className="brand-body text-base text-black leading-relaxed">
-                7v7 format with professional standards and innovative scoring systems.
-              </p>
-            </div>
-
-            <div className="bg-white border-4 border-black p-8 hover:bg-[var(--color-volt)] hover:translate-x-2 transition-all duration-300 group">
-              <div className="w-20 h-3 bg-black mb-6 transform skew-x-[-12deg] group-hover:w-24 transition-all duration-300"></div>
-              <h3 className="brand-subhead text-xl md:text-2xl font-black mb-4 uppercase tracking-wider text-black">
-                Social Impact
-              </h3>
-              <p className="brand-body text-base text-black leading-relaxed">
-                Teams earn points for community engagement and UN SDG contributions.
-              </p>
-            </div>
-
-            <div className="bg-white border-4 border-black p-8 hover:bg-[var(--color-volt)] hover:translate-x-2 transition-all duration-300 group">
-              <div className="w-20 h-3 bg-black mb-6 transform skew-x-[-12deg] group-hover:w-24 transition-all duration-300"></div>
-              <h3 className="brand-subhead text-xl md:text-2xl font-black mb-4 uppercase tracking-wider text-black">
-                Digital Innovation
-              </h3>
-              <p className="brand-body text-base text-black leading-relaxed">
-                Multi-metric tracking including social media growth and viral moments.
-              </p>
-            </div>
+            {(content?.about?.pillars || defaultPillars).map((pillar, index) => (
+              <div
+                key={index}
+                className="bg-white border-4 border-black p-8 hover:bg-[var(--color-volt)] hover:translate-x-2 transition-all duration-300 group"
+              >
+                <div className="w-20 h-3 bg-black mb-6 transform skew-x-[-12deg] group-hover:w-24 transition-all duration-300"></div>
+                <h3 className="brand-subhead text-xl md:text-2xl font-black mb-4 uppercase tracking-wider text-black">
+                  {pillar.title}
+                </h3>
+                <p className="brand-body text-base text-black leading-relaxed">
+                  {pillar.description}
+                </p>
+              </div>
+            ))}
           </div>
 
           {/* Description */}
           <div className="max-w-4xl mx-auto text-center">
-            <p className="brand-body text-2xl md:text-3xl text-black leading-relaxed font-bold">
+            <p
+              className="brand-body text-2xl md:text-3xl text-black leading-relaxed font-bold"
+              data-sanity={aboutDescriptionAttribute?.toString()}
+            >
               {content?.about?.description ||
                "We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female."}
             </p>
@@ -244,7 +372,10 @@ export default function HomePage({ content }: HomePageProps) {
       </section>
 
       {/* Impact Section - With Bold Dynamic Images */}
-      <section className="relative py-32 md:py-48 bg-black text-white overflow-hidden">
+      <section
+        className="relative py-32 md:py-48 bg-black text-white overflow-hidden"
+        data-sanity={impactDataAttribute?.toString()}
+      >
         {/* Background Images Grid - High Contrast */}
         <div className="absolute inset-0 grid grid-cols-2">
           <div className="relative">
@@ -268,44 +399,53 @@ export default function HomePage({ content }: HomePageProps) {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4">
           {/* Dynamic Headline */}
-          <h2 className="brand-headline text-5xl md:text-7xl lg:text-9xl font-black mb-24 text-center leading-[0.9] uppercase">
-            <span className="text-white">LEAGUE</span><br/>
-            <span className="text-[var(--color-volt)] text-6xl md:text-8xl lg:text-[10rem]">IMPACT</span>
+          <h2
+            className="brand-headline text-5xl md:text-7xl lg:text-9xl font-black mb-24 text-center leading-[0.9] uppercase"
+            data-sanity={impactHeadlineAttribute?.toString()}
+          >
+            {content?.impact?.headline ? (
+              <span className="whitespace-pre-line">{content.impact.headline}</span>
+            ) : (
+              <>
+                <span className="text-white">LEAGUE</span><br/>
+                <span className="text-[var(--color-volt)] text-6xl md:text-8xl lg:text-[10rem]">IMPACT</span>
+              </>
+            )}
           </h2>
 
           {/* Stats - Clean Grid with Rightward Movement */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-32 max-w-6xl mx-auto">
-            <div className="bg-black border-4 border-[var(--color-volt)] p-8 md:p-10 text-center hover:bg-[var(--color-volt)] hover:text-black hover:translate-x-2 hover:-translate-y-2 transition-all duration-300 group aspect-square flex flex-col items-center justify-center transform skew-x-[-2deg]">
-              <div className="text-5xl md:text-6xl lg:text-7xl font-black text-[var(--color-volt)] mb-3 group-hover:text-black transform skew-x-[2deg]">24</div>
-              <div className="brand-caption text-xs uppercase tracking-widest text-white group-hover:text-black transform skew-x-[2deg]">Teams</div>
-            </div>
-
-            <div className="bg-black border-4 border-[var(--color-volt)] p-8 md:p-10 text-center hover:bg-[var(--color-volt)] hover:text-black hover:translate-x-2 hover:-translate-y-2 transition-all duration-300 group aspect-square flex flex-col items-center justify-center transform skew-x-[-2deg]">
-              <div className="text-5xl md:text-6xl lg:text-7xl font-black text-[var(--color-volt)] mb-3 group-hover:text-black transform skew-x-[2deg]">300+</div>
-              <div className="brand-caption text-xs uppercase tracking-widest text-white group-hover:text-black transform skew-x-[2deg]">Athletes</div>
-            </div>
-
-            <div className="bg-black border-4 border-[var(--color-volt)] p-8 md:p-10 text-center hover:bg-[var(--color-volt)] hover:text-black hover:translate-x-2 hover:-translate-y-2 transition-all duration-300 group aspect-square flex flex-col items-center justify-center transform skew-x-[-2deg]">
-              <div className="text-5xl md:text-6xl lg:text-7xl font-black text-[var(--color-volt)] mb-3 group-hover:text-black transform skew-x-[2deg]">50K</div>
-              <div className="brand-caption text-xs uppercase tracking-widest text-white group-hover:text-black transform skew-x-[2deg]">Community</div>
-            </div>
-
-            <div className="bg-black border-4 border-[var(--color-volt)] p-8 md:p-10 text-center hover:bg-[var(--color-volt)] hover:text-black hover:translate-x-2 hover:-translate-y-2 transition-all duration-300 group aspect-square flex flex-col items-center justify-center transform skew-x-[-2deg]">
-              <div className="text-5xl md:text-6xl lg:text-7xl font-black text-[var(--color-volt)] mb-3 group-hover:text-black transform skew-x-[2deg]">12</div>
-              <div className="brand-caption text-xs uppercase tracking-widest text-white group-hover:text-black transform skew-x-[2deg]">SDG Goals</div>
-            </div>
+            {(content?.impact?.stats || defaultImpactStats).map((stat, index) => (
+              <div
+                key={index}
+                className="bg-black border-4 border-[var(--color-volt)] p-8 md:p-10 text-center hover:bg-[var(--color-volt)] hover:text-black hover:translate-x-2 hover:-translate-y-2 transition-all duration-300 group aspect-square flex flex-col items-center justify-center transform skew-x-[-2deg]"
+              >
+                <div className="text-5xl md:text-6xl lg:text-7xl font-black text-[var(--color-volt)] mb-3 group-hover:text-black transform skew-x-[2deg]">
+                  {stat.value}
+                </div>
+                <div className="brand-caption text-xs uppercase tracking-widest text-white group-hover:text-black transform skew-x-[2deg]">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Quote Box with Rightward Accent */}
           <div className="max-w-4xl mx-auto bg-[var(--color-volt)] border-4 border-black p-12 text-black relative overflow-hidden">
             <div className="absolute top-0 left-0 w-2 h-full bg-black transform skew-x-[-12deg] origin-top"></div>
             <div className="relative z-10">
-              <p className="brand-headline text-2xl md:text-4xl font-black mb-4 uppercase leading-tight">
-                "This isn't just football -<br/>it's a movement."
+              <p
+                className="brand-headline text-2xl md:text-4xl font-black mb-4 uppercase leading-tight"
+                data-sanity={impactQuoteAttribute?.toString()}
+              >
+                {content?.impact?.quoteText || '"This isn\'t just football - it\'s a movement."'}
               </p>
-              <p className="brand-caption text-sm uppercase tracking-widest flex items-center gap-2">
+              <p
+                className="brand-caption text-sm uppercase tracking-widest flex items-center gap-2"
+                data-sanity={impactQuoteAttrAttribute?.toString()}
+              >
                 <span className="w-8 h-0.5 bg-black transform skew-x-[-12deg]"></span>
-                League Founder
+                {content?.impact?.quoteAttribution || "League Founder"}
               </p>
             </div>
           </div>
@@ -313,7 +453,10 @@ export default function HomePage({ content }: HomePageProps) {
       </section>
 
       {/* Final CTA */}
-      <section className="py-40 md:py-48 bg-[var(--color-volt)] text-black border-t-4 border-black">
+      <section
+        className="py-40 md:py-48 bg-[var(--color-volt)] text-black border-t-4 border-black"
+        data-sanity={ctaDataAttribute?.toString()}
+      >
         <div className="max-w-6xl mx-auto px-6 text-center">
           <img
             src="/logos/SL-SPARK-LARGE.svg"
@@ -321,12 +464,18 @@ export default function HomePage({ content }: HomePageProps) {
             className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-20"
           />
 
-          <h2 className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black mb-12 leading-tight uppercase">
-            JOIN THE REVOLUTION
+          <h2
+            className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black mb-12 leading-tight uppercase"
+            data-sanity={ctaHeadlineAttribute?.toString()}
+          >
+            {content?.cta?.headline || "JOIN THE REVOLUTION"}
           </h2>
 
-          <p className="brand-body text-2xl md:text-3xl mb-16 max-w-3xl mx-auto font-bold">
-            Be notified when registration opens for the next season.
+          <p
+            className="brand-body text-2xl md:text-3xl mb-16 max-w-3xl mx-auto font-bold"
+            data-sanity={ctaDescriptionAttribute?.toString()}
+          >
+            {content?.cta?.description || "Be notified when registration opens for the next season."}
           </p>
 
           <div className="max-w-3xl mx-auto">
@@ -350,8 +499,9 @@ export default function HomePage({ content }: HomePageProps) {
                   "brand-caption transition-all duration-300 border-4 border-black group",
                   "bg-black text-[var(--color-volt)] hover:bg-white hover:text-black hover:translate-x-1"
                 )}
+                data-sanity={ctaButtonAttribute?.toString()}
               >
-                <span className="relative z-10">JOIN →</span>
+                <span className="relative z-10">{content?.cta?.buttonText || "JOIN →"}</span>
                 <div className="absolute inset-0 bg-white transform translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
               </button>
             </form>

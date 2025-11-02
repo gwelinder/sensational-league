@@ -38,90 +38,55 @@ const client = createClient({
 const homePageContent = {
 	_type: "homePage",
 	_id: "homePage",
+	title: "Home Page",
+	seo: {
+		metaTitle: "Sensational League - Fast. Rebellious. Female.",
+		metaDescription: "Women's 7v7 football league combining athletic excellence with social impact.",
+	},
 	hero: {
-		headline: "Play Football. Drive Impact. Change the World.",
-		subheadline:
-			"Join the next season of Sensational League—where every match, every goal, and every team action fuels real-world change for the UN Global Goals.",
-		ctaText: "Join the Waitlist",
-		ctaUrl: "#home-signup",
-	},
-	signupSection: {
-		title: "Be First in Line for Next Season",
-		description:
-			"We\u2019re building the future of purpose-driven sport. Drop your email to get exclusive early access to player registration, team formation updates, and season launch announcements.",
-		buttonText: "Count Me In",
-	},
-	aboutSection: {
-		title: "Football as a Force for Good",
-		content: [
-			{
-				_type: "block",
-				style: "normal",
-				children: [
-					{
-						_type: "span",
-						text: "Sensational League isn\u2019t just football—it\u2019s a movement. Born from 20+ years of championing women in sport and informed by 7,800+ players across 17 countries, we\u2019ve created a completely new category of competitive play.",
-					},
-				],
-			},
-			{
-				_type: "block",
-				style: "normal",
-				children: [
-					{
-						_type: "span",
-						text: "Here, your team\u2019s success is measured not just by goals scored, but by the positive actions you take toward all 17 UN Sustainable Development Goals. Every week, you\u2019re playing for something bigger than the scoreboard.",
-					},
-				],
-			},
+		headline: "FAST.\nREBELLIOUS.\nFEMALE.",
+		subline: "Women's 7v7 football league that combines athletic excellence with social impact.",
+		ctaText: "JOIN →",
+		stats: [
+			{ value: "300+", label: "Athletes" },
+			{ value: "24", label: "Teams" },
+			{ value: "12", label: "SDG Goals" }
 		],
 	},
-	howWePlaySection: {
-		title: "How It Works",
-		content: [
+	about: {
+		title: "PLAY FOOTBALL.\nDRIVE IMPACT.\nCHANGE THE WORLD.",
+		description: "We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female.",
+		pillars: [
 			{
-				_type: "block",
-				style: "h3",
-				children: [
-					{
-						_type: "span",
-						text: "On the Pitch + Off the Pitch = Total Impact",
-					},
-				],
+				title: "Elite Competition",
+				description: "7v7 format with professional standards and innovative scoring systems."
 			},
 			{
-				_type: "block",
-				style: "normal",
-				children: [
-					{
-						_type: "span",
-						text: "Teams compete in weekly 5v5 matches with traditional scoring. But here\u2019s the twist: your team also earns impact points for actions you take toward the Global Goals—from sustainability initiatives to community service to policy advocacy.",
-					},
-				],
+				title: "Social Impact",
+				description: "Teams earn points for community engagement and UN SDG contributions."
 			},
 			{
-				_type: "block",
-				style: "normal",
-				children: [
-					{
-						_type: "span",
-						text: "You\u2019ll connect with a global network of athlete activists, participate in empowering game day experiences, and discover how your passion for football can create tangible change in your community and beyond.",
-					},
-				],
-			},
-			{
-				_type: "block",
-				style: "normal",
-				children: [
-					{
-						_type: "span",
-						text: "This is sport reimagined. This is where competition meets purpose. This is Sensational League.",
-					},
-				],
-			},
+				title: "Digital Innovation",
+				description: "Multi-metric tracking including social media growth and viral moments."
+			}
 		],
 	},
-	partners: [],
+	impact: {
+		headline: "LEAGUE\nIMPACT",
+		stats: [
+			{ value: "24", label: "Teams" },
+			{ value: "300+", label: "Athletes" },
+			{ value: "50K", label: "Community" },
+			{ value: "12", label: "SDG Goals" }
+		],
+		quoteText: "\"This isn't just football - it's a movement.\"",
+		quoteAttribution: "League Founder",
+	},
+	cta: {
+		headline: "JOIN THE REVOLUTION",
+		description: "Be notified when registration opens for the next season.",
+		buttonText: "JOIN →",
+	},
 };
 
 async function seed() {

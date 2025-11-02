@@ -1,4 +1,4 @@
-import { defineField, defineType, defineArrayMember } from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export const homePage = defineType({
   name: 'homePage',
@@ -36,56 +36,153 @@ export const homePage = defineType({
       ],
     }),
     defineField({
-      name: 'sections',
-      type: 'array',
-      title: 'Page Sections',
-      description: 'Drag and drop to reorder sections',
-      of: [
-        defineArrayMember({
-          type: 'heroSection',
-          title: 'Simple Hero Section',
-        }),
-        defineArrayMember({
-          type: 'advancedHeroSection',
-          title: 'Advanced Hero Section',
-        }),
-        defineArrayMember({
-          type: 'contentSection',
-          title: 'Content Section',
-        }),
-        defineArrayMember({
-          type: 'mediaSection',
-          title: 'Media Section',
-        }),
-        defineArrayMember({
-          type: 'statsSection',
-          title: 'Statistics & Impact Section',
-        }),
-        defineArrayMember({
-          type: 'signupSection',
-          title: 'Signup Section',
-        }),
-        defineArrayMember({
-          type: 'partnersSection',
-          title: 'Partners Section',
-        }),
-        defineArrayMember({
-          type: 'flexibleSection',
-          title: 'Flexible Content Section',
-        }),
+      name: 'hero',
+      type: 'object',
+      title: 'Hero Section',
+      fields: [
+        {
+          name: 'headline',
+          type: 'string',
+          title: 'Headline',
+          description: 'Main headline (e.g., "FAST. REBELLIOUS. FEMALE.")',
+        },
+        {
+          name: 'subline',
+          type: 'text',
+          title: 'Subline',
+          description: 'Descriptive text below the headline',
+          rows: 2,
+        },
+        {
+          name: 'ctaText',
+          type: 'string',
+          title: 'CTA Button Text',
+          description: 'Text for the call-to-action button',
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          title: 'Stats',
+          description: 'Statistics displayed in the hero section',
+          of: [{
+            type: 'object',
+            fields: [
+              { name: 'value', type: 'string', title: 'Value' },
+              { name: 'label', type: 'string', title: 'Label' },
+            ],
+          }],
+        },
       ],
-      validation: (Rule) => Rule.min(1),
+    }),
+    defineField({
+      name: 'about',
+      type: 'object',
+      title: 'About Section',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          title: 'Section Title',
+          description: 'Main title for the about section',
+          rows: 3,
+        },
+        {
+          name: 'description',
+          type: 'text',
+          title: 'Description',
+          description: 'Main description text',
+          rows: 3,
+        },
+        {
+          name: 'pillars',
+          type: 'array',
+          title: 'Three Pillars',
+          description: 'The three core pillars of the league',
+          of: [{
+            type: 'object',
+            fields: [
+              { name: 'title', type: 'string', title: 'Pillar Title' },
+              { name: 'description', type: 'text', title: 'Description', rows: 2 },
+            ],
+          }],
+          validation: (Rule) => Rule.max(3),
+        },
+      ],
+    }),
+    defineField({
+      name: 'impact',
+      type: 'object',
+      title: 'Impact Section',
+      fields: [
+        {
+          name: 'headline',
+          type: 'text',
+          title: 'Headline',
+          description: 'Impact section headline',
+          rows: 2,
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          title: 'Impact Stats',
+          description: 'Statistics for the impact section',
+          of: [{
+            type: 'object',
+            fields: [
+              { name: 'value', type: 'string', title: 'Value' },
+              { name: 'label', type: 'string', title: 'Label' },
+            ],
+          }],
+        },
+        {
+          name: 'quoteText',
+          type: 'text',
+          title: 'Quote Text',
+          description: 'Featured quote',
+          rows: 3,
+        },
+        {
+          name: 'quoteAttribution',
+          type: 'string',
+          title: 'Quote Attribution',
+          description: 'Who said the quote',
+        },
+      ],
+    }),
+    defineField({
+      name: 'cta',
+      type: 'object',
+      title: 'Final CTA Section',
+      fields: [
+        {
+          name: 'headline',
+          type: 'string',
+          title: 'Headline',
+          description: 'CTA section headline',
+        },
+        {
+          name: 'description',
+          type: 'text',
+          title: 'Description',
+          rows: 2,
+        },
+        {
+          name: 'buttonText',
+          type: 'string',
+          title: 'Button Text',
+        },
+      ],
     }),
   ],
   preview: {
     select: {
       title: 'title',
-      sectionsCount: 'sections.length',
+      headline: 'hero.headline',
     },
-    prepare({ title, sectionsCount }) {
+    prepare({ title, headline }) {
       return {
         title: title || 'Home Page',
-        subtitle: `${sectionsCount || 0} sections`,
+        subtitle: headline || 'Fast. Rebellious. Female.',
       }
     },
   },

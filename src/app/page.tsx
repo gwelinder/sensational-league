@@ -1,5 +1,15 @@
-import { SectionsRenderer } from "@/components/SectionsRenderer";
+import HomePage from "./homepage";
 import { sanityFetch } from "@/sanity/lib/live";
+
+interface Stat {
+	value: string;
+	label: string;
+}
+
+interface Pillar {
+	title: string;
+	description: string;
+}
 
 interface HomePageContent {
 	_id: string;
@@ -9,11 +19,28 @@ interface HomePageContent {
 		metaTitle?: string;
 		metaDescription?: string;
 	};
-	sections?: Array<{
-		_key: string;
-		_type: string;
-		[key: string]: any;
-	}>;
+	hero?: {
+		headline?: string;
+		subline?: string;
+		ctaText?: string;
+		stats?: Stat[];
+	};
+	about?: {
+		title?: string;
+		description?: string;
+		pillars?: Pillar[];
+	};
+	impact?: {
+		headline?: string;
+		stats?: Stat[];
+		quoteText?: string;
+		quoteAttribution?: string;
+	};
+	cta?: {
+		headline?: string;
+		description?: string;
+		buttonText?: string;
+	};
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
@@ -23,10 +50,36 @@ async function getHomePageData(): Promise<HomePageContent | null> {
       _type,
       title,
       seo,
-      sections[] {
-        _key,
-        _type,
-        ...
+      hero {
+        headline,
+        subline,
+        ctaText,
+        stats[] {
+          value,
+          label
+        }
+      },
+      about {
+        title,
+        description,
+        pillars[] {
+          title,
+          description
+        }
+      },
+      impact {
+        headline,
+        stats[] {
+          value,
+          label
+        },
+        quoteText,
+        quoteAttribution
+      },
+      cta {
+        headline,
+        description,
+        buttonText
       }
     }`,
 	});
@@ -45,22 +98,5 @@ export async function generateMetadata() {
 export default async function Home() {
 	const content = await getHomePageData();
 
-	if (!content) {
-		return (
-			<main className="min-h-screen flex items-center justify-center">
-				<div className="text-center">
-					<h1 className="text-2xl font-bold mb-4">No homepage content</h1>
-					<p>Please configure your homepage in Sanity Studio</p>
-				</div>
-			</main>
-		);
-	}
-
-	return (
-		<SectionsRenderer
-			documentId={content._id}
-			documentType={content._type}
-			sections={content.sections || []}
-		/>
-	);
+	return <HomePage content={content || undefined} />;
 }
