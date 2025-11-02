@@ -44,7 +44,34 @@ const homePageContent = {
 		metaDescription: "Women's 7v7 football league combining athletic excellence with social impact.",
 	},
 	hero: {
-		headline: "FAST.\nREBELLIOUS.\nFEMALE.",
+		headline: [
+			{
+				_type: 'block',
+				_key: 'hero-headline',
+				style: 'normal',
+				children: [
+					{
+						_type: 'span',
+						_key: 'span1',
+						text: 'FAST. ',
+						marks: ['colorBlack'],
+					},
+					{
+						_type: 'span',
+						_key: 'span2',
+						text: 'REBELLIOUS. ',
+						marks: ['colorBlack'],
+					},
+					{
+						_type: 'span',
+						_key: 'span3',
+						text: 'FEMALE.',
+						marks: ['colorVolt'],
+					},
+				],
+				markDefs: [],
+			},
+		],
 		subline: "Women's 7v7 football league that combines athletic excellence with social impact.",
 		ctaText: "JOIN →",
 		stats: [
@@ -54,7 +81,34 @@ const homePageContent = {
 		],
 	},
 	about: {
-		title: "PLAY FOOTBALL.\nDRIVE IMPACT.\nCHANGE THE WORLD.",
+		title: [
+			{
+				_type: 'block',
+				_key: 'about-title',
+				style: 'normal',
+				children: [
+					{
+						_type: 'span',
+						_key: 'span1',
+						text: 'PLAY FOOTBALL. ',
+						marks: ['colorBlack'],
+					},
+					{
+						_type: 'span',
+						_key: 'span2',
+						text: 'DRIVE IMPACT. ',
+						marks: ['colorVolt'],
+					},
+					{
+						_type: 'span',
+						_key: 'span3',
+						text: 'CHANGE THE WORLD.',
+						marks: ['colorBlack'],
+					},
+				],
+				markDefs: [],
+			},
+		],
 		description: "We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female.",
 		pillars: [
 			{
@@ -72,7 +126,28 @@ const homePageContent = {
 		],
 	},
 	impact: {
-		headline: "LEAGUE\nIMPACT",
+		headline: [
+			{
+				_type: 'block',
+				_key: 'impact-headline',
+				style: 'normal',
+				children: [
+					{
+						_type: 'span',
+						_key: 'span1',
+						text: 'LEAGUE ',
+						marks: ['colorWhite'],
+					},
+					{
+						_type: 'span',
+						_key: 'span2',
+						text: 'IMPACT',
+						marks: ['colorVolt'],
+					},
+				],
+				markDefs: [],
+			},
+		],
 		stats: [
 			{ value: "24", label: "Teams" },
 			{ value: "300+", label: "Athletes" },

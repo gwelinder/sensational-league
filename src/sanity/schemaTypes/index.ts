@@ -1,5 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
 import { blockContent } from "./blockContent";
+import { styledText } from "./styledText";
 import { homePage } from "./homePage";
 import { page } from "./page";
 import { policy } from "./policy";
@@ -63,7 +64,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     
     // Objects
     blockContent,
-    
+    styledText,
+
     // Basic Sections
     heroSection,
     signupSection,

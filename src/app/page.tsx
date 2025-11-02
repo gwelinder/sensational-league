@@ -1,5 +1,6 @@
 import HomePage from "./homepage";
 import { sanityFetch } from "@/sanity/lib/live";
+import type { PortableTextBlock } from '@portabletext/types';
 
 interface Stat {
 	value: string;
@@ -20,18 +21,18 @@ interface HomePageContent {
 		metaDescription?: string;
 	};
 	hero?: {
-		headline?: string;
+		headline?: PortableTextBlock[];
 		subline?: string;
 		ctaText?: string;
 		stats?: Stat[];
 	};
 	about?: {
-		title?: string;
+		title?: PortableTextBlock[];
 		description?: string;
 		pillars?: Pillar[];
 	};
 	impact?: {
-		headline?: string;
+		headline?: PortableTextBlock[];
 		stats?: Stat[];
 		quoteText?: string;
 		quoteAttribution?: string;

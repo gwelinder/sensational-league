@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
+import type { PortableTextBlock } from '@portabletext/types';
+import StyledTextRenderer from "@/components/StyledTextRenderer";
 
 interface Stat {
   value: string;
@@ -19,18 +21,18 @@ interface HomePageProps {
     _id?: string;
     _type?: string;
     hero?: {
-      headline?: string;
+      headline?: PortableTextBlock[];
       subline?: string;
       ctaText?: string;
       stats?: Stat[];
     };
     about?: {
-      title?: string;
+      title?: PortableTextBlock[];
       description?: string;
       pillars?: Pillar[];
     };
     impact?: {
-      headline?: string;
+      headline?: PortableTextBlock[];
       stats?: Stat[];
       quoteText?: string;
       quoteAttribution?: string;
@@ -232,7 +234,7 @@ export default function HomePage({ content }: HomePageProps) {
             data-sanity={heroHeadlineAttribute?.toString()}
           >
             {content?.hero?.headline ? (
-              <span className="text-black whitespace-pre-line">{content.hero.headline}</span>
+              <StyledTextRenderer value={content.hero.headline} />
             ) : (
               <>
                 <span className="text-black">FAST.</span><br />
@@ -329,7 +331,7 @@ export default function HomePage({ content }: HomePageProps) {
               data-sanity={aboutTitleAttribute?.toString()}
             >
               {content?.about?.title ? (
-                <span className="whitespace-pre-line">{content.about.title}</span>
+                <StyledTextRenderer value={content.about.title} />
               ) : (
                 <>
                   <span className="block text-black">PLAY FOOTBALL.</span>
@@ -404,7 +406,7 @@ export default function HomePage({ content }: HomePageProps) {
             data-sanity={impactHeadlineAttribute?.toString()}
           >
             {content?.impact?.headline ? (
-              <span className="whitespace-pre-line">{content.impact.headline}</span>
+              <StyledTextRenderer value={content.impact.headline} />
             ) : (
               <>
                 <span className="text-white">LEAGUE</span><br/>

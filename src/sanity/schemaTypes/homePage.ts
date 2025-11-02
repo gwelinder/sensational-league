@@ -42,9 +42,9 @@ export const homePage = defineType({
       fields: [
         {
           name: 'headline',
-          type: 'string',
+          type: 'styledText',
           title: 'Headline',
-          description: 'Main headline (e.g., "FAST. REBELLIOUS. FEMALE.")',
+          description: 'Main headline - select text and apply colors from the toolbar',
         },
         {
           name: 'subline',
@@ -81,10 +81,9 @@ export const homePage = defineType({
       fields: [
         {
           name: 'title',
-          type: 'text',
+          type: 'styledText',
           title: 'Section Title',
-          description: 'Main title for the about section',
-          rows: 3,
+          description: 'Main title - select text and apply colors from the toolbar',
         },
         {
           name: 'description',
@@ -116,10 +115,9 @@ export const homePage = defineType({
       fields: [
         {
           name: 'headline',
-          type: 'text',
+          type: 'styledText',
           title: 'Headline',
-          description: 'Impact section headline',
-          rows: 2,
+          description: 'Impact section headline - select text and apply colors from the toolbar',
         },
         {
           name: 'stats',
