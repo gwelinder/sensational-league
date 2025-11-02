@@ -175,12 +175,11 @@ export const homePage = defineType({
   preview: {
     select: {
       title: 'title',
-      headline: 'hero.headline',
     },
-    prepare({ title, headline }) {
+    prepare({ title }) {
       return {
         title: title || 'Home Page',
-        subtitle: headline || 'Fast. Rebellious. Female.',
+        subtitle: 'Homepage content',
       }
     },
   },
