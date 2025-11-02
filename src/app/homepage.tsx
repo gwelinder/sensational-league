@@ -221,14 +221,14 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 							<h1
 								className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1]"
 								data-sanity={heroHeadlineAttribute?.toString()}
-								style={{ marginLeft: "11.2%" }}
+								style={{ marginLeft: "2%" }}
 							>
 								{content?.hero?.headline ? (
-									<div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+									<div className="inline-block bg-[var(--color-volt)] px-2 py-0">
 										<StyledTextRenderer value={content.hero.headline} />
 									</div>
 								) : (
-									<div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+									<div className="inline-block bg-[var(--color-volt)] px-2 py-0">
 										<span className="text-black">
 											FAST. REBELLIOUS. FEMALE.
 										</span>
@@ -252,61 +252,142 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 						<SignupForm />
 					</div>
 
-					{/* Image Grid - Bold, Dynamic with Rightward Movement */}
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-						{content?.hero?.images && content.hero.images.length > 0
-							? content.hero.images.slice(0, 8).map((image, index) => {
-									const imageProps = getImageProps(image, 800);
+					{/* Dynamic Spark Logo Animation - Moments of Greatness */}
+					<div className="relative h-[400px] md:h-[500px] overflow-hidden">
+						{/* Animated Sparks with Secondary Colors */}
+						<div className="absolute inset-0 flex items-center justify-center">
+							{/* Large Center Spark - Volt Yellow */}
+							<div className="absolute animate-pulse" style={{ animation: 'pulse 3s ease-in-out infinite' }}>
+								<img
+									src="/logos/SL-SPARK-LARGE.svg"
+									alt=""
+									className="w-64 h-64 md:w-96 md:h-96"
+									style={{ filter: 'brightness(0) saturate(100%) invert(88%) sepia(85%) saturate(2000%) hue-rotate(30deg) brightness(104%) contrast(104%)' }}
+								/>
+							</div>
 
-									return (
-										<div
-											key={index}
-											className={cn(
-												"relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
-												index % 2 === 1 && "md:mt-8",
-											)}
-										>
-											<img
-												{...imageProps}
-												alt={
-													image.alt || `Sensational League image ${index + 1}`
-												}
-												className={cn(
-													"w-full h-full group-hover:scale-110 transition-all duration-500",
-													!image.objectFit && "object-cover",
-												)}
-												style={{
-													...imageProps.style,
-													objectFit: image.objectFit || "cover",
-												}}
-											/>
-											<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-										</div>
-									);
-								})
-							: // Fallback to default images when no Sanity images are available
-								[
-									"/logos/image_046_page_39.jpeg",
-									"/logos/image_063_page_42.jpeg",
-									"/logos/image_067_page_43.jpeg",
-									"/logos/image_073_page_44.jpeg",
-								].map((src, index) => (
-									<div
-										key={index}
-										className={cn(
-											"relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
-											index % 2 === 1 && "md:mt-8",
-										)}
-									>
-										<img
-											src={src}
-											alt={`Sensational League image ${index + 1}`}
-											className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-										/>
-										<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-									</div>
-								))}
+							{/* Top Left - Orange */}
+							<div
+								className="absolute top-8 left-8 animate-bounce"
+								style={{
+									animation: 'float-right-1 6s ease-in-out infinite',
+									animationDelay: '0s'
+								}}
+							>
+								<img
+									src="/logos/SL-SPARK-MEDIUM.svg"
+									alt=""
+									className="w-24 h-24 md:w-32 md:h-32 opacity-60"
+									style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(4578%) hue-rotate(1deg) brightness(103%) contrast(107%)' }}
+								/>
+							</div>
+
+							{/* Top Right - Cyan */}
+							<div
+								className="absolute top-12 right-12"
+								style={{
+									animation: 'float-right-2 7s ease-in-out infinite',
+									animationDelay: '1s'
+								}}
+							>
+								<img
+									src="/logos/SL-SPARK-SMALL.svg"
+									alt=""
+									className="w-20 h-20 md:w-28 md:h-28 opacity-70"
+									style={{ filter: 'brightness(0) saturate(100%) invert(65%) sepia(89%) saturate(2578%) hue-rotate(157deg) brightness(102%) contrast(106%)' }}
+								/>
+							</div>
+
+							{/* Bottom Left - Purple */}
+							<div
+								className="absolute bottom-16 left-16"
+								style={{
+									animation: 'float-right-3 8s ease-in-out infinite',
+									animationDelay: '2s'
+								}}
+							>
+								<img
+									src="/logos/SL-SPARK-MEDIUM.svg"
+									alt=""
+									className="w-28 h-28 md:w-36 md:h-36 opacity-50"
+									style={{ filter: 'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(6234%) hue-rotate(280deg) brightness(97%) contrast(109%)' }}
+								/>
+							</div>
+
+							{/* Bottom Right - Orange */}
+							<div
+								className="absolute bottom-8 right-20"
+								style={{
+									animation: 'float-right-4 5.5s ease-in-out infinite',
+									animationDelay: '1.5s'
+								}}
+							>
+								<img
+									src="/logos/SL-SPARK-SMALL.svg"
+									alt=""
+									className="w-16 h-16 md:w-24 md:h-24 opacity-60"
+									style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(4578%) hue-rotate(1deg) brightness(103%) contrast(107%)' }}
+								/>
+							</div>
+
+							{/* Middle Right - Cyan */}
+							<div
+								className="absolute top-1/2 right-8 -translate-y-1/2"
+								style={{
+									animation: 'spin-slow 20s linear infinite'
+								}}
+							>
+								<img
+									src="/logos/SL-SPARK-MEDIUM.svg"
+									alt=""
+									className="w-20 h-20 md:w-28 md:h-28 opacity-40"
+									style={{ filter: 'brightness(0) saturate(100%) invert(65%) sepia(89%) saturate(2578%) hue-rotate(157deg) brightness(102%) contrast(106%)' }}
+								/>
+							</div>
+
+							{/* Middle Left - Purple */}
+							<div
+								className="absolute top-1/3 left-4"
+								style={{
+									animation: 'float-right-1 9s ease-in-out infinite',
+									animationDelay: '3s'
+								}}
+							>
+								<img
+									src="/logos/SL-SPARK-SMALL.svg"
+									alt=""
+									className="w-18 h-18 md:w-24 md:h-24 opacity-50"
+									style={{ filter: 'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(6234%) hue-rotate(280deg) brightness(97%) contrast(109%)' }}
+								/>
+							</div>
+						</div>
 					</div>
+
+					<style jsx>{`
+						@keyframes float-right-1 {
+							0%, 100% { transform: translate(0, 0) rotate(0deg); }
+							25% { transform: translate(20px, -10px) rotate(5deg); }
+							50% { transform: translate(40px, 0px) rotate(0deg); }
+							75% { transform: translate(20px, 10px) rotate(-5deg); }
+						}
+						@keyframes float-right-2 {
+							0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+							33% { transform: translate(15px, 15px) rotate(10deg) scale(1.1); }
+							66% { transform: translate(30px, -10px) rotate(-5deg) scale(0.95); }
+						}
+						@keyframes float-right-3 {
+							0%, 100% { transform: translate(0, 0) scale(1); }
+							50% { transform: translate(25px, -20px) scale(1.15); }
+						}
+						@keyframes float-right-4 {
+							0%, 100% { transform: translate(0, 0) rotate(0deg); }
+							50% { transform: translate(35px, 15px) rotate(15deg); }
+						}
+						@keyframes spin-slow {
+							from { transform: translateY(-50%) rotate(0deg); }
+							to { transform: translateY(-50%) rotate(360deg); }
+						}
+					`}</style>
 				</div>
 			</section>
 
