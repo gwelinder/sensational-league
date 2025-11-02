@@ -12,6 +12,14 @@ interface Pillar {
 	description: string;
 }
 
+interface SanityImage {
+	asset?: {
+		_ref?: string;
+		_type?: string;
+	};
+	alt?: string;
+}
+
 interface HomePageContent {
 	_id: string;
 	_type: string;
@@ -21,10 +29,12 @@ interface HomePageContent {
 		metaDescription?: string;
 	};
 	hero?: {
+		logo?: SanityImage;
 		headline?: PortableTextBlock[] | null;
 		subline?: string;
 		ctaText?: string;
 		stats?: Stat[];
+		images?: SanityImage[];
 	};
 	about?: {
 		title?: PortableTextBlock[] | null;
@@ -33,11 +43,13 @@ interface HomePageContent {
 	};
 	impact?: {
 		headline?: PortableTextBlock[] | null;
+		backgroundImages?: SanityImage[];
 		stats?: Stat[];
 		quoteText?: string;
 		quoteAttribution?: string;
 	};
 	cta?: {
+		logo?: SanityImage;
 		headline?: string;
 		description?: string;
 		buttonText?: string;
@@ -52,12 +64,20 @@ async function getHomePageData(): Promise<HomePageContent | null> {
       title,
       seo,
       hero {
+        logo {
+          asset,
+          alt
+        },
         headline,
         subline,
         ctaText,
         stats[] {
           value,
           label
+        },
+        images[] {
+          asset,
+          alt
         }
       },
       about {
@@ -70,6 +90,10 @@ async function getHomePageData(): Promise<HomePageContent | null> {
       },
       impact {
         headline,
+        backgroundImages[] {
+          asset,
+          alt
+        },
         stats[] {
           value,
           label
@@ -78,6 +102,10 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         quoteAttribution
       },
       cta {
+        logo {
+          asset,
+          alt
+        },
         headline,
         description,
         buttonText

@@ -29,6 +29,20 @@ export const siteSettings = defineType({
       title: 'Header Navigation',
       fields: [
         defineField({
+          name: 'sparkLogo',
+          type: 'image',
+          title: 'Spark Logo',
+          description: 'The spark icon logo for the header',
+          options: {hotspot: true},
+        }),
+        defineField({
+          name: 'wordmarkLogo',
+          type: 'image',
+          title: 'Wordmark Logo',
+          description: 'The wordmark logo for the header (desktop)',
+          options: {hotspot: true},
+        }),
+        defineField({
           name: 'links',
           type: 'array',
           title: 'Navigation Links',
@@ -49,6 +63,20 @@ export const siteSettings = defineType({
       type: 'object',
       title: 'Footer',
       fields: [
+        defineField({
+          name: 'sparkLogo',
+          type: 'image',
+          title: 'Spark Logo',
+          description: 'The spark icon logo for the footer',
+          options: {hotspot: true},
+        }),
+        defineField({
+          name: 'wordmarkLogo',
+          type: 'image',
+          title: 'Wordmark Logo',
+          description: 'The wordmark logo for the footer',
+          options: {hotspot: true},
+        }),
         defineField({
           name: 'tagline',
           type: 'string',

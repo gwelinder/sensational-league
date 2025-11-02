@@ -5,7 +5,9 @@ import { cn } from "@/lib/utils";
 import { createDataAttribute, useOptimistic } from "@sanity/visual-editing";
 import type { PortableTextBlock } from '@portabletext/types';
 import type { SanityDocument } from '@sanity/client';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import StyledTextRenderer from "@/components/StyledTextRenderer";
+import { getImageUrl } from "@/lib/sanity-image";
 
 interface Stat {
   value: string;
@@ -17,15 +19,25 @@ interface Pillar {
   description: string;
 }
 
+interface SanityImage {
+  asset?: {
+    _ref?: string;
+    _type?: string;
+  };
+  alt?: string;
+}
+
 interface HomePageProps {
   content?: {
     _id?: string;
     _type?: string;
     hero?: {
+      logo?: SanityImage;
       headline?: PortableTextBlock[] | null;
       subline?: string;
       ctaText?: string;
       stats?: Stat[];
+      images?: SanityImage[];
     };
     about?: {
       title?: PortableTextBlock[] | null;
@@ -34,11 +46,13 @@ interface HomePageProps {
     };
     impact?: {
       headline?: PortableTextBlock[] | null;
+      backgroundImages?: SanityImage[];
       stats?: Stat[];
       quoteText?: string;
       quoteAttribution?: string;
     };
     cta?: {
+      logo?: SanityImage;
       headline?: string;
       description?: string;
       buttonText?: string;
@@ -239,11 +253,19 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
         <div className="w-full max-w-6xl mx-auto">
           {/* Logo */}
           <div className="text-center mb-12">
-            <img
-              src="/logos/SL-SPARK-LARGE.svg"
-              alt="Sensational League"
-              className="w-48 h-48 md:w-56 md:h-56 mx-auto"
-            />
+            {content?.hero?.logo && getImageUrl(content.hero.logo) ? (
+              <img
+                src={getImageUrl(content.hero.logo) || undefined}
+                alt="Sensational League"
+                className="w-48 h-48 md:w-56 md:h-56 mx-auto"
+              />
+            ) : (
+              <img
+                src="/logos/SL-SPARK-LARGE.svg"
+                alt="Sensational League"
+                className="w-48 h-48 md:w-56 md:h-56 mx-auto"
+              />
+            )}
           </div>
 
           {/* Headline */}
@@ -291,38 +313,51 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 
           {/* Image Grid - Bold, Dynamic with Rightward Movement */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <div className="relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group">
-              <img
-                src="/logos/image_046_page_39.jpeg"
-                alt="Sensational League Athletes"
-                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
-            <div className="relative aspect-[3/4] overflow-hidden border-4 border-black md:mt-8 hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group">
-              <img
-                src="/logos/image_063_page_42.jpeg"
-                alt="Sensational League Action"
-                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
-            <div className="relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group">
-              <img
-                src="/logos/image_067_page_43.jpeg"
-                alt="Sensational League Team"
-                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
-            <div className="relative aspect-[3/4] overflow-hidden border-4 border-black md:mt-8 hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group">
-              <img
-                src="/logos/image_073_page_44.jpeg"
-                alt="Sensational League Players"
-                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
+            {(content?.hero?.images && content.hero.images.length > 0 ? content.hero.images.slice(0, 8) : []).length > 0 ? (
+              content.hero.images!.map((image, index) => {
+                const imageUrl = getImageUrl(image, 800);
+
+                return (
+                  <div
+                    key={index}
+                    className={cn(
+                      "relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
+                      index % 2 === 1 && "md:mt-8"
+                    )}
+                  >
+                    <img
+                      src={imageUrl || undefined}
+                      alt={image.alt || `Sensational League image ${index + 1}`}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  </div>
+                );
+              })
+            ) : (
+              // Fallback to default images when no Sanity images are available
+              [
+                "/logos/image_046_page_39.jpeg",
+                "/logos/image_063_page_42.jpeg",
+                "/logos/image_067_page_43.jpeg",
+                "/logos/image_073_page_44.jpeg",
+              ].map((src, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
+                    index % 2 === 1 && "md:mt-8"
+                  )}
+                >
+                  <img
+                    src={src}
+                    alt={`Sensational League image ${index + 1}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -398,22 +433,40 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
       >
         {/* Background Images Grid - High Contrast */}
         <div className="absolute inset-0 grid grid-cols-2">
-          <div className="relative">
-            <img
-              src="/logos/image_046_page_39.jpeg"
-              alt=""
-              className="w-full h-full object-cover opacity-40 contrast-125 saturate-150"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
-          </div>
-          <div className="relative">
-            <img
-              src="/logos/image_063_page_42.jpeg"
-              alt=""
-              className="w-full h-full object-cover opacity-40 contrast-125 saturate-150"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-black/80 to-transparent"></div>
-          </div>
+          {(content?.impact?.backgroundImages && content.impact.backgroundImages.length > 0 ? content.impact.backgroundImages.slice(0, 2) : []).length > 0 ? (
+            content.impact.backgroundImages!.slice(0, 2).map((image, index) => {
+              const imageUrl = getImageUrl(image, 1200);
+
+              return (
+                <div key={index} className="relative">
+                  <img
+                    src={imageUrl || undefined}
+                    alt={image.alt || ""}
+                    className="w-full h-full object-cover opacity-40 contrast-125 saturate-150"
+                  />
+                  <div className={cn(
+                    "absolute inset-0",
+                    index === 0 ? "bg-gradient-to-r from-black/80 to-transparent" : "bg-gradient-to-l from-black/80 to-transparent"
+                  )}></div>
+                </div>
+              );
+            })
+          ) : (
+            // Fallback to default background images
+            ["/logos/image_046_page_39.jpeg", "/logos/image_063_page_42.jpeg"].map((src, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={src}
+                  alt=""
+                  className="w-full h-full object-cover opacity-40 contrast-125 saturate-150"
+                />
+                <div className={cn(
+                  "absolute inset-0",
+                  index === 0 ? "bg-gradient-to-r from-black/80 to-transparent" : "bg-gradient-to-l from-black/80 to-transparent"
+                )}></div>
+              </div>
+            ))
+          )}
         </div>
         <div className="absolute inset-0 bg-black/40"></div>
 
@@ -478,11 +531,19 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
         data-sanity={ctaDataAttribute?.toString()}
       >
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <img
-            src="/logos/SL-SPARK-LARGE.svg"
-            alt="Sensational League"
-            className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-20"
-          />
+          {content?.cta?.logo && getImageUrl(content.cta.logo) ? (
+            <img
+              src={getImageUrl(content.cta.logo) || undefined}
+              alt="Sensational League"
+              className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-20"
+            />
+          ) : (
+            <img
+              src="/logos/SL-SPARK-LARGE.svg"
+              alt="Sensational League"
+              className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-20"
+            />
+          )}
 
           <h2
             className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black mb-12 leading-tight uppercase"

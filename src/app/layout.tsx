@@ -26,8 +26,31 @@ async function getSiteSettings() {
       _id,
       _type,
       title,
-      navigation,
-      footer
+      navigation {
+        sparkLogo {
+          asset,
+          alt
+        },
+        wordmarkLogo {
+          asset,
+          alt
+        },
+        links
+      },
+      footer {
+        sparkLogo {
+          asset,
+          alt
+        },
+        wordmarkLogo {
+          asset,
+          alt
+        },
+        tagline,
+        description,
+        copyrightText,
+        additionalText
+      }
     }`,
 		stega: true, // Enable stega encoding for this query
 	});

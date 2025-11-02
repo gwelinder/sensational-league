@@ -4,12 +4,23 @@ import Link from "next/link";
 import { SKIP_TO_CONTENT_ID } from "@/constants/accessibility";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
+import { getImageUrl } from "@/lib/sanity-image";
+
+interface SanityImage {
+	asset?: {
+		_ref?: string;
+		_type?: string;
+	};
+	alt?: string;
+}
 
 interface HeaderProps {
 	settings?: {
 		_id: string;
 		_type: string;
 		navigation?: {
+			sparkLogo?: SanityImage;
+			wordmarkLogo?: SanityImage;
 			links?: Array<{
 				label: string;
 				href: string;
@@ -52,18 +63,35 @@ export default function Header({ settings }: HeaderProps) {
 						"focus:outline-none focus:ring-2 focus:ring-[var(--color-volt)] focus:ring-offset-2 focus:ring-offset-black rounded"
 					)}
 				>
-					<img
-						src="/logos/SL-SPARK-LARGE.svg"
-						alt="Sensational League"
-						className="w-10 h-10"
-					/>
-					<div className="hidden sm:block">
+					{settings?.navigation?.sparkLogo && getImageUrl(settings.navigation.sparkLogo) ? (
 						<img
-							src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
+							src={getImageUrl(settings.navigation.sparkLogo) || undefined}
 							alt="Sensational League"
-							className="h-6"
-							style={{ filter: 'brightness(0) invert(1)' }}
+							className="w-10 h-10"
 						/>
+					) : (
+						<img
+							src="/logos/SL-SPARK-LARGE.svg"
+							alt="Sensational League"
+							className="w-10 h-10"
+						/>
+					)}
+					<div className="hidden sm:block">
+						{settings?.navigation?.wordmarkLogo && getImageUrl(settings.navigation.wordmarkLogo) ? (
+							<img
+								src={getImageUrl(settings.navigation.wordmarkLogo) || undefined}
+								alt="Sensational League"
+								className="h-6"
+								style={{ filter: 'brightness(0) invert(1)' }}
+							/>
+						) : (
+							<img
+								src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
+								alt="Sensational League"
+								className="h-6"
+								style={{ filter: 'brightness(0) invert(1)' }}
+							/>
+						)}
 					</div>
 				</Link>
 

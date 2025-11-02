@@ -8,18 +8,30 @@ import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
 import { SKIP_TO_CONTENT_ID } from '@/constants/accessibility';
 
+interface SanityImage {
+  asset?: {
+    _ref?: string;
+    _type?: string;
+  };
+  alt?: string;
+}
+
 interface ConditionalLayoutProps {
   children: React.ReactNode;
   settings?: {
     _id: string;
     _type: string;
     navigation?: {
+      sparkLogo?: SanityImage;
+      wordmarkLogo?: SanityImage;
       links?: Array<{
         label: string;
         href: string;
       }>;
     };
     footer?: {
+      sparkLogo?: SanityImage;
+      wordmarkLogo?: SanityImage;
       tagline?: string;
       description?: string;
       copyrightText?: string;

@@ -41,6 +41,15 @@ export const homePage = defineType({
       title: 'Hero Section',
       fields: [
         {
+          name: 'logo',
+          type: 'image',
+          title: 'Hero Logo',
+          description: 'Large logo displayed at the top of the hero section',
+          options: {
+            hotspot: true,
+          },
+        },
+        {
           name: 'headline',
           type: 'styledText',
           title: 'Headline',
@@ -71,6 +80,27 @@ export const homePage = defineType({
               { name: 'label', type: 'string', title: 'Label' },
             ],
           }],
+        },
+        {
+          name: 'images',
+          type: 'array',
+          title: 'Hero Images',
+          description: 'Gallery images displayed below the stats (4 images recommended)',
+          of: [{
+            type: 'image',
+            options: {
+              hotspot: true,
+            },
+            fields: [
+              {
+                name: 'alt',
+                type: 'string',
+                title: 'Alt Text',
+                description: 'Alternative text for accessibility',
+              },
+            ],
+          }],
+          validation: (Rule) => Rule.max(8),
         },
       ],
     }),
@@ -120,6 +150,27 @@ export const homePage = defineType({
           description: 'Impact section headline - select text and apply colors from the toolbar',
         },
         {
+          name: 'backgroundImages',
+          type: 'array',
+          title: 'Background Images',
+          description: 'Background images for the impact section (2 images recommended)',
+          of: [{
+            type: 'image',
+            options: {
+              hotspot: true,
+            },
+            fields: [
+              {
+                name: 'alt',
+                type: 'string',
+                title: 'Alt Text',
+                description: 'Alternative text for accessibility (can be empty for decorative images)',
+              },
+            ],
+          }],
+          validation: (Rule) => Rule.max(4),
+        },
+        {
           name: 'stats',
           type: 'array',
           title: 'Impact Stats',
@@ -152,6 +203,15 @@ export const homePage = defineType({
       type: 'object',
       title: 'Final CTA Section',
       fields: [
+        {
+          name: 'logo',
+          type: 'image',
+          title: 'CTA Logo',
+          description: 'Logo displayed in the CTA section',
+          options: {
+            hotspot: true,
+          },
+        },
         {
           name: 'headline',
           type: 'string',

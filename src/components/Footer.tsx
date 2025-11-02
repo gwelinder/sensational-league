@@ -3,12 +3,23 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
+import { getImageUrl } from "@/lib/sanity-image";
+
+interface SanityImage {
+	asset?: {
+		_ref?: string;
+		_type?: string;
+	};
+	alt?: string;
+}
 
 interface FooterProps {
 	settings?: {
 		_id: string;
 		_type: string;
 		footer?: {
+			sparkLogo?: SanityImage;
+			wordmarkLogo?: SanityImage;
 			tagline?: string;
 			description?: string;
 			copyrightText?: string;
@@ -54,16 +65,32 @@ export default function Footer({ settings }: FooterProps) {
         {/* Brand Section */}
         <div className="mb-20">
           <div className="flex items-center gap-6 mb-10">
-            <img
-              src="/logos/SL-SPARK-LARGE.svg"
-              alt=""
-              className="w-20 h-20"
-            />
-            <img
-              src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
-              alt="Sensational League"
-              className="h-10"
-            />
+            {settings?.footer?.sparkLogo && getImageUrl(settings.footer.sparkLogo) ? (
+              <img
+                src={getImageUrl(settings.footer.sparkLogo) || undefined}
+                alt=""
+                className="w-20 h-20"
+              />
+            ) : (
+              <img
+                src="/logos/SL-SPARK-LARGE.svg"
+                alt=""
+                className="w-20 h-20"
+              />
+            )}
+            {settings?.footer?.wordmarkLogo && getImageUrl(settings.footer.wordmarkLogo) ? (
+              <img
+                src={getImageUrl(settings.footer.wordmarkLogo) || undefined}
+                alt="Sensational League"
+                className="h-10"
+              />
+            ) : (
+              <img
+                src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
+                alt="Sensational League"
+                className="h-10"
+              />
+            )}
           </div>
           <p
             className="brand-body text-xl md:text-2xl text-black max-w-3xl font-medium leading-relaxed"
