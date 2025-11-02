@@ -63,7 +63,7 @@ function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="w-full">
       <div className="flex flex-col sm:flex-row gap-3">
         <input
           type="email"
@@ -84,7 +84,7 @@ function SignupForm() {
           disabled={isSubmitted}
           className={cn(
             "px-10 py-4 font-black uppercase tracking-wider",
-            "brand-caption transition-all duration-200",
+            "brand-caption transition-all duration-200 whitespace-nowrap",
             "focus:outline-none disabled:opacity-70",
             isSubmitted
               ? "bg-black text-white"
@@ -174,57 +174,57 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
       <section
-        className="relative min-h-screen flex items-center justify-center px-4 pt-8 pb-20 bg-white"
+        className="relative min-h-screen flex items-start px-6 md:px-12 lg:px-20 pt-20 md:pt-32 pb-20 bg-white"
         data-sanity={heroDataAttribute?.toString()}
       >
-        <div className="w-full max-w-6xl mx-auto">
-          {/* Logo - Large and Prominent */}
-          <div className="text-center mb-16 md:mb-20">
+        <div className="w-full max-w-7xl">
+          {/* Logo and Branding - Left Aligned */}
+          <div className="mb-8 md:mb-12">
             {content?.hero?.logo && getImageUrl(content.hero.logo) ? (
               <img
                 {...getImageProps(content.hero.logo, 2400)}
                 alt={content.hero.logo.alt || "Sensational League"}
                 className={cn(
-                  "mx-auto max-w-full",
-                  !content.hero.logo.width && !content.hero.logo.height && "w-full max-w-4xl h-auto md:max-w-6xl"
+                  "max-w-full",
+                  !content.hero.logo.width && !content.hero.logo.height && "w-full max-w-3xl md:max-w-4xl h-auto"
                 )}
               />
             ) : (
               <img
-                src="/logos/SL-SPARK-LARGE.svg"
+                src="/logos/SL-SECONDARY LOCKUP-LEFT ALIGNED.svg"
                 alt="Sensational League"
-                className="w-full max-w-4xl h-auto md:max-w-6xl mx-auto"
+                className="w-full max-w-3xl md:max-w-4xl h-auto"
               />
             )}
           </div>
 
-          {/* Headline with Yellow Background */}
+          {/* Headline with Yellow Background - Left Aligned */}
           <h1
-            className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] mb-12 text-center"
+            className="brand-headline text-4xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-8 md:mb-12"
             data-sanity={heroHeadlineAttribute?.toString()}
           >
             {content?.hero?.headline ? (
-              <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+              <div className="inline-block bg-[var(--color-volt)] px-4 md:px-6 py-2">
                 <StyledTextRenderer value={content.hero.headline} />
               </div>
             ) : (
-              <div className="inline-block bg-[var(--color-volt)] px-6 py-2">
+              <div className="inline-block bg-[var(--color-volt)] px-4 md:px-6 py-2">
                 <span className="text-black">FAST. REBELLIOUS. FEMALE.</span>
               </div>
             )}
           </h1>
 
-          {/* Subline */}
+          {/* Subline - Left Aligned */}
           <p
-            className="brand-body text-lg md:text-xl text-gray-700 mb-12 max-w-2xl mx-auto text-center"
+            className="brand-body text-base md:text-lg text-gray-700 mb-8 md:mb-12 max-w-xl"
             data-sanity={heroSublineAttribute?.toString()}
           >
             {content?.hero?.subline ||
              "Women's 7v7 football league that combines athletic excellence with social impact."}
           </p>
 
-          {/* Form */}
-          <div className="mb-16">
+          {/* Form - Left Aligned */}
+          <div className="mb-12 md:mb-16 max-w-2xl">
             <SignupForm />
           </div>
 
