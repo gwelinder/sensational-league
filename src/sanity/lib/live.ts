@@ -12,7 +12,6 @@ if (!token) {
 
 export const { sanityFetch, SanityLive } = defineLive({
   client: client.withConfig({
-    token,
     perspective: 'previewDrafts',
     useCdn: false,
     stega: {
