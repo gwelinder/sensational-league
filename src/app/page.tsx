@@ -2,6 +2,10 @@ import HomePage from "./homepage";
 import { sanityFetch } from "@/sanity/lib/live";
 import type { PortableTextBlock } from '@portabletext/types';
 
+// Ensure this page is dynamically rendered for live updates
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface Stat {
 	value: string;
 	label: string;
@@ -83,6 +87,7 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         buttonText
       }
     }`,
+		stega: true, // Enable stega encoding for this query
 	});
 	return data as HomePageContent | null;
 }

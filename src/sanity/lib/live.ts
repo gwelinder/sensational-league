@@ -11,14 +11,7 @@ if (!token) {
 }
 
 export const { sanityFetch, SanityLive } = defineLive({
-  client: client.withConfig({
-    perspective: 'previewDrafts',
-    useCdn: false,
-    stega: {
-      enabled: true,
-      studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || '/studio',
-    },
-  }),
+  client,
   serverToken: token,
   browserToken: token,
 });

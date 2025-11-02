@@ -29,6 +29,7 @@ async function getSiteSettings() {
       navigation,
       footer
     }`,
+		stega: true, // Enable stega encoding for this query
 	});
 	return data;
 }
