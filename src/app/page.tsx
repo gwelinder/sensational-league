@@ -47,15 +47,11 @@ interface HomePageContent {
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
-	// In development, query both draft and published documents
-	// In production, only query published documents
-	const isDevelopment = process.env.NODE_ENV === 'development';
-	const query = isDevelopment
-		? `*[_type == "homePage" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]`
-		: `*[_type == "homePage"][0]`;
-
+	// The Live API client (liveClient) uses 'previewDrafts' perspective
+	// This automatically handles showing draft content when in draft mode
+	// and published content in production
 	const { data } = await sanityFetch({
-		query: `${query} {
+		query: `*[_type == "homePage"][0] {
       _id,
       _type,
       title,
@@ -92,7 +88,6 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         }
       }
     }`,
-		stega: true, // Enable stega encoding for this query
 	});
 
 	return data as HomePageContent | null;

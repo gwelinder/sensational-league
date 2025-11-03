@@ -64,7 +64,6 @@ async function getSiteSettings() {
         additionalText
       }
     }`,
-		stega: true, // Enable stega encoding for this query
 	});
 	return data;
 }
