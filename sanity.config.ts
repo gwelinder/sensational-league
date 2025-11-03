@@ -31,6 +31,7 @@ export default defineConfig({
 		// Presentation tool for visual editing with drag-and-drop
 		presentationTool({
 			previewUrl: {
+				origin: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
 				draftMode: {
 					enable: "/api/draft-mode/enable",
 				},

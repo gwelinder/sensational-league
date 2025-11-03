@@ -10,8 +10,11 @@ if (!token) {
   console.warn('Missing SANITY_VIEWER_TOKEN - visual editing features will be limited');
 }
 
+// The Live API automatically switches between published and draft content
+// based on whether Draft Mode is enabled (via the Presentation tool)
+// DON'T manually configure perspective here or in queries - it breaks optimistic updates
 export const { sanityFetch, SanityLive } = defineLive({
-  client: client.withConfig({ token }),
+  client,
   serverToken: token,
   browserToken: token,
 });

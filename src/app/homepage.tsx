@@ -1,9 +1,8 @@
 "use client";
 
 import type { PortableTextBlock } from "@portabletext/types";
-import type { SanityDocument } from "@sanity/client";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { createDataAttribute, useOptimistic } from "@sanity/visual-editing";
+import { createDataAttribute } from "@sanity/visual-editing";
 import Link from "next/link";
 import { useState } from "react";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
@@ -182,23 +181,9 @@ function SignupForm() {
 	);
 }
 
-export default function HomePage({ content: initialContent }: HomePageProps) {
-	// Use optimistic updates to prevent page reloads on every edit
-	const content = useOptimistic<HomePageProps["content"], SanityDocument>(
-		initialContent,
-		(currentContent, action) => {
-			// Only update if this is the same document
-			if (!currentContent || action.id !== currentContent._id) {
-				return currentContent;
-			}
-
-			// Return the updated document data
-			return {
-				...currentContent,
-				...action.document,
-			} as HomePageProps["content"];
-		},
-	);
+export default function HomePage({ content }: HomePageProps) {
+	// SanityLive component in layout.tsx handles live updates automatically
+	// No need for manual useOptimistic - it's only needed for drag and drop
 
 	// Hero section attributes
 	const heroDataAttribute = content?._id

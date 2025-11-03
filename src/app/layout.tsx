@@ -21,8 +21,7 @@ export const metadata: Metadata = {
 };
 
 async function getSiteSettings() {
-	const isDraftMode = (await draftMode()).isEnabled;
-
+	// Live API handles perspective automatically - don't override it
 	const { data } = await sanityFetch({
 		query: `*[_type == "siteSettings"][0] {
       _id,
@@ -66,7 +65,6 @@ async function getSiteSettings() {
         additionalText
       }
     }`,
-		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 	return data;
 }
@@ -86,7 +84,9 @@ export default async function RootLayout({
 				<SanityLive />
 				{isEnabled && (
 					<>
-						<VisualEditing />
+						<VisualEditing
+							studioUrl="/studio"
+						/>
 						<DisableDraftMode />
 					</>
 				)}

@@ -1,7 +1,6 @@
 import HomePage from "./homepage";
 import { sanityFetch } from "@/sanity/lib/live";
 import type { PortableTextBlock } from '@portabletext/types';
-import { draftMode } from 'next/headers';
 
 interface Stat {
 	value: string;
@@ -48,10 +47,8 @@ interface HomePageContent {
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
-	const isDraftMode = (await draftMode()).isEnabled;
-
-	// Use 'previewDrafts' perspective when in draft mode to see unpublished changes
-	// Use 'published' perspective in production to only show published content
+	// The Live API client handles perspective automatically
+	// No need to manually set perspective here - it causes full page reloads
 	const { data } = await sanityFetch({
 		query: `*[_type == "homePage"][0] {
       _id,
@@ -90,7 +87,6 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         }
       }
     }`,
-		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 
 	return data as HomePageContent | null;
@@ -105,8 +101,9 @@ export async function generateMetadata() {
 	};
 }
 
-// Revalidate every 60 seconds - SanityLive handles live updates in development
-export const revalidate = 60;
+// Cache page data, SanityLive triggers on-demand revalidation via revalidateTag
+// This prevents full page reloads - updates are seamless via Next.js cache eviction
+export const revalidate = 3600; // Cache for 1 hour, revalidate on-demand when content changes
 
 export default async function Home() {
 	const content = await getHomePageData();
