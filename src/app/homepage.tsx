@@ -358,8 +358,17 @@ export default function HomePage({ content }: HomePageProps) {
 						</div>
 					</div>
 
-					{/* Feature Bullets - Grid Layout */}
-					<div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
+					{/* Feature Bullets - Flexible Grid Layout */}
+					<div className={cn(
+						"max-w-6xl mx-auto grid gap-6",
+						content?.about?.pillars && content.about.pillars.length === 3
+							? "md:grid-cols-3" // 3 columns for 3 items
+							: content?.about?.pillars && content.about.pillars.length === 2
+								? "md:grid-cols-2 max-w-4xl" // 2 columns for 2 items, narrower
+								: content?.about?.pillars && content.about.pillars.length === 1
+									? "md:grid-cols-1 max-w-2xl" // 1 column for 1 item, narrower
+									: "md:grid-cols-2" // Default 2x2 grid for 4+ items
+					)}>
 						{content?.about?.pillars && content.about.pillars.length > 0
 							? content.about.pillars.map((pillar, index) => (
 									<div
