@@ -47,8 +47,15 @@ interface HomePageContent {
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
+	// In development, query both draft and published documents
+	// In production, only query published documents
+	const isDevelopment = process.env.NODE_ENV === 'development';
+	const query = isDevelopment
+		? `*[_type == "homePage" && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]`
+		: `*[_type == "homePage"][0]`;
+
 	const { data } = await sanityFetch({
-		query: `*[_type == "homePage"][0] {
+		query: `${query} {
       _id,
       _type,
       title,
@@ -87,6 +94,7 @@ async function getHomePageData(): Promise<HomePageContent | null> {
     }`,
 		stega: true, // Enable stega encoding for this query
 	});
+
 	return data as HomePageContent | null;
 }
 
@@ -98,6 +106,9 @@ export async function generateMetadata() {
 		description: content?.seo?.metaDescription || "Women's 7v7 football league combining athletic excellence with social impact.",
 	};
 }
+
+// Revalidate every 60 seconds - SanityLive handles live updates in development
+export const revalidate = 60;
 
 export default async function Home() {
 	const content = await getHomePageData();

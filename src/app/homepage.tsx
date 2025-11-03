@@ -4,6 +4,7 @@ import type { PortableTextBlock } from "@portabletext/types";
 import type { SanityDocument } from "@sanity/client";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { createDataAttribute, useOptimistic } from "@sanity/visual-editing";
+import Link from "next/link";
 import { useState } from "react";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
 import { getImageProps, getImageUrl } from "@/lib/sanity-image";
@@ -52,48 +53,131 @@ interface HomePageProps {
 
 function SignupForm() {
 	const [email, setEmail] = useState("");
-	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
+	const [status, setStatus] = useState<
+		"idle" | "loading" | "success" | "error"
+	>("idle");
+	const [errorMessage, setErrorMessage] = useState("");
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (email) {
-			setIsSubmitted(true);
-			setTimeout(() => setIsSubmitted(false), 3000);
+
+		if (!agreedToPrivacy) {
+			setErrorMessage("Please accept the privacy policy to continue");
+			setStatus("error");
+			return;
+		}
+
+		setStatus("loading");
+		setErrorMessage("");
+
+		try {
+			const response = await fetch("/api/newsletter", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					consentGiven: agreedToPrivacy,
+					consentTimestamp: new Date().toISOString(),
+					source: "homepage-hero",
+				}),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.error || "Failed to subscribe");
+			}
+
+			setStatus("success");
+			setEmail("");
+			setAgreedToPrivacy(false);
+
+			// Reset success message after 5 seconds
+			setTimeout(() => {
+				setStatus("idle");
+			}, 5000);
+		} catch (err) {
+			setStatus("error");
+			setErrorMessage(
+				err instanceof Error
+					? err.message
+					: "Failed to subscribe. Please try again.",
+			);
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
-			<div className="flex flex-col sm:flex-row gap-3">
+		<form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-12">
+			<div className="flex flex-col sm:flex-row gap-3 mb-3">
 				<input
 					type="email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="Enter your email"
 					required
+					disabled={status === "loading"}
 					className={cn(
 						"flex-1 px-6 py-4 border-2 border-black rounded-none",
 						"text-black placeholder-gray-500 brand-body",
 						"focus:outline-none focus:border-[var(--color-volt)]",
 						"transition-colors duration-200",
+						"disabled:opacity-50 disabled:cursor-not-allowed",
 					)}
 				/>
 
 				<button
 					type="submit"
-					disabled={isSubmitted}
+					disabled={status === "loading" || !agreedToPrivacy}
 					className={cn(
 						"px-10 py-4 font-black uppercase tracking-wider",
 						"brand-caption transition-all duration-200",
 						"focus:outline-none disabled:opacity-70",
-						isSubmitted
+						status === "success"
 							? "bg-black text-white"
 							: "bg-[var(--color-volt)] text-black hover:bg-black hover:text-[var(--color-volt)]",
 					)}
 				>
-					{isSubmitted ? "✓ JOINED" : "JOIN →"}
+					{status === "loading"
+						? "..."
+						: status === "success"
+							? "✓ JOINED"
+							: "JOIN →"}
 				</button>
 			</div>
+
+			{/* Privacy Consent - Compact */}
+			<div className="flex items-center gap-2 justify-center">
+				<input
+					type="checkbox"
+					id="privacy-consent"
+					checked={agreedToPrivacy}
+					onChange={(e) => setAgreedToPrivacy(e.target.checked)}
+					disabled={status === "loading"}
+					required
+					className="w-4 h-4 border-2 border-gray-400 cursor-pointer accent-black disabled:opacity-50 disabled:cursor-not-allowed"
+				/>
+				<label
+					htmlFor="privacy-consent"
+					className="text-xs text-gray-600 cursor-pointer"
+				>
+					I want to join Sensational League and receive updates about the
+					world&apos;s most innovative women&apos;s football league.{" "}
+					<Link
+						href="/privacy"
+						className="underline hover:text-black transition-colors"
+					>
+						Privacy Policy
+					</Link>
+				</label>
+			</div>
+
+			{/* Error Message */}
+			{status === "error" && errorMessage && (
+				<p className="text-xs text-red-600 text-center mt-2">{errorMessage}</p>
+			)}
 		</form>
 	);
 }
@@ -125,14 +209,6 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 			})
 		: undefined;
 
-	const heroHeadlineAttribute = content?._id
-		? createDataAttribute({
-				id: content._id,
-				type: content._type || "homePage",
-				path: "hero.headline",
-			})
-		: undefined;
-
 	const heroSublineAttribute = content?._id
 		? createDataAttribute({
 				id: content._id,
@@ -158,33 +234,6 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 			})
 		: undefined;
 
-	const aboutDescriptionAttribute = content?._id
-		? createDataAttribute({
-				id: content._id,
-				type: content._type || "homePage",
-				path: "about.description",
-			})
-		: undefined;
-
-	// Default data
-	const defaultPillars: Pillar[] = [
-		{
-			title: "Elite Competition",
-			description:
-				"7v7 format with professional standards and innovative scoring systems.",
-		},
-		{
-			title: "Social Impact",
-			description:
-				"Teams earn points for community engagement and UN SDG contributions.",
-		},
-		{
-			title: "Digital Innovation",
-			description:
-				"Multi-metric tracking including social media growth and viral moments.",
-		},
-	];
-
 	return (
 		<main className="min-h-screen bg-white">
 			{/* Hero Section */}
@@ -208,34 +257,11 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 							/>
 						) : (
 							<img
-								src="/logos/SL-PRIMARY LOCKUP-CROPPED.svg"
-								alt="Sensational League"
+								src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
+								alt="Sensational League - Fast. Rebellious. Female."
 								className="mx-auto w-full h-auto max-w-full"
 							/>
 						)}
-					</div>
-
-					{/* Headline with Yellow Background - Left aligned to match logo "S" position */}
-					<div className="mb-8 md:mb-12 flex justify-center">
-						<div className="w-full flex">
-							<h1
-								className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1]"
-								data-sanity={heroHeadlineAttribute?.toString()}
-								style={{ marginLeft: "2%" }}
-							>
-								{content?.hero?.headline ? (
-									<div className="inline-block bg-[var(--color-volt)] px-2 py-0">
-										<StyledTextRenderer value={content.hero.headline} />
-									</div>
-								) : (
-									<div className="inline-block bg-[var(--color-volt)] px-2 py-0">
-										<span className="text-black">
-											FAST. REBELLIOUS. FEMALE.
-										</span>
-									</div>
-								)}
-							</h1>
-						</div>
 					</div>
 
 					{/* Subline - Centered */}
@@ -268,9 +294,7 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 										>
 											<img
 												{...imageProps}
-												alt={
-													image.alt || `Sensational League image ${index + 1}`
-												}
+												alt={image.alt || `Sensational League ${index + 1}`}
 												className={cn(
 													"w-full h-full group-hover:scale-110 transition-all duration-500",
 													!image.objectFit && "object-cover",
@@ -300,7 +324,7 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 									>
 										<img
 											src={src}
-											alt={`Sensational League image ${index + 1}`}
+											alt={`Sensational League ${index + 1}`}
 											className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
 										/>
 										<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -310,70 +334,83 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 				</div>
 			</section>
 
-			{/* Visual Divider - Rightward Movement */}
-			<div className="relative h-24 bg-white overflow-hidden">
-				<div className="absolute inset-0 flex items-center justify-center">
-					<div className="w-full mx-auto">
-						<div className="h-2 bg-black transform skew-x-[-3deg] origin-left"></div>
-					</div>
-				</div>
-			</div>
 
 			{/* About Section */}
 			<section
-				className="py-32 md:py-40 bg-white"
+				className="py-20 md:py-32 bg-white"
 				data-sanity={aboutDataAttribute?.toString()}
 			>
 				<div className="max-w-7xl mx-auto px-4">
-					{/* Headline - Bold and Clean */}
-					<div className="mb-28">
-						<h2
-							className="brand-headline text-5xl md:text-7xl lg:text-8xl font-black text-center leading-tight uppercase"
-							data-sanity={aboutTitleAttribute?.toString()}
-						>
-							{content?.about?.title ? (
-								<StyledTextRenderer value={content.about.title} />
-							) : (
-								<>
-									<span className="block text-black">PLAY FOOTBALL.</span>
-									<span className="block text-[var(--color-volt)]">
-										DRIVE IMPACT.
-									</span>
-									<span className="block text-black">CHANGE THE WORLD.</span>
-								</>
-							)}
+					{/* Simple Bold Label */}
+					<div className="mb-12 text-center">
+						<h2 className="text-6xl md:text-7xl font-black uppercase tracking-[0.15em] text-black mb-4">
+							ABOUT US
 						</h2>
+						<div className="w-24 h-2 bg-black mx-auto"></div>
 					</div>
 
-					{/* Three Pillars - Clean Cards with Rightward Movement */}
-					<div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-20 max-w-6xl mx-auto">
-						{(content?.about?.pillars || defaultPillars).map(
-							(pillar, index) => (
-								<div
-									key={index}
-									className="bg-white border-4 border-black p-8 hover:bg-[var(--color-volt)] hover:translate-x-2 transition-all duration-300 group"
-								>
-									<div className="w-20 h-3 bg-black mb-6 transform skew-x-[-12deg] group-hover:w-24 transition-all duration-300"></div>
-									<h3 className="brand-subhead text-xl md:text-2xl font-black mb-4 uppercase tracking-wider text-black">
-										{pillar.title}
-									</h3>
-									<p className="brand-body text-base text-black leading-relaxed">
-										{pillar.description}
-									</p>
-								</div>
-							),
-						)}
-					</div>
-
-					{/* Description */}
-					<div className="max-w-4xl mx-auto text-center">
-						<p
-							className="brand-body text-2xl md:text-3xl text-black leading-relaxed font-bold"
-							data-sanity={aboutDescriptionAttribute?.toString()}
-						>
-							{content?.about?.description ||
-								"We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female."}
+					{/* Primary Description */}
+					<div className="max-w-4xl mx-auto text-center mb-20">
+						<p className="brand-body text-2xl md:text-3xl text-black leading-relaxed font-bold">
+							An international 7v7 professional women&apos;s football league
+							launching April 2026 across the Nordics, expanding to the UK and
+							US. Elite competition meets entertainment and lifestyle.
 						</p>
+					</div>
+
+					{/* Info Box - Point System */}
+					<div className="max-w-5xl mx-auto mb-20">
+						<div className="bg-[var(--color-volt)] border-[6px] border-black p-12 md:p-16 transform hover:translate-x-2 hover:-translate-y-2 transition-all duration-200">
+							<h3 className="brand-subhead text-3xl md:text-4xl font-black mb-6 uppercase tracking-[0.15em] text-black">
+								THE SENSATIONAL POINT SYSTEM
+							</h3>
+							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed font-semibold">
+								Champions are crowned for winning matches, growing their
+								following, and amplifying women&apos;s sports through community
+								projects. This built-in growth mechanism makes promotion of the
+								game part of the competition model itself.
+							</p>
+						</div>
+					</div>
+
+					{/* Feature Bullets - Grid Layout */}
+					<div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
+						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
+							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
+								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
+									ELITE 7V7 COMPETITION
+								</strong>
+								Fast, high-scoring, skills focused, made for brands, broadcast
+								and streaming.
+							</p>
+						</div>
+
+						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
+							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
+								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
+									8 TEAMS
+								</strong>
+								Led by athlete-influencer Captains.
+							</p>
+						</div>
+
+						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
+							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
+								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
+									6 FESTIVAL MATCHDAYS
+								</strong>
+								Football meets music, culture, and community.
+							</p>
+						</div>
+
+						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
+							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
+								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
+									PROFESSIONAL PAY
+								</strong>
+								Athletes with creative control and shared value.
+							</p>
+						</div>
 					</div>
 				</div>
 			</section>

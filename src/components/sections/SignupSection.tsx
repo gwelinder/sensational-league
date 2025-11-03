@@ -59,9 +59,10 @@ export function SignupSection({ data, documentId, documentType, path }: SignupSe
           </p>
         )}
         
-        <SignupForm 
-          buttonText={data.buttonText} 
+        <SignupForm
+          buttonText={data.buttonText}
           theme={isLight ? "light" : "dark"}
+          source="signup-section"
         />
       </div>
     </section>
