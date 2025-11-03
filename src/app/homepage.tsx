@@ -375,42 +375,63 @@ export default function HomePage({ content: initialContent }: HomePageProps) {
 
 					{/* Feature Bullets - Grid Layout */}
 					<div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
-						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
-							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
-								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
-									ELITE 7V7 COMPETITION
-								</strong>
-								Fast, high-scoring, skills focused, made for brands, broadcast
-								and streaming.
-							</p>
-						</div>
-
-						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
-							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
-								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
-									8 TEAMS
-								</strong>
-								Led by athlete-influencer Captains.
-							</p>
-						</div>
-
-						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
-							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
-								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
-									6 FESTIVAL MATCHDAYS
-								</strong>
-								Football meets music, culture, and community.
-							</p>
-						</div>
-
-						<div className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group">
-							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
-								<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
-									PROFESSIONAL PAY
-								</strong>
-								Athletes with creative control and shared value.
-							</p>
-						</div>
+						{content?.about?.pillars && content.about.pillars.length > 0
+							? content.about.pillars.map((pillar, index) => (
+									<div
+										key={index}
+										className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group"
+										data-sanity={
+											content._id
+												? createDataAttribute({
+														id: content._id,
+														type: content._type || "homePage",
+														path: `about.pillars[${index}]`,
+													})?.toString()
+												: undefined
+										}
+									>
+										<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
+											<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
+												{pillar.title}
+											</strong>
+											{pillar.description}
+										</p>
+									</div>
+								))
+							: // Fallback to default content when no Sanity pillars are available
+								[
+									{
+										title: "ELITE 7V7 COMPETITION",
+										description:
+											"Fast, high-scoring, skills focused, made for brands, broadcast and streaming.",
+									},
+									{
+										title: "8 TEAMS",
+										description: "Led by athlete-influencer Captains.",
+									},
+									{
+										title: "6 FESTIVAL MATCHDAYS",
+										description:
+											"Football meets music, culture, and community.",
+									},
+									{
+										title: "PROFESSIONAL PAY",
+										description:
+											"Athletes with creative control and shared value.",
+									},
+								].map((pillar, index) => (
+									<div
+										key={index}
+										className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group"
+									>
+										<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
+											<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
+												{pillar.title}
+											</strong>
+											{pillar.description}
+										</p>
+									</div>
+								))}
 					</div>
 				</div>
 			</section>

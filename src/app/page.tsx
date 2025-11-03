@@ -1,6 +1,7 @@
 import HomePage from "./homepage";
 import { sanityFetch } from "@/sanity/lib/live";
 import type { PortableTextBlock } from '@portabletext/types';
+import { draftMode } from 'next/headers';
 
 interface Stat {
 	value: string;
@@ -47,9 +48,10 @@ interface HomePageContent {
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
-	// The Live API client (liveClient) uses 'previewDrafts' perspective
-	// This automatically handles showing draft content when in draft mode
-	// and published content in production
+	const isDraftMode = (await draftMode()).isEnabled;
+
+	// Use 'previewDrafts' perspective when in draft mode to see unpublished changes
+	// Use 'published' perspective in production to only show published content
 	const { data } = await sanityFetch({
 		query: `*[_type == "homePage"][0] {
       _id,
@@ -88,6 +90,7 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         }
       }
     }`,
+		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 
 	return data as HomePageContent | null;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { draftMode } from "next/headers";
 import { sanityFetch } from "@/sanity/lib/live";
 
 interface Policy {
@@ -9,12 +10,15 @@ interface Policy {
 }
 
 async function getPolicies(): Promise<Policy[]> {
+	const isDraftMode = (await draftMode()).isEnabled;
+
 	const { data } = await sanityFetch({
 		query: `*[_type == "policy"] | order(order asc) {
       _id,
       title,
       slug
     }`,
+		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 	return (data ?? []) as Policy[];
 }

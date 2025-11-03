@@ -187,16 +187,16 @@ export const homePage = defineType({
         {
           name: 'pillars',
           type: 'array',
-          title: 'Three Pillars',
-          description: 'The three core pillars of the league',
+          title: 'Key Features',
+          description: 'The key features/pillars of the league (4 recommended for grid layout)',
           of: [{
             type: 'object',
             fields: [
-              { name: 'title', type: 'string', title: 'Pillar Title' },
+              { name: 'title', type: 'string', title: 'Feature Title' },
               { name: 'description', type: 'text', title: 'Description', rows: 2 },
             ],
           }],
-          validation: (Rule) => Rule.max(3),
+          validation: (Rule) => Rule.min(1).max(8),
         },
       ],
     }),

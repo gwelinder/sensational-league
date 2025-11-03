@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
 import type { PortableTextBlock } from "sanity";
 import { RenderPortableText } from "@/lib/portable-text";
 import { client } from "@/sanity/lib/client";
@@ -16,6 +17,8 @@ interface PageProps {
 }
 
 async function getPolicy(slug: string): Promise<Policy | null> {
+	const isDraftMode = (await draftMode()).isEnabled;
+
 	const { data } = await sanityFetch({
 		query: `*[_type == "policy" && slug.current == $slug][0] {
       _id,
@@ -24,6 +27,7 @@ async function getPolicy(slug: string): Promise<Policy | null> {
       content
     }`,
 		params: { slug },
+		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 	return data as Policy | null;
 }

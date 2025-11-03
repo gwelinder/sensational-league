@@ -21,6 +21,8 @@ export const metadata: Metadata = {
 };
 
 async function getSiteSettings() {
+	const isDraftMode = (await draftMode()).isEnabled;
+
 	const { data } = await sanityFetch({
 		query: `*[_type == "siteSettings"][0] {
       _id,
@@ -64,6 +66,7 @@ async function getSiteSettings() {
         additionalText
       }
     }`,
+		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 	return data;
 }

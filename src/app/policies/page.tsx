@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { draftMode } from "next/headers";
 import { sanityFetch } from "@/sanity/lib/live";
 
 interface Policy {
@@ -6,8 +7,11 @@ interface Policy {
 }
 
 async function getFirstPolicy(): Promise<Policy | null> {
+	const isDraftMode = (await draftMode()).isEnabled;
+
 	const { data } = await sanityFetch({
 		query: `*[_type == "policy"] | order(order asc) [0] { slug }`,
+		perspective: isDraftMode ? 'previewDrafts' : 'published',
 	});
 	return data as Policy | null;
 }

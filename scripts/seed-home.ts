@@ -113,18 +113,23 @@ const homePageContent = {
 		pillars: [
 			{
 				_key: 'pillar-1',
-				title: "Elite Competition",
-				description: "7v7 format with professional standards and innovative scoring systems."
+				title: "ELITE 7V7 COMPETITION",
+				description: "Fast, high-scoring, skills focused, made for brands, broadcast and streaming."
 			},
 			{
 				_key: 'pillar-2',
-				title: "Social Impact",
-				description: "Teams earn points for community engagement and UN SDG contributions."
+				title: "8 TEAMS",
+				description: "Led by athlete-influencer Captains."
 			},
 			{
 				_key: 'pillar-3',
-				title: "Digital Innovation",
-				description: "Multi-metric tracking including social media growth and viral moments."
+				title: "6 FESTIVAL MATCHDAYS",
+				description: "Football meets music, culture, and community."
+			},
+			{
+				_key: 'pillar-4',
+				title: "PROFESSIONAL PAY",
+				description: "Athletes with creative control and shared value."
 			}
 		],
 	},
