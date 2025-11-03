@@ -13,45 +13,56 @@
 /* Sensational League Brand System - Fast. Rebellious. Female. */
 
 /* GT Standard Font Declarations */
+
+/* GT Standard Expanded - Light (300) */
 @font-face {
 	font-family: 'GT Standard';
-	src: url('/fonts/gt-standard/GTStandard-Expanded-Light.woff2') format('woff2');
+	src: url('/fonts/gt-standard/GT-Standard-M-Expanded-Light.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-M-Expanded-Light.woff') format('woff');
 	font-weight: 300;
 	font-style: normal;
 	font-stretch: expanded;
 	font-display: swap;
 }
 
+/* GT Standard Expanded - Bold (700) */
 @font-face {
 	font-family: 'GT Standard';
-	src: url('/fonts/gt-standard/GTStandard-Expanded-Bold.woff2') format('woff2');
+	src: url('/fonts/gt-standard/GT-Standard-M-Expanded-Bold.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-M-Expanded-Bold.woff') format('woff');
 	font-weight: 700;
 	font-style: normal;
 	font-stretch: expanded;
 	font-display: swap;
 }
 
+/* GT Standard Narrow - Medium (500) */
 @font-face {
 	font-family: 'GT Standard Narrow';
-	src: url('/fonts/gt-standard/GTStandard-Narrow-Medium.woff2') format('woff2');
+	src: url('/fonts/gt-standard/GT-Standard-M-Narrow-Medium.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-M-Narrow-Medium.woff') format('woff');
 	font-weight: 500;
 	font-style: normal;
 	font-stretch: condensed;
 	font-display: swap;
 }
 
+/* GT Standard Narrow - Bold (700) */
 @font-face {
 	font-family: 'GT Standard Narrow';
-	src: url('/fonts/gt-standard/GTStandard-Narrow-Bold.woff2') format('woff2');
+	src: url('/fonts/gt-standard/GT-Standard-M-Narrow-Bold.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-M-Narrow-Bold.woff') format('woff');
 	font-weight: 700;
 	font-style: normal;
 	font-stretch: condensed;
 	font-display: swap;
 }
 
+/* GT Standard Mono - Regular (400) */
 @font-face {
 	font-family: 'GT Standard Mono';
-	src: url('/fonts/gt-standard/GTStandard-Mono-Regular.woff2') format('woff2');
+	src: url('/fonts/gt-standard/GT-Standard-Mono-Standard-Regular.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-Mono-Standard-Regular.woff') format('woff');
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
