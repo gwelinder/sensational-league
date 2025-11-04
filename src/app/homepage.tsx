@@ -326,7 +326,7 @@ export default function HomePage({ content }: HomePageProps) {
 						href="/press"
 						className="inline-block bg-[var(--color-volt)] border-4 border-black px-8 py-4 text-black font-black uppercase tracking-[0.15em] text-lg hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]"
 					>
-						📰 Press & Media Kit
+						📰 Press release
 					</a>
 				</div>
 			</section>
