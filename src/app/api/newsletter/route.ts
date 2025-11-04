@@ -170,8 +170,8 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 		);
 
 		// Use verified domain
-		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'updates.sensationalleague.com'
-			? "Sensational League <newsletter@updates.sensationalleague.com>"
+		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN
+			? `Sensational League <newsletter@${process.env.RESEND_VERIFIED_DOMAIN}>`
 			: "Sensational League <onboarding@resend.dev>";
 
 		let emailSubject: string;
@@ -232,8 +232,8 @@ async function sendAdminNotification(
 		}
 
 		// Use verified domain
-		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'updates.sensationalleague.com'
-			? "Sensational League Newsletter <notifications@updates.sensationalleague.com>"
+		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN
+			? `Sensational League Newsletter <notifications@${process.env.RESEND_VERIFIED_DOMAIN}>`
 			: "Sensational League Newsletter <onboarding@resend.dev>";
 
 		await resend.emails.send({
