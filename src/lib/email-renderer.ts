@@ -107,20 +107,8 @@ export function renderEmailTemplate(template: EmailTemplate, variables: EmailVar
 	const contentHTML = portableTextToEmailHTML(template.content);
 	const signature = template.signature ? replaceVariables(template.signature, variables) : '';
 
-	// Build social media links
-	let socialLinksHTML = '';
-	if (template.socialLinks) {
-		const links = [];
-		if (template.socialLinks.youtube) links.push(`<a href="${template.socialLinks.youtube}" style="color: #232324; font-weight: 600;">YouTube</a>`);
-		if (template.socialLinks.instagram) links.push(`<a href="${template.socialLinks.instagram}" style="color: #232324; font-weight: 600;">Instagram</a>`);
-		if (template.socialLinks.facebook) links.push(`<a href="${template.socialLinks.facebook}" style="color: #232324; font-weight: 600;">Facebook</a>`);
-		if (template.socialLinks.tiktok) links.push(`<a href="${template.socialLinks.tiktok}" style="color: #232324; font-weight: 600;">TikTok</a>`);
-		if (template.socialLinks.twitter) links.push(`<a href="${template.socialLinks.twitter}" style="color: #232324; font-weight: 600;">X</a>`);
-
-		if (links.length > 0) {
-			socialLinksHTML = `<p style="margin: 0 0 30px; color: #232324; font-size: 16px; line-height: 1.6;">You can also follow us on our social platforms - ${links.join(', ')}.</p>`;
-		}
-	}
+	// Social links are now part of the content blocks, so we don't need to render them separately
+	const socialLinksHTML = '';
 
 	// Build signature HTML
 	const signatureHTML = signature ? `
