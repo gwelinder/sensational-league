@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
 		try {
 
 			const { error } = await resend.emails.send({
-				from: "Sensational League <onboarding@resend.dev>", // Use resend.dev for testing, or verify your domain in Resend
+				from: "Sensational League <newsletter@sensationalleague.com>",
 				to: [recipientEmail],
 				subject: testingMode ? `[TEST] Welcome to Sensational League ⚡ (for: ${email})` : "Welcome to Sensational League ⚡",
 				html: `
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
 							<table role="presentation" style="margin: 0 auto;">
 								<tr>
 									<td style="border-radius: 24px; background-color: #D4FF00;">
-										<a href="https://sensational-league.com" style="display: inline-block; padding: 14px 32px; color: #232324; text-decoration: none; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+										<a href="https://sensationalleague.com" style="display: inline-block; padding: 14px 32px; color: #232324; text-decoration: none; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
 											Visit Our Website
 										</a>
 									</td>
@@ -201,8 +201,8 @@ export async function POST(request: NextRequest) {
 								You're receiving this email because you subscribed to Sensational League newsletter on ${new Date(timestamp).toLocaleDateString()}.
 							</p>
 							<p style="margin: 0; color: rgba(247,247,247,0.7); font-size: 12px; line-height: 1.5;">
-								<a href="mailto:saga@sagasportsgroup.com?subject=Unsubscribe" style="color: #D4FF00; text-decoration: underline;">Unsubscribe</a> |
-								<a href="https://sensational-league.com/privacy" style="color: #D4FF00; text-decoration: underline;">Privacy Policy</a>
+								<a href="mailto:hello@sensationalleague.com?subject=Unsubscribe" style="color: #D4FF00; text-decoration: underline;">Unsubscribe</a> |
+								<a href="https://sensationalleague.com/privacy" style="color: #D4FF00; text-decoration: underline;">Privacy Policy</a>
 							</p>
 							<p style="margin: 15px 0 0; color: rgba(247,247,247,0.7); font-size: 12px; line-height: 1.5;">
 								© ${new Date().getFullYear()} Sensational League. All rights reserved.
@@ -230,9 +230,9 @@ export async function POST(request: NextRequest) {
 		// Notify admin
 		try {
 			await resend.emails.send({
-				from: "Sensational League Newsletter <onboarding@resend.dev>", // Use resend.dev for testing
+				from: "Sensational League Newsletter <notifications@sensationalleague.com>",
 				to: testingMode ? ["gwelinder@gmail.com"] : ["saga@sagasportsgroup.com"],
-				subject: "⚡ New Sensational League Newsletter Subscription",
+				subject: `[SL] Newsletter Signup: ${email}`,
 				text: `New newsletter subscription:
 
 Email: ${email}
