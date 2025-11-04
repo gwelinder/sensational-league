@@ -122,8 +122,7 @@ export default function Footer({ settings }: FooterProps) {
 						className="brand-body text-xl md:text-2xl text-white max-w-3xl font-medium leading-relaxed"
 						data-sanity={descriptionAttribute?.toString()}
 					>
-						{settings?.footer?.description ||
-							"Women's 7v7 football league combining athletic excellence with social impact."}
+						{settings?.footer?.description || ""}
 					</p>
 				</div>
 
