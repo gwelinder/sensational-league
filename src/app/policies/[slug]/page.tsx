@@ -65,6 +65,10 @@ export async function generateMetadata({ params }: PageProps) {
 	return {
 		title,
 		description,
+		robots: {
+			index: false,
+			follow: false,
+		},
 		openGraph: {
 			title: `${title} | Sensational League`,
 			description,
