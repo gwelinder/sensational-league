@@ -151,7 +151,7 @@ export default function Footer({ settings }: FooterProps) {
 						<Link
 							href="/press"
 							className={cn(
-								"brand-caption text-sm text-white uppercase tracking-wider font-bold",
+								"brand-caption text-md text-white uppercase tracking-wider font-bold",
 								"hover:text-[var(--color-volt)] transition-colors",
 							)}
 						>
