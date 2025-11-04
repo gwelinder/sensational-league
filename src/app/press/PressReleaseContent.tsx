@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { PortableTextBlock } from "sanity";
 import { PortableText } from "@portabletext/react";
 import { createDataAttribute } from "@sanity/visual-editing";
+import { useEffect, useState } from "react";
+import type { PortableTextBlock } from "sanity";
 
 interface PressPhoto {
 	id: string;
@@ -46,8 +46,14 @@ interface PressReleaseProps {
 	};
 }
 
-export default function PressReleaseContent({ content: pressRelease }: PressReleaseProps) {
-	const [language, setLanguage] = useState<'da' | 'en'>('da');
+export default function PressReleaseContent({
+	content: pressRelease,
+}: PressReleaseProps) {
+	// Check if English version exists and set as default
+	const hasEnglish = !!(pressRelease.headlineEn && pressRelease.contentEn);
+	const [language, setLanguage] = useState<"da" | "en">(
+		hasEnglish ? "en" : "da",
+	);
 	const [photos, setPhotos] = useState<PressPhoto[]>([]);
 	const [loadingPhotos, setLoadingPhotos] = useState(true);
 
@@ -71,42 +77,53 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 		window.print();
 	};
 
-	// Find founder photos
-	const bettinaPhoto = photos.find(p => p.name.toLowerCase().includes('bettina'));
-	const majkenPhoto = photos.find(p => p.name.toLowerCase().includes('majken'));
+	// Find founder photos - specific profile photos
+	const bettinaPhoto =
+		photos.find((p) => p.name === "Bettina - Profil.jpg") ||
+		photos.find((p) => p.name.toLowerCase().includes("bettina"));
+	const majkenPhoto =
+		photos.find((p) => p.name === "Majken - Profil.jpg") ||
+		photos.find((p) => p.name.toLowerCase().includes("majken"));
 
 	// Format date in Danish
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
-		return date.toLocaleDateString('da-DK', { year: 'numeric', month: 'long', day: 'numeric' });
+		return date.toLocaleDateString("da-DK", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
 	};
 
-	// Check if English version exists
-	const hasEnglish = !!(pressRelease.headlineEn && pressRelease.contentEn);
-
 	// Get current language content
-	const headline = language === 'en' ? pressRelease.headlineEn : pressRelease.headlineDa;
-	const subheadline = language === 'en' ? pressRelease.subheadlineEn : pressRelease.subheadlineDa;
-	const content = language === 'en' ? pressRelease.contentEn : pressRelease.contentDa;
-	const aboutSections = language === 'en' ? pressRelease.aboutSectionsEn : pressRelease.aboutSectionsDa;
+	const headline =
+		language === "en" ? pressRelease.headlineEn : pressRelease.headlineDa;
+	const subheadline =
+		language === "en" ? pressRelease.subheadlineEn : pressRelease.subheadlineDa;
+	const content =
+		language === "en" ? pressRelease.contentEn : pressRelease.contentDa;
+	const aboutSections =
+		language === "en"
+			? pressRelease.aboutSectionsEn
+			: pressRelease.aboutSectionsDa;
 
 	// Data attributes for visual editing
 	const headlineAttr = createDataAttribute({
 		id: pressRelease._id,
 		type: pressRelease._type,
-		path: language === 'en' ? 'headlineEn' : 'headlineDa',
+		path: language === "en" ? "headlineEn" : "headlineDa",
 	});
 
 	const subheadlineAttr = createDataAttribute({
 		id: pressRelease._id,
 		type: pressRelease._type,
-		path: language === 'en' ? 'subheadlineEn' : 'subheadlineDa',
+		path: language === "en" ? "subheadlineEn" : "subheadlineDa",
 	});
 
 	const contentAttr = createDataAttribute({
 		id: pressRelease._id,
 		type: pressRelease._type,
-		path: language === 'en' ? 'contentEn' : 'contentDa',
+		path: language === "en" ? "contentEn" : "contentDa",
 	});
 
 	return (
@@ -118,25 +135,31 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 					<div className="flex gap-2 border-2 border-black">
 						<button
 							type="button"
-							onClick={() => setLanguage('da')}
+							onClick={() => setLanguage("da")}
 							className={`px-4 py-2 font-bold uppercase tracking-wider transition-all duration-200 ${
-								language === 'da'
-									? 'bg-[var(--color-volt)] text-black'
-									: 'bg-white text-black hover:bg-gray-100'
+								language === "da"
+									? "bg-[var(--color-volt)] text-black"
+									: "bg-white text-black hover:bg-gray-100"
 							}`}
-							style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
+							style={{
+								fontFamily: "'GT Standard Narrow', sans-serif",
+								fontWeight: 700,
+							}}
 						>
 							🇩🇰 DA
 						</button>
 						<button
 							type="button"
-							onClick={() => setLanguage('en')}
+							onClick={() => setLanguage("en")}
 							className={`px-4 py-2 font-bold uppercase tracking-wider transition-all duration-200 ${
-								language === 'en'
-									? 'bg-[var(--color-volt)] text-black'
-									: 'bg-white text-black hover:bg-gray-100'
+								language === "en"
+									? "bg-[var(--color-volt)] text-black"
+									: "bg-white text-black hover:bg-gray-100"
 							}`}
-							style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
+							style={{
+								fontFamily: "'GT Standard Narrow', sans-serif",
+								fontWeight: 700,
+							}}
 						>
 							🇬🇧 EN
 						</button>
@@ -147,7 +170,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 					type="button"
 					onClick={printAsPDF}
 					className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-volt)] text-black font-bold uppercase tracking-wider hover:bg-black hover:text-[var(--color-volt)] transition-all duration-200 border-2 border-black"
-					style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
+					style={{
+						fontFamily: "'GT Standard Narrow', sans-serif",
+						fontWeight: 700,
+					}}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +190,7 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 						<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
 						<rect x="6" y="14" width="12" height="8" />
 					</svg>
-					Gem som PDF
+					{language === "en" ? "Save as PDF" : "Gem som PDF"}
 				</button>
 			</div>
 
@@ -186,7 +212,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 						</p>
 						<p
 							className="text-xs tracking-wide text-gray-600"
-							style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+							style={{
+								fontFamily: "'GT Standard Small Narrow', sans-serif",
+								fontWeight: 500,
+							}}
 						>
 							{formatDate(pressRelease.publishDate)}
 						</p>
@@ -194,16 +223,22 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 					<a
 						href="/"
 						className="text-sm text-gray-600 hover:text-black transition-colors print:hidden"
-						style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+						style={{
+							fontFamily: "'GT Standard Small Narrow', sans-serif",
+							fontWeight: 500,
+						}}
 					>
-						← Tilbage
+						← {language === "en" ? "Back" : "Tilbage"}
 					</a>
 				</div>
 
 				{/* Main Headline - GT Standard L Expanded Light, 18pt */}
 				<h1
 					className="mb-8 text-[18pt] leading-[1.2] tracking-wide uppercase text-black"
-					style={{ fontFamily: "'GT Standard Large', sans-serif", fontWeight: 300 }}
+					style={{
+						fontFamily: "'GT Standard Large', sans-serif",
+						fontWeight: 300,
+					}}
 					data-sanity={headlineAttr?.toString()}
 				>
 					{headline}
@@ -213,7 +248,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 				{subheadline && (
 					<h2
 						className="mb-12 text-xl md:text-2xl leading-relaxed text-black"
-						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 500 }}
+						style={{
+							fontFamily: "'GT Standard Large Narrow', sans-serif",
+							fontWeight: 500,
+						}}
 						data-sanity={subheadlineAttr?.toString()}
 					>
 						{subheadline}
@@ -224,7 +262,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 				<div
 					className="prose prose-lg max-w-none"
 					data-sanity={contentAttr?.toString()}
-					style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+					style={{
+						fontFamily: "'GT Standard Small Narrow', sans-serif",
+						fontWeight: 500,
+					}}
 				>
 					<PortableText
 						value={content || []}
@@ -238,7 +279,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								h3: ({ children }) => (
 									<h3
 										className="text-xl md:text-2xl mt-12 mb-4 uppercase tracking-wide text-black"
-										style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+										style={{
+											fontFamily: "'GT Standard Large Narrow', sans-serif",
+											fontWeight: 700,
+										}}
 									>
 										{children}
 									</h3>
@@ -246,7 +290,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								h4: ({ children }) => (
 									<h4
 										className="text-lg md:text-xl mt-8 mb-3 uppercase tracking-wide text-black"
-										style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+										style={{
+											fontFamily: "'GT Standard Large Narrow', sans-serif",
+											fontWeight: 700,
+										}}
 									>
 										{children}
 									</h4>
@@ -254,7 +301,10 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								blockquote: ({ children }) => (
 									<blockquote
 										className="my-8 pl-6 border-l-[6px] border-[var(--color-volt)] italic text-lg md:text-xl text-black"
-										style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+										style={{
+											fontFamily: "'GT Standard Small Narrow', sans-serif",
+											fontWeight: 500,
+										}}
 									>
 										{children}
 									</blockquote>
@@ -273,84 +323,110 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								),
 							},
 							listItem: {
-								bullet: ({ children }) => <li className="text-black">{children}</li>,
-								number: ({ children }) => <li className="text-black">{children}</li>,
+								bullet: ({ children }) => (
+									<li className="text-black">{children}</li>
+								),
+								number: ({ children }) => (
+									<li className="text-black">{children}</li>
+								),
 							},
 							marks: {
-								strong: ({ children }) => <strong className="font-bold text-black">{children}</strong>,
-								em: ({ children }) => <em className="italic text-black">{children}</em>,
+								strong: ({ children }) => (
+									<strong className="font-bold text-black">{children}</strong>
+								),
+								em: ({ children }) => (
+									<em className="italic text-black">{children}</em>
+								),
 							},
 						}}
 					/>
 				</div>
 
-					{/* Founder Photos - if available from SharePoint */}
-					{!loadingPhotos && (bettinaPhoto || majkenPhoto) && (
-						<div className="grid md:grid-cols-2 gap-6 my-12 print:page-break-inside-avoid print:break-inside-avoid">
-							{bettinaPhoto && (
-								<div className="border-4 border-black">
-									<img
-										src={bettinaPhoto.thumbnails?.large || bettinaPhoto.downloadUrl}
-										alt="Bettina Kuperman"
-										className="w-full aspect-[4/5] object-cover"
-										crossOrigin="anonymous"
-									/>
-									<div className="p-4 bg-black text-white">
-										<p
-											className="text-sm font-bold uppercase"
-											style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
-										>
-											Bettina Kuperman
-										</p>
-										<p
-											className="text-xs"
-											style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
-										>
-											CEO, Saga Sports Group
-										</p>
-									</div>
+				{/* Founder Photos - if available from SharePoint */}
+				{!loadingPhotos && (bettinaPhoto || majkenPhoto) && (
+					<div className="grid md:grid-cols-2 gap-6 my-12 print:page-break-inside-avoid print:break-inside-avoid">
+						{majkenPhoto && (
+							<div className="border-4 border-black">
+								<img
+									src={majkenPhoto.thumbnails?.large || majkenPhoto.downloadUrl}
+									alt="Majken Gilmartin"
+									className="w-full aspect-[4/5] object-cover"
+									crossOrigin="anonymous"
+								/>
+								<div className="p-4 bg-black text-white">
+									<p
+										className="text-sm font-bold uppercase"
+										style={{
+											fontFamily: "'GT Standard Narrow', sans-serif",
+											fontWeight: 700,
+										}}
+									>
+										Majken Gilmartin
+									</p>
+									<p
+										className="text-xs"
+										style={{
+											fontFamily: "'GT Standard Small Narrow', sans-serif",
+											fontWeight: 500,
+										}}
+									>
+										COO, Saga Sports Group
+									</p>
 								</div>
-							)}
-							{majkenPhoto && (
-								<div className="border-4 border-black">
-									<img
-										src={majkenPhoto.thumbnails?.large || majkenPhoto.downloadUrl}
-										alt="Majken Gilmartin"
-										className="w-full aspect-[4/5] object-cover"
-										crossOrigin="anonymous"
-									/>
-									<div className="p-4 bg-black text-white">
-										<p
-											className="text-sm font-bold uppercase"
-											style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
-										>
-											Majken Gilmartin
-										</p>
-										<p
-											className="text-xs"
-											style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
-										>
-											COO, Saga Sports Group
-										</p>
-									</div>
+							</div>
+						)}
+						{bettinaPhoto && (
+							<div className="border-4 border-black">
+								<img
+									src={
+										bettinaPhoto.thumbnails?.large || bettinaPhoto.downloadUrl
+									}
+									alt="Bettina Kuperman"
+									className="w-full aspect-[4/5] object-cover"
+									crossOrigin="anonymous"
+								/>
+								<div className="p-4 bg-black text-white">
+									<p
+										className="text-sm font-bold uppercase"
+										style={{
+											fontFamily: "'GT Standard Narrow', sans-serif",
+											fontWeight: 700,
+										}}
+									>
+										Bettina Kuperman
+									</p>
+									<p
+										className="text-xs"
+										style={{
+											fontFamily: "'GT Standard Small Narrow', sans-serif",
+											fontWeight: 500,
+										}}
+									>
+										CEO, Saga Sports Group
+									</p>
 								</div>
-							)}
-						</div>
-					)}
+							</div>
+						)}
+					</div>
+				)}
 
 				{/* Contact Person Section */}
 				{pressRelease.contactPerson && (
 					<div className="mt-16 pt-8 border-t-2 border-black">
 						<h3
 							className="text-xl md:text-2xl mb-6 uppercase tracking-wide text-black"
-							style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+							style={{
+								fontFamily: "'GT Standard Large Narrow', sans-serif",
+								fontWeight: 700,
+							}}
 						>
-							Pressehenvendelser
-						</h3>
-
+							{language === "en" ? "Press Inquiries" : "Pressehenvendelser"}
+						</h3>{" "}
 						<div className="space-y-2">
 							{pressRelease.contactPerson.name && (
-								<p><strong>{pressRelease.contactPerson.name}</strong></p>
+								<p>
+									<strong>{pressRelease.contactPerson.name}</strong>
+								</p>
 							)}
 							{pressRelease.contactPerson.title && (
 								<p>{pressRelease.contactPerson.title}</p>
@@ -359,7 +435,7 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								{pressRelease.contactPerson.phone && (
 									<>
 										<a
-											href={`tel:${pressRelease.contactPerson.phone.replace(/\s/g, '')}`}
+											href={`tel:${pressRelease.contactPerson.phone.replace(/\s/g, "")}`}
 											className="hover:text-[var(--color-volt)] transition-colors"
 										>
 											{pressRelease.contactPerson.phone}
@@ -377,11 +453,23 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								)}
 							</p>
 							<p>
-								<a href="https://sensationalleague.com" className="hover:text-[var(--color-volt)] transition-colors">sensationalleague.com</a>
+								<a
+									href="https://sensationalleague.com"
+									className="hover:text-[var(--color-volt)] transition-colors"
+								>
+									sensationalleague.com
+								</a>
 							</p>
 							<p>
-								<strong>Pressemateriale:</strong>{" "}
-								<a href="https://sagasportsgroup.com/press" className="hover:text-[var(--color-volt)] transition-colors">sagasportsgroup.com/press</a>
+								<strong>
+									{language === "en" ? "Press Materials" : "Pressemateriale"}:
+								</strong>{" "}
+								<a
+									href="https://sagasportsgroup.com/press"
+									className="hover:text-[var(--color-volt)] transition-colors"
+								>
+									sagasportsgroup.com/press
+								</a>
 							</p>
 						</div>
 					</div>
@@ -394,13 +482,19 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 							<div key={index}>
 								<h4
 									className="text-lg md:text-xl mb-3 uppercase tracking-wide text-black"
-									style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+									style={{
+										fontFamily: "'GT Standard Large Narrow', sans-serif",
+										fontWeight: 700,
+									}}
 								>
 									{section.title}
 								</h4>
 								<p
 									className="text-sm md:text-base leading-relaxed whitespace-pre-line text-black"
-									style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+									style={{
+										fontFamily: "'GT Standard Small Narrow', sans-serif",
+										fontWeight: 500,
+									}}
 								>
 									{section.content}
 								</p>
@@ -415,11 +509,13 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 				<div className="mt-16 pt-12 border-t-4 border-black print:mt-8 print:pt-8 print:border-t-2">
 					<h3
 						className="text-xl md:text-2xl mb-8 uppercase tracking-wide text-black"
-						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+						style={{
+							fontFamily: "'GT Standard Large Narrow', sans-serif",
+							fontWeight: 700,
+						}}
 					>
-						Pressebilleder
-					</h3>
-
+						{language === "en" ? "Press Photos" : "Pressebilleder"}
+					</h3>{" "}
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 print:grid-cols-3 print:gap-3">
 						{photos.map((photo) => (
 							<a
@@ -429,7 +525,11 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 								className="group relative aspect-square border-2 border-black overflow-hidden hover:border-[var(--color-volt)] transition-all duration-200 print:border print:hover:border-black"
 							>
 								<img
-									src={photo.thumbnails?.medium || photo.thumbnails?.large || photo.downloadUrl}
+									src={
+										photo.thumbnails?.medium ||
+										photo.thumbnails?.large ||
+										photo.downloadUrl
+									}
 									alt={photo.name}
 									className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 print:group-hover:scale-100"
 									crossOrigin="anonymous"
@@ -455,12 +555,16 @@ export default function PressReleaseContent({ content: pressRelease }: PressRele
 							</a>
 						))}
 					</div>
-
 					<p
 						className="mt-6 text-sm text-gray-600 text-center print:hidden"
-						style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+						style={{
+							fontFamily: "'GT Standard Small Narrow', sans-serif",
+							fontWeight: 500,
+						}}
 					>
-						Klik på billedet for at downloade i fuld størrelse
+						{language === "en"
+							? "Click on the image to download in full size"
+							: "Klik på billedet for at downloade i fuld størrelse"}
 					</p>
 				</div>
 			)}
