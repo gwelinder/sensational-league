@@ -1,6 +1,4 @@
 import { ImageResponse } from "next/og";
-import fs from "fs/promises";
-import path from "path";
 
 export const runtime = "edge";
 export const alt = "Sensational League - Press Release";
@@ -11,11 +9,8 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-	// Load the logo image
-	const logoPath = path.join(process.cwd(), "public/SENSATIONAL-LEAGUE-PRIMARY-MARK-WHITE.png");
-	const logoBuffer = await fs.readFile(logoPath);
-	const logoBase64 = logoBuffer.toString("base64");
-	const logoSrc = `data:image/png;base64,${logoBase64}`;
+	// Use absolute URL for the logo in edge runtime
+	const logoUrl = new URL("/SENSATIONAL-LEAGUE-PRIMARY-MARK-WHITE.png", "https://sensationalleague.com").href;
 
 	return new ImageResponse(
 		(
@@ -56,7 +51,7 @@ export default async function Image() {
 					}}
 				>
 					<img
-						src={logoSrc}
+						src={logoUrl}
 						alt="Sensational League"
 						width="300"
 						height="300"

@@ -418,21 +418,21 @@ export default function PressReleaseContent({
 						>
 							{language === "en" ? "Press Inquiries" : "Pressehenvendelser"}
 						</h3>{" "}
-						<div className="space-y-2">
+						<div className="space-y-2 text-black">
 							{pressRelease.contactPerson.name && (
-								<p>
-									<strong>{pressRelease.contactPerson.name}</strong>
+								<p className="text-black">
+									<strong className="text-black">{pressRelease.contactPerson.name}</strong>
 								</p>
 							)}
 							{pressRelease.contactPerson.title && (
-								<p>{pressRelease.contactPerson.title}</p>
+								<p className="text-black">{pressRelease.contactPerson.title}</p>
 							)}
-							<p>
+							<p className="text-black">
 								{pressRelease.contactPerson.phone && (
 									<>
 										<a
 											href={`tel:${pressRelease.contactPerson.phone.replace(/\s/g, "")}`}
-											className="hover:text-[var(--color-volt)] transition-colors"
+											className="text-black hover:text-[var(--color-volt)] transition-colors"
 										>
 											{pressRelease.contactPerson.phone}
 										</a>
@@ -442,27 +442,27 @@ export default function PressReleaseContent({
 								{pressRelease.contactPerson.email && (
 									<a
 										href={`mailto:${pressRelease.contactPerson.email}`}
-										className="hover:text-[var(--color-volt)] transition-colors"
+										className="text-black hover:text-[var(--color-volt)] transition-colors"
 									>
 										{pressRelease.contactPerson.email}
 									</a>
 								)}
 							</p>
-							<p>
+							<p className="text-black">
 								<a
 									href="https://sensationalleague.com"
-									className="hover:text-[var(--color-volt)] transition-colors"
+									className="text-black hover:text-[var(--color-volt)] transition-colors"
 								>
 									sensationalleague.com
 								</a>
 							</p>
-							<p>
-								<strong>
+							<p className="text-black">
+								<strong className="text-black">
 									{language === "en" ? "Press Materials" : "Pressemateriale"}:
 								</strong>{" "}
 								<a
 									href="https://sagasportsgroup.com/press"
-									className="hover:text-[var(--color-volt)] transition-colors"
+									className="text-black hover:text-[var(--color-volt)] transition-colors"
 								>
 									sagasportsgroup.com/press
 								</a>

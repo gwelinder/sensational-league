@@ -122,7 +122,31 @@ export default function Footer({ settings }: FooterProps) {
 						className="brand-body text-xl md:text-2xl text-white max-w-3xl font-medium leading-relaxed"
 						data-sanity={descriptionAttribute?.toString()}
 					>
-						{settings?.footer?.description || ""}
+						{(() => {
+							const description = settings?.footer?.description || "";
+							// Parse text to find URLs in parentheses and make them clickable
+							const urlRegex = /\((https?:\/\/[^)]+)\)/g;
+							const parts = description.split(urlRegex);
+
+							return parts.map((part, index) => {
+								// If it's a URL (odd indices after split)
+								if (index % 2 === 1) {
+									return (
+										<a
+											key={`url-${part}`}
+											href={part}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="underline hover:text-[var(--color-volt)] transition-colors"
+										>
+											{part}
+										</a>
+									);
+								}
+								// Regular text - remove the parentheses around URLs
+								return <span key={`text-${index}-${part.slice(0, 10)}`}>{part.replace(/\(/g, '').replace(/\)/g, '')}</span>;
+							});
+						})()}
 					</p>
 				</div>
 
