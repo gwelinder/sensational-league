@@ -3,6 +3,7 @@ import type { PortableTextBlock } from "sanity";
 import { sanityFetch } from "@/sanity/lib/live";
 import { notFound } from "next/navigation";
 import PressReleaseContent from "./PressReleaseContent";
+import { PressReleaseSchema, OrganizationSchema } from "./schema-markup";
 
 interface PressRelease {
 	_id: string;
@@ -136,10 +137,20 @@ export default async function PressReleasePage() {
 	}
 
 	return (
-		<main className="min-h-screen bg-[var(--color-off-white)] py-8 print:py-0 print:bg-white">
-			<article className="max-w-4xl mx-auto px-6 md:px-12 py-12 md:py-16 bg-white border-4 border-black print:border-0 print:px-0 print:py-0 print:max-w-full">
-				<PressReleaseContent content={pressRelease} />
-			</article>
-		</main>
+		<>
+			{/* Structured Data for Google */}
+			<PressReleaseSchema
+				headline={pressRelease.headlineDa}
+				subheadline={pressRelease.subheadlineDa}
+				publishDate={pressRelease.publishDate}
+			/>
+			<OrganizationSchema />
+
+			<main className="min-h-screen bg-[var(--color-off-white)] py-8 print:py-0 print:bg-white">
+				<article className="max-w-4xl mx-auto px-6 md:px-12 py-12 md:py-16 bg-white border-4 border-black print:border-0 print:px-0 print:py-0 print:max-w-full">
+					<PressReleaseContent content={pressRelease} />
+				</article>
+			</main>
+		</>
 	);
 }
