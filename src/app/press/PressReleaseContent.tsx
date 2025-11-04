@@ -64,6 +64,8 @@ export default function PressReleaseContent({
 			.then((data) => {
 				if (data.success && data.photos) {
 					setPhotos(data.photos);
+					// Debug: Log all photo names to find the right ones
+					console.log("Available photos:", data.photos.map((p: PressPhoto) => p.name));
 				}
 				setLoadingPhotos(false);
 			})
@@ -78,12 +80,23 @@ export default function PressReleaseContent({
 	};
 
 	// Find founder photos - specific profile photos
+	// Bettina: standing full-body photo (usually named with "profil" or "standing")
+	// Majken: portrait with scarf
 	const bettinaPhoto =
 		photos.find((p) => p.name === "Bettina - Profil.jpg") ||
-		photos.find((p) => p.name.toLowerCase().includes("bettina"));
+		photos.find((p) => 
+			p.name.toLowerCase().includes("bettina") && 
+			(p.name.toLowerCase().includes("profil") || p.name.toLowerCase().includes("standing"))
+		) ||
+		photos.find((p) => p.name.toLowerCase().includes("bettina") && !p.name.toLowerCase().includes("group"));
+	
 	const majkenPhoto =
 		photos.find((p) => p.name === "Majken - Profil.jpg") ||
-		photos.find((p) => p.name.toLowerCase().includes("majken"));
+		photos.find((p) => 
+			p.name.toLowerCase().includes("majken") && 
+			(p.name.toLowerCase().includes("profil") || p.name.toLowerCase().includes("scarf"))
+		) ||
+		photos.find((p) => p.name.toLowerCase().includes("majken") && !p.name.toLowerCase().includes("group"));
 
 	// Format date in Danish
 	const formatDate = (dateString: string) => {
