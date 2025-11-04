@@ -68,6 +68,65 @@
 	font-display: swap;
 }
 
+/* GT Standard Large (L) Variants - For headlines and special applications */
+
+/* GT Standard L Expanded - Light (300) */
+@font-face {
+	font-family: 'GT Standard Large';
+	src: url('/fonts/gt-standard/GT-Standard-L-Expanded-Light.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-L-Expanded-Light.woff') format('woff');
+	font-weight: 300;
+	font-style: normal;
+	font-stretch: expanded;
+	font-display: swap;
+}
+
+/* GT Standard L Expanded - Bold (700) */
+@font-face {
+	font-family: 'GT Standard Large';
+	src: url('/fonts/gt-standard/GT-Standard-L-Expanded-Bold.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-L-Expanded-Bold.woff') format('woff');
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: expanded;
+	font-display: swap;
+}
+
+/* GT Standard L Narrow - Medium (500) */
+@font-face {
+	font-family: 'GT Standard Large Narrow';
+	src: url('/fonts/gt-standard/GT-Standard-L-Narrow-Medium.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-L-Narrow-Medium.woff') format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-stretch: condensed;
+	font-display: swap;
+}
+
+/* GT Standard L Narrow - Bold (700) */
+@font-face {
+	font-family: 'GT Standard Large Narrow';
+	src: url('/fonts/gt-standard/GT-Standard-L-Narrow-Bold.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-L-Narrow-Bold.woff') format('woff');
+	font-weight: 700;
+	font-style: normal;
+	font-stretch: condensed;
+	font-display: swap;
+}
+
+/* GT Standard Small (S) Variants - For body text and captions */
+
+/* GT Standard S Narrow - Medium (500) */
+@font-face {
+	font-family: 'GT Standard Small Narrow';
+	src: url('/fonts/gt-standard/GT-Standard-S-Narrow-Medium.woff2') format('woff2'),
+	     url('/fonts/gt-standard/GT-Standard-S-Narrow-Medium.woff') format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-stretch: condensed;
+	font-display: swap;
+}
+
 /* Brand Color System */
 :root {
 	/* Primary Palette - Fast. Rebellious. Female. */
@@ -736,3 +795,109 @@ body {
 	animation: spark-spin 25s linear infinite;
 }
 
+/* Print Styles for Press Release PDF Export */
+@media print {
+	@page {
+		margin: 1.5cm;
+		size: A4;
+	}
+
+	body {
+		background: white;
+		color: black;
+	}
+
+	main {
+		background: white;
+		padding: 0;
+	}
+
+	/* Remove outer padding and borders in print */
+	article {
+		border: none;
+		padding: 0;
+		margin: 0;
+		max-width: 100%;
+		box-shadow: none;
+	}
+
+	/* Hide interactive elements */
+	.print\:hidden,
+	button,
+	nav:not(.print\:block),
+	header:not(.print\:block),
+	footer:not(.print\:block) {
+		display: none;
+	}
+
+	/* Optimize colors for print */
+	* {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		color-adjust: exact;
+	}
+
+	/* Images */
+	img {
+		max-width: 100%;
+		page-break-inside: avoid;
+		break-inside: avoid;
+	}
+
+	/* Prevent awkward page breaks */
+	h1, h2, h3, h4, h5, h6 {
+		page-break-after: avoid;
+		break-after: avoid;
+		page-break-inside: avoid;
+		break-inside: avoid;
+	}
+
+	blockquote {
+		page-break-inside: avoid;
+		break-inside: avoid;
+	}
+
+	ul, ol {
+		page-break-inside: avoid;
+		break-inside: avoid;
+	}
+
+	/* Photo grids - allow breaks for large galleries */
+	.grid[class*="grid-cols-2"] {
+		page-break-inside: auto;
+		break-inside: auto;
+	}
+
+	/* Individual photo items - don't break */
+	.grid > * {
+		page-break-inside: avoid;
+		break-inside: avoid;
+	}
+
+	/* Better paragraph handling */
+	p {
+		orphans: 3;
+		widows: 3;
+	}
+
+	/* Section dividers */
+	div[class*="border-t"] {
+		page-break-before: avoid;
+		break-before: avoid;
+	}
+
+	/* Ensure proper spacing */
+	.space-y-6 > * + * {
+		margin-top: 1.5rem;
+	}
+
+	.space-y-8 > * + * {
+		margin-top: 2rem;
+	}
+
+	/* Remove hover effects */
+	* {
+		box-shadow: none;
+		transition: none;
+	}
+}

@@ -34,9 +34,10 @@ interface HeaderProps {
 
 export default function Header({ settings }: HeaderProps) {
 	const defaultLinks = [
-		{ href: "/policies", label: "Policies" },
+		{ href: "/#about", label: "About" },
+		{ href: "/press", label: "Press" },
 		{ href: "/dashboard", label: "Dashboard" },
-		{ href: "/#about", label: "About" }
+		{ href: "/policies", label: "Policies" }
 	];
 
 	const links = settings?.navigation?.links?.length
