@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import fs from "fs/promises";
+import path from "path";
 
 export const runtime = "edge";
 export const alt = "Sensational League - Press Release";
@@ -9,11 +11,17 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
+	// Load the logo image
+	const logoPath = path.join(process.cwd(), "public/SENSATIONAL-LEAGUE-PRIMARY-MARK-WHITE.png");
+	const logoBuffer = await fs.readFile(logoPath);
+	const logoBase64 = logoBuffer.toString("base64");
+	const logoSrc = `data:image/png;base64,${logoBase64}`;
+
 	return new ImageResponse(
 		(
 			<div
 				style={{
-					background: "#F7F7F7",
+					background: "#232324",
 					width: "100%",
 					height: "100%",
 					display: "flex",
@@ -21,62 +29,75 @@ export default async function Image() {
 					alignItems: "center",
 					justifyContent: "center",
 					padding: "80px",
+					position: "relative",
 				}}
 			>
-				{/* Logo/Spark */}
+				{/* Background subtle gradient */}
+				<div
+					style={{
+						position: "absolute",
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: "radial-gradient(circle at center, rgba(212, 255, 0, 0.1) 0%, rgba(35, 35, 36, 1) 70%)",
+					}}
+				/>
+
+				{/* Logo */}
 				<div
 					style={{
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						marginBottom: "40px",
+						marginBottom: "60px",
+						position: "relative",
+						zIndex: 1,
 					}}
 				>
-					<svg
-						width="200"
-						height="200"
-						viewBox="0 0 100 100"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M50 10L60 45H95L67.5 65L77.5 100L50 80L22.5 100L32.5 65L5 45H40L50 10Z"
-							fill="#CDFC2B"
-							stroke="#000000"
-							strokeWidth="3"
-						/>
-					</svg>
+					<img
+						src={logoSrc}
+						alt="Sensational League"
+						width="300"
+						height="300"
+						style={{
+							objectFit: "contain",
+						}}
+					/>
 				</div>
 
 				{/* Title */}
 				<div
 					style={{
 						display: "flex",
-						fontSize: 72,
+						fontSize: 64,
 						fontWeight: 900,
-						letterSpacing: "0.05em",
-						color: "#000",
+						letterSpacing: "0.1em",
+						color: "#D4FF00",
 						textAlign: "center",
 						textTransform: "uppercase",
 						marginBottom: "20px",
+						position: "relative",
+						zIndex: 1,
 					}}
 				>
-					Sensational League
+					Press Release
 				</div>
 
-				{/* Subtitle */}
+				{/* Tagline */}
 				<div
 					style={{
 						display: "flex",
 						fontSize: 36,
 						fontWeight: 700,
-						color: "#000",
+						color: "#F7F7F7",
 						textAlign: "center",
-						textTransform: "uppercase",
-						letterSpacing: "0.15em",
+						letterSpacing: "0.05em",
+						position: "relative",
+						zIndex: 1,
 					}}
 				>
-					Press Release
+					Fast. Rebellious. Female.
 				</div>
 			</div>
 		),
