@@ -34,114 +34,103 @@ function getGraphClient() {
 	});
 }
 
-export async function POST(request: NextRequest) {
+// Helper: Save to SharePoint (independent operation)
+async function saveToSharePoint(
+	email: string,
+	consentGiven: boolean,
+	consentTimestamp: string,
+	timestamp: string,
+	source?: string
+): Promise<boolean> {
+	if (
+		!process.env.AZURE_TENANT_ID ||
+		!process.env.AZURE_CLIENT_ID ||
+		!process.env.AZURE_CLIENT_SECRET ||
+		!process.env.SHAREPOINT_SITE_ID ||
+		!process.env.SHAREPOINT_NEWSLETTER_LIST_ID
+	) {
+		console.warn("⚠️ SharePoint not configured - missing environment variables");
+		return false;
+	}
+
 	try {
-		const body = await request.json();
-		const { email, consentGiven, consentTimestamp, source } = body;
+		const graphClient = getGraphClient();
 
-		// Validate required fields
-		if (!email || !consentGiven) {
-			return NextResponse.json(
-				{ error: "Email and consent are required" },
-				{ status: 400 },
-			);
+		// Check if email already exists
+		const existingItems = await graphClient
+			.api(
+				`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`
+			)
+			.header('Prefer', 'HonorNonIndexedQueriesWarningMayFailRandomly')
+			.filter(`fields/Email eq '${email}'`)
+			.expand('fields')
+			.get();
+
+		if (existingItems.value && existingItems.value.length > 0) {
+			// Update existing subscription
+			const itemId = existingItems.value[0].id;
+			const updateFields: Record<string, string | boolean> = {
+				Status: "Active",
+				ConsentGiven: consentGiven,
+				ConsentTimestamp: consentTimestamp,
+			};
+			if (source) updateFields.Source = source;
+
+			await graphClient
+				.api(
+					`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items/${itemId}/fields`
+				)
+				.update(updateFields);
+
+			console.log("✅ SharePoint: Updated existing subscription for", email);
+		} else {
+			// Create new subscription
+			const fields: Record<string, string | boolean> = {
+				Title: email,
+				Email: email,
+				Status: "Active",
+				SubscribedAt: timestamp,
+				ConsentGiven: consentGiven,
+				ConsentTimestamp: consentTimestamp,
+			};
+
+			if (source) fields.Source = source;
+
+			await graphClient
+				.api(
+					`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`
+				)
+				.post({ fields });
+
+			console.log("✅ SharePoint: Created new subscription for", email);
 		}
 
-		// Validate email format
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			return NextResponse.json(
-				{ error: "Invalid email address" },
-				{ status: 400 },
-			);
-		}
+		return true;
+	} catch (spError) {
+		console.error("❌ SharePoint error:", spError);
+		console.error("SharePoint error details:", {
+			message: spError instanceof Error ? spError.message : 'Unknown error',
+			stack: spError instanceof Error ? spError.stack : undefined,
+			siteId: process.env.SHAREPOINT_SITE_ID,
+			listId: process.env.SHAREPOINT_NEWSLETTER_LIST_ID,
+		});
+		return false;
+	}
+}
 
-		const timestamp = new Date().toISOString();
-		const ipAddress = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "Unknown";
-		const userAgent = request.headers.get("user-agent") || "Unknown";
-		const submittedFrom = request.headers.get("referer") || "Direct";
+// Helper: Send welcome email (independent operation)
+async function sendWelcomeEmail(email: string, timestamp: string): Promise<boolean> {
+	if (!process.env.RESEND_API_KEY) {
+		console.warn("⚠️ Resend not configured - missing RESEND_API_KEY");
+		return false;
+	}
 
-		// Store in SharePoint List (GDPR-compliant storage)
-		let sharePointSuccess = false;
-		if (
-			process.env.AZURE_TENANT_ID &&
-			process.env.AZURE_CLIENT_ID &&
-			process.env.AZURE_CLIENT_SECRET &&
-			process.env.SHAREPOINT_SITE_ID &&
-			process.env.SHAREPOINT_NEWSLETTER_LIST_ID
-		) {
-			try {
-				const graphClient = getGraphClient();
-
-				// Check if email already exists
-				// Add header to allow querying non-indexed fields
-				const existingItems = await graphClient
-					.api(
-						`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`
-					)
-					.header('Prefer', 'HonorNonIndexedQueriesWarningMayFailRandomly')
-					.filter(`fields/Email eq '${email}'`)
-					.expand('fields')
-					.get();
-
-				if (existingItems.value && existingItems.value.length > 0) {
-					// Update existing subscription
-					const itemId = existingItems.value[0].id;
-					const updateFields: Record<string, any> = {
-						Status: "Active",
-						ConsentGiven: consentGiven,
-						ConsentTimestamp: consentTimestamp || timestamp,
-					};
-					if (source) updateFields.Source = source;
-
-					await graphClient
-						.api(
-							`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items/${itemId}/fields`
-						)
-						.update(updateFields);
-				} else {
-					// Create new subscription
-					// Only include fields that exist in your SharePoint list
-					const fields: Record<string, any> = {
-						Title: email,
-						Email: email,
-						Status: "Active",
-						SubscribedAt: timestamp,
-						ConsentGiven: consentGiven,
-						ConsentTimestamp: consentTimestamp || timestamp,
-					};
-
-					// Add optional fields only if they exist in your list
-					if (source) fields.Source = source;
-					// Uncomment these if you add these columns to SharePoint:
-					// if (ipAddress) fields.IPAddress = ipAddress;
-					// if (userAgent) fields.UserAgent = userAgent;
-
-					await graphClient
-						.api(
-							`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`
-						)
-						.post({ fields });
-				}
-				sharePointSuccess = true;
-			} catch (spError) {
-				console.error("SharePoint error:", spError);
-				// Don't fail the request if SharePoint fails
-			}
-		}
-
-		// Send welcome email via Resend
-		// Using newsletter@sensationalleague.com (must be verified in Resend)
-		const recipientEmail = email;
-
-		let emailSuccess = false;
-		try {
-
-			const { error } = await resend.emails.send({
-				from: "Sensational League <newsletter@sensationalleague.com>",
-				to: [recipientEmail],
-				subject: "Welcome to Sensational League ⚡",
-				html: `
+	try {
+		const { error } = await resend.emails.send({
+			from: "Sensational League <newsletter@sensationalleague.com>",
+			to: [email],
+			subject: "Welcome to Sensational League ⚡",
+			html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -212,25 +201,48 @@ export async function POST(request: NextRequest) {
 	</table>
 </body>
 </html>
-				`,
-			});
+			`,
+		});
 
-			if (error) {
-				console.error("Resend error:", error);
-			} else {
-				emailSuccess = true;
-			}
-		} catch (emailError) {
-			console.error("Email error:", emailError);
+		if (error) {
+			console.error("❌ Resend error:", error);
+			console.error("Resend error details:", {
+				from: "newsletter@sensationalleague.com",
+				to: email,
+				verifiedDomain: process.env.RESEND_VERIFIED_DOMAIN,
+			});
+			return false;
 		}
 
-		// Notify admin
-		try {
-			await resend.emails.send({
-				from: "Sensational League Newsletter <notifications@sensationalleague.com>",
-				to: ["saga@sagasportsgroup.com"],
-				subject: `[SL] Newsletter Signup: ${email}`,
-				text: `New newsletter subscription:
+		console.log("✅ Email: Successfully sent welcome email to", email);
+		return true;
+	} catch (emailError) {
+		console.error("❌ Email error:", emailError);
+		console.error("Email error details:", {
+			message: emailError instanceof Error ? emailError.message : 'Unknown error',
+			hasApiKey: !!process.env.RESEND_API_KEY,
+		});
+		return false;
+	}
+}
+
+// Helper: Send admin notification (non-blocking, fire-and-forget)
+async function sendAdminNotification(
+	email: string,
+	source: string,
+	timestamp: string,
+	ipAddress: string,
+	consentGiven: boolean,
+	consentTimestamp: string,
+	sharePointSuccess: boolean,
+	emailSuccess: boolean
+): Promise<void> {
+	try {
+		await resend.emails.send({
+			from: "Sensational League Newsletter <notifications@sensationalleague.com>",
+			to: ["saga@sagasportsgroup.com"],
+			subject: `[SL] Newsletter Signup: ${email}`,
+			text: `New newsletter subscription:
 
 Email: ${email}
 Source: ${source}
@@ -241,10 +253,69 @@ Consent timestamp: ${consentTimestamp}
 
 Stored in SharePoint: ${sharePointSuccess ? "Yes" : "No"}
 Welcome email sent: ${emailSuccess ? "Yes" : "No"}`,
-			});
-		} catch (notifyError) {
-			console.error("Admin notification error:", notifyError);
+		});
+		console.log("✅ Admin notification sent");
+	} catch (notifyError) {
+		console.error("❌ Admin notification error:", notifyError);
+	}
+}
+
+export async function POST(request: NextRequest) {
+	try {
+		const body = await request.json();
+		const { email, consentGiven, consentTimestamp, source } = body;
+
+		// Validate required fields
+		if (!email || !consentGiven) {
+			return NextResponse.json(
+				{ error: "Email and consent are required" },
+				{ status: 400 },
+			);
 		}
+
+		// Validate email format
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			return NextResponse.json(
+				{ error: "Invalid email address" },
+				{ status: 400 },
+			);
+		}
+
+		const timestamp = new Date().toISOString();
+		const ipAddress = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "Unknown";
+
+		console.log(`📧 Newsletter signup: ${email} from ${source || 'unknown source'}`);
+
+		// Run SharePoint and Email operations in parallel using Promise.allSettled
+		// This ensures they are completely independent - failures don't cascade
+		const [sharePointResult, emailResult] = await Promise.allSettled([
+			saveToSharePoint(email, consentGiven, consentTimestamp || timestamp, timestamp, source),
+			sendWelcomeEmail(email, timestamp),
+		]);
+
+		const sharePointSuccess = sharePointResult.status === 'fulfilled' && sharePointResult.value;
+		const emailSuccess = emailResult.status === 'fulfilled' && emailResult.value;
+
+		// Log results
+		if (sharePointResult.status === 'rejected') {
+			console.error("❌ SharePoint operation rejected:", sharePointResult.reason);
+		}
+		if (emailResult.status === 'rejected') {
+			console.error("❌ Email operation rejected:", emailResult.reason);
+		}
+
+		// Send admin notification (non-blocking, fire-and-forget)
+		sendAdminNotification(
+			email,
+			source || 'unknown',
+			timestamp,
+			ipAddress,
+			consentGiven,
+			consentTimestamp || timestamp,
+			sharePointSuccess,
+			emailSuccess
+		).catch((err: Error) => console.error("Admin notification failed:", err));
 
 		return NextResponse.json({
 			success: true,
