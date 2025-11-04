@@ -69,47 +69,72 @@ export async function generateMetadata(): Promise<Metadata> {
 
 	if (!pressRelease) {
 		return {
-			title: "Press - Sensational League",
+			title: "Press Release - Sensational League",
 			description: "Latest press releases from Sensational League",
+			openGraph: {
+				title: "Press Release - Sensational League",
+				description: "Latest press releases from Sensational League",
+				type: "website",
+				url: "https://sensationalleague.com/press",
+				siteName: "Sensational League",
+				locale: "en_US",
+				images: [
+					{
+						url: "/press/opengraph-image",
+						width: 1200,
+						height: 630,
+						alt: "Sensational League - Press Release",
+					},
+				],
+			},
+			twitter: {
+				card: "summary_large_image",
+				title: "Press Release - Sensational League",
+				description: "Latest press releases from Sensational League",
+				images: ["/press/opengraph-image"],
+			},
 		};
 	}
 
-	const title = pressRelease.seo?.metaTitle || `${pressRelease.headlineDa} - Sensational League`;
-	const description = pressRelease.seo?.metaDescription || pressRelease.subheadlineDa || pressRelease.headlineDa;
+	// Use English if available, fallback to Danish
+	const title = pressRelease.seo?.metaTitle || (pressRelease.headlineEn ? `${pressRelease.headlineEn} - Sensational League` : `${pressRelease.headlineDa} - Sensational League`);
+	const description = pressRelease.seo?.metaDescription || pressRelease.subheadlineEn || pressRelease.headlineEn || pressRelease.subheadlineDa || pressRelease.headlineDa;
+	const ogTitle = pressRelease.headlineEn || pressRelease.headlineDa;
 
 	return {
 		title,
 		description,
 		keywords: pressRelease.seo?.keywords || [
-			"kvindefodbold",
 			"women's football",
 			"Sensational League",
-			"sports innovation"
+			"sports innovation",
+			"kvindefodbold"
 		],
 		openGraph: {
-			title: pressRelease.headlineDa,
+			title: ogTitle,
 			description: description,
 			type: "article",
 			publishedTime: pressRelease.publishDate,
 			authors: ["Saga Sports Group"],
 			url: "https://sensationalleague.com/press",
 			siteName: "Sensational League",
+			locale: "en_US",
 			images: [
 				{
-					url: "/opengraph-image",
+					url: "/press/opengraph-image",
 					width: 1200,
 					height: 630,
-					alt: "Sensational League - Fast. Rebellious. Female.",
+					alt: "Sensational League - Press Release",
 				},
 			],
 		},
 		twitter: {
 			card: "summary_large_image",
-			title: pressRelease.headlineDa,
+			title: ogTitle,
 			description: description,
 			site: "@SensationalLG",
 			creator: "@SensationalLG",
-			images: ["/opengraph-image"],
+			images: ["/press/opengraph-image"],
 		},
 		alternates: {
 			canonical: "https://sensationalleague.com/press",
