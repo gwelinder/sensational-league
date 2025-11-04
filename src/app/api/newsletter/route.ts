@@ -126,8 +126,13 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 	}
 
 	try {
+		// Use verified domain if available, fallback to Resend test domain
+		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'sensationalleague.com'
+			? "Sensational League <newsletter@sensationalleague.com>"
+			: "Sensational League <onboarding@resend.dev>";
+
 		const { error } = await resend.emails.send({
-			from: "Sensational League <newsletter@sensationalleague.com>",
+			from: fromEmail,
 			to: [email],
 			subject: "Welcome to Sensational League ⚡",
 			html: `
@@ -238,8 +243,13 @@ async function sendAdminNotification(
 	emailSuccess: boolean
 ): Promise<void> {
 	try {
+		// Use verified domain if available, fallback to Resend test domain
+		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'sensationalleague.com'
+			? "Sensational League Newsletter <notifications@sensationalleague.com>"
+			: "Sensational League Newsletter <onboarding@resend.dev>";
+
 		await resend.emails.send({
-			from: "Sensational League Newsletter <notifications@sensationalleague.com>",
+			from: fromEmail,
 			to: ["saga@sagasportsgroup.com"],
 			subject: `[SL] Newsletter Signup: ${email}`,
 			text: `New newsletter subscription:
