@@ -1,4 +1,13 @@
 import type React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Privacy Policy - Sensational League",
+	robots: {
+		index: false,
+		follow: false,
+	},
+};
 
 const PageHeader = ({ children }: { children: React.ReactNode }) => (
 	<div className="pt-48 pb-24 bg-[var(--surface)] border-b border-[var(--border)]">
