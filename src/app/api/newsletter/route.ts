@@ -1,10 +1,15 @@
 import { ClientSecretCredential } from "@azure/identity";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { type NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import sgMail from "@sendgrid/mail";
+import { client } from "@/sanity/lib/client";
+import { renderEmailTemplate } from "@/lib/email-renderer";
 import "isomorphic-fetch";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 // Initialize Microsoft Graph client for SharePoint
 function getGraphClient() {
@@ -118,24 +123,9 @@ async function saveToSharePoint(
 	}
 }
 
-// Helper: Send welcome email (independent operation)
-async function sendWelcomeEmail(email: string, timestamp: string): Promise<boolean> {
-	if (!process.env.RESEND_API_KEY) {
-		console.warn("⚠️ Resend not configured - missing RESEND_API_KEY");
-		return false;
-	}
-
-	try {
-		// Use verified domain if available, fallback to Resend test domain
-		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'sensationalleague.com'
-			? "Sensational League <newsletter@sensationalleague.com>"
-			: "Sensational League <onboarding@resend.dev>";
-
-		const { error } = await resend.emails.send({
-			from: fromEmail,
-			to: [email],
-			subject: "Welcome to Sensational League ⚡",
-			html: `
+// Helper: Generate fallback email HTML
+function getFallbackEmailHTML(email: string, timestamp: string): string {
+	return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -147,56 +137,15 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 	<table role="presentation" style="width: 100%; border-collapse: collapse;">
 		<tr>
 			<td align="center" style="padding: 40px 20px;">
-				<table role="presentation" style="max-width: 600px; width: 100%; background-color: #232324; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
-					<!-- Header -->
-					<tr>
-						<td style="padding: 40px 40px 30px; text-align: center; background-color: #232324;">
-							<h1 style="margin: 0; color: #D4FF00; font-size: 32px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">SENSATIONAL LEAGUE</h1>
-							<p style="margin: 10px 0 0; color: #F7F7F7; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">Fast. Rebellious. Female.</p>
-						</td>
-					</tr>
-
-					<!-- Content -->
+				<table role="presentation" style="max-width: 600px; width: 100%; background-color: #232324; border-radius: 8px; overflow: hidden;">
 					<tr>
 						<td style="padding: 40px; background-color: #F7F7F7;">
-							<p style="margin: 0 0 20px; color: #232324; font-size: 16px; line-height: 1.6; font-weight: 500;">
-								Welcome to the movement! ⚡
-							</p>
+							<h1 style="margin: 0 0 20px; color: #232324; font-size: 24px;">Welcome to Sensational League</h1>
 							<p style="margin: 0 0 20px; color: #232324; font-size: 16px; line-height: 1.6;">
-								You're now part of something revolutionary. Get ready for exclusive updates about the world's most innovative women's football league—where teams compete not just for goals, but for impact.
+								Thank you for subscribing! We'll keep you updated with the latest news and announcements.
 							</p>
-							<p style="margin: 0 0 20px; color: #232324; font-size: 16px; line-height: 1.6;">
-								<strong>Play Football. Drive Impact. Change the World.</strong>
-							</p>
-							<p style="margin: 0 0 30px; color: #232324; font-size: 16px; line-height: 1.6;">
-								Stay tuned for announcements about our launch, team reveals, and how you can be part of the Sensational League.
-							</p>
-
-							<!-- CTA Button -->
-							<table role="presentation" style="margin: 0 auto;">
-								<tr>
-									<td style="border-radius: 24px; background-color: #D4FF00;">
-										<a href="https://sensationalleague.com" style="display: inline-block; padding: 14px 32px; color: #232324; text-decoration: none; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
-											Visit Our Website
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-
-					<!-- Footer -->
-					<tr>
-						<td style="padding: 30px 40px; background-color: #232324; border-top: 2px solid #D4FF00;">
-							<p style="margin: 0 0 15px; color: rgba(247,247,247,0.7); font-size: 12px; line-height: 1.5;">
-								You're receiving this email because you subscribed to Sensational League newsletter on ${new Date(timestamp).toLocaleDateString()}.
-							</p>
-							<p style="margin: 0; color: rgba(247,247,247,0.7); font-size: 12px; line-height: 1.5;">
-								<a href="mailto:hello@sensationalleague.com?subject=Unsubscribe" style="color: #D4FF00; text-decoration: underline;">Unsubscribe</a> |
-								<a href="https://sensationalleague.com/privacy" style="color: #D4FF00; text-decoration: underline;">Privacy Policy</a>
-							</p>
-							<p style="margin: 15px 0 0; color: rgba(247,247,247,0.7); font-size: 12px; line-height: 1.5;">
-								© ${new Date().getFullYear()} Sensational League. All rights reserved.
+							<p style="margin: 0; color: #232324; font-size: 14px;">
+								Subscribed on ${new Date(timestamp).toLocaleDateString()}
 							</p>
 						</td>
 					</tr>
@@ -206,18 +155,46 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 	</table>
 </body>
 </html>
-			`,
-		});
+	`.trim();
+}
 
-		if (error) {
-			console.error("❌ Resend error:", error);
-			console.error("Resend error details:", {
-				from: "newsletter@sensationalleague.com",
-				to: email,
-				verifiedDomain: process.env.RESEND_VERIFIED_DOMAIN,
-			});
-			return false;
+// Helper: Send welcome email (independent operation)
+async function sendWelcomeEmail(email: string, timestamp: string): Promise<boolean> {
+	if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
+		console.warn("⚠️ SendGrid not configured - missing SENDGRID_API_KEY or SENDGRID_FROM_EMAIL");
+		return false;
+	}
+
+	try {
+		// Fetch email template from Sanity
+		const template = await client.fetch(
+			'*[_type == "emailTemplate" && templateId == "welcome-email" && enabled == true][0] { subject, content, signature, ctaButton, socialLinks }'
+		);
+
+		const fromEmail = process.env.SENDGRID_FROM_EMAIL;
+
+		let emailSubject: string;
+		let emailHtml: string;
+
+		if (template) {
+			// Render template from Sanity
+			const rendered = renderEmailTemplate(template, { email, timestamp });
+			emailSubject = rendered.subject;
+			emailHtml = rendered.html;
+			console.log("✅ Using Sanity email template");
+		} else {
+			// Use fallback if template doesn't exist
+			emailSubject = "Welcome to the Sensational League ⚡";
+			emailHtml = getFallbackEmailHTML(email, timestamp);
+			console.warn("⚠️ No Sanity template found - using fallback HTML");
 		}
+
+		await sgMail.send({
+			from: fromEmail,
+			to: email,
+			subject: emailSubject,
+			html: emailHtml,
+		});
 
 		console.log("✅ Email: Successfully sent welcome email to", email);
 		return true;
@@ -225,7 +202,8 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 		console.error("❌ Email error:", emailError);
 		console.error("Email error details:", {
 			message: emailError instanceof Error ? emailError.message : 'Unknown error',
-			hasApiKey: !!process.env.RESEND_API_KEY,
+			hasApiKey: !!process.env.SENDGRID_API_KEY,
+			hasFromEmail: !!process.env.SENDGRID_FROM_EMAIL,
 		});
 		return false;
 	}
@@ -243,14 +221,16 @@ async function sendAdminNotification(
 	emailSuccess: boolean
 ): Promise<void> {
 	try {
-		// Use verified domain if available, fallback to Resend test domain
-		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'sensationalleague.com'
-			? "Sensational League Newsletter <notifications@sensationalleague.com>"
-			: "Sensational League Newsletter <onboarding@resend.dev>";
+		if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
+			console.warn("⚠️ SendGrid not configured - skipping admin notification");
+			return;
+		}
 
-		await resend.emails.send({
+		const fromEmail = process.env.SENDGRID_FROM_EMAIL;
+
+		await sgMail.send({
 			from: fromEmail,
-			to: ["saga@sagasportsgroup.com"],
+			to: "saga@sagasportsgroup.com",
 			subject: `[SL] Newsletter Signup: ${email}`,
 			text: `New newsletter subscription:
 

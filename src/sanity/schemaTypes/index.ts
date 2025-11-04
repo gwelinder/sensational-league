@@ -5,6 +5,7 @@ import { homePage } from "./homePage";
 import { page } from "./page";
 import { policy } from "./policy";
 import { pressRelease } from "./pressRelease";
+import { emailTemplate } from "./emailTemplate";
 import { siteSettings } from "./siteSettings";
 import { contributorSettings } from "./contributorSettings";
 import { logo } from "./logo";
@@ -50,6 +51,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     page,
     policy,
     pressRelease,
+    emailTemplate,
     contributorSettings,
     logo,
     
