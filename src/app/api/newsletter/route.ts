@@ -1,15 +1,13 @@
 import { ClientSecretCredential } from "@azure/identity";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { type NextRequest, NextResponse } from "next/server";
-import sgMail from "@sendgrid/mail";
+import { Resend } from "resend";
 import { client } from "@/sanity/lib/client";
 import { renderEmailTemplate } from "@/lib/email-renderer";
 import "isomorphic-fetch";
 
-// Initialize SendGrid
-if (process.env.SENDGRID_API_KEY) {
-	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Initialize Microsoft Graph client for SharePoint
 function getGraphClient() {
@@ -160,8 +158,8 @@ function getFallbackEmailHTML(email: string, timestamp: string): string {
 
 // Helper: Send welcome email (independent operation)
 async function sendWelcomeEmail(email: string, timestamp: string): Promise<boolean> {
-	if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-		console.warn("⚠️ SendGrid not configured - missing SENDGRID_API_KEY or SENDGRID_FROM_EMAIL");
+	if (!process.env.RESEND_API_KEY) {
+		console.warn("⚠️ Resend not configured - missing RESEND_API_KEY");
 		return false;
 	}
 
@@ -171,7 +169,10 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 			'*[_type == "emailTemplate" && templateId == "welcome-email" && enabled == true][0] { subject, content, signature, ctaButton, socialLinks }'
 		);
 
-		const fromEmail = process.env.SENDGRID_FROM_EMAIL;
+		// Use verified domain
+		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'updates.sensationalleague.com'
+			? "Sensational League <newsletter@updates.sensationalleague.com>"
+			: "Sensational League <onboarding@resend.dev>";
 
 		let emailSubject: string;
 		let emailHtml: string;
@@ -189,12 +190,17 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 			console.warn("⚠️ No Sanity template found - using fallback HTML");
 		}
 
-		await sgMail.send({
+		const { error } = await resend.emails.send({
 			from: fromEmail,
-			to: email,
+			to: [email],
 			subject: emailSubject,
 			html: emailHtml,
 		});
+
+		if (error) {
+			console.error("❌ Resend error:", error);
+			return false;
+		}
 
 		console.log("✅ Email: Successfully sent welcome email to", email);
 		return true;
@@ -202,8 +208,7 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 		console.error("❌ Email error:", emailError);
 		console.error("Email error details:", {
 			message: emailError instanceof Error ? emailError.message : 'Unknown error',
-			hasApiKey: !!process.env.SENDGRID_API_KEY,
-			hasFromEmail: !!process.env.SENDGRID_FROM_EMAIL,
+			hasApiKey: !!process.env.RESEND_API_KEY,
 		});
 		return false;
 	}
@@ -221,16 +226,19 @@ async function sendAdminNotification(
 	emailSuccess: boolean
 ): Promise<void> {
 	try {
-		if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-			console.warn("⚠️ SendGrid not configured - skipping admin notification");
+		if (!process.env.RESEND_API_KEY) {
+			console.warn("⚠️ Resend not configured - skipping admin notification");
 			return;
 		}
 
-		const fromEmail = process.env.SENDGRID_FROM_EMAIL;
+		// Use verified domain
+		const fromEmail = process.env.RESEND_VERIFIED_DOMAIN === 'updates.sensationalleague.com'
+			? "Sensational League Newsletter <notifications@updates.sensationalleague.com>"
+			: "Sensational League Newsletter <onboarding@resend.dev>";
 
-		await sgMail.send({
+		await resend.emails.send({
 			from: fromEmail,
-			to: "saga@sagasportsgroup.com",
+			to: ["saga@sagasportsgroup.com"],
 			subject: `[SL] Newsletter Signup: ${email}`,
 			text: `New newsletter subscription:
 
