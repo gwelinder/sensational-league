@@ -3,9 +3,9 @@
  * Run with: pnpm seed:email
  */
 
+import { resolve } from "node:path";
 import * as dotenv from "dotenv";
 import { createClient } from "next-sanity";
-import { resolve } from "path";
 
 // Load .env.local file
 dotenv.config({ path: resolve(process.cwd(), ".env.local") });
@@ -40,23 +40,9 @@ const welcomeEmailTemplate = {
 	_id: "emailTemplate-welcome",
 	name: "Welcome Email",
 	templateId: "welcome-email",
-	subject: "Welcome to the Sensational League ⚡",
+	subject: "Welcome to the Sensational League Newsletter⚡",
 	preheader: "We're so happy you're here",
 	content: [
-		{
-			_type: 'block',
-			_key: 'welcome-greeting',
-			style: 'normal',
-			children: [
-				{
-					_type: 'span',
-					_key: 'greeting-text',
-					text: 'Welcome to the Sensational League ⚡',
-					marks: ['strong'],
-				},
-			],
-			markDefs: [],
-		},
 		{
 			_type: 'block',
 			_key: 'welcome-intro',
@@ -85,7 +71,7 @@ const welcomeEmailTemplate = {
 				{
 					_type: 'span',
 					_key: 'social-yt',
-					text: 'YouTube',
+					text: 'Youtube',
 					marks: ['link-youtube'],
 				},
 				{
@@ -121,7 +107,7 @@ const welcomeEmailTemplate = {
 				{
 					_type: 'span',
 					_key: 'social-tt',
-					text: 'TikTok',
+					text: 'Tik Tok',
 					marks: ['link-tiktok'],
 				},
 				{
@@ -172,7 +158,7 @@ const welcomeEmailTemplate = {
 			],
 		},
 	],
-	signature: "Warm regards,\nSaga & the Sensational Team",
+	signature: "Warm regards\nSaga & the Sensational Team",
 	ctaButton: {
 		text: "Visit Our Website",
 		url: "https://sensationalleague.com",
