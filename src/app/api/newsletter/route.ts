@@ -131,10 +131,8 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Send welcome email via Resend
-		// When using resend.dev testing domain, can only send to account owner email
-		// For production, verify your domain and remove this check
-		const testingMode = process.env.RESEND_API_KEY?.startsWith('re_') && !process.env.RESEND_VERIFIED_DOMAIN;
-		const recipientEmail = testingMode ? 'gwelinder@gmail.com' : email;
+		// Using newsletter@sensationalleague.com (must be verified in Resend)
+		const recipientEmail = email;
 
 		let emailSuccess = false;
 		try {
@@ -142,7 +140,7 @@ export async function POST(request: NextRequest) {
 			const { error } = await resend.emails.send({
 				from: "Sensational League <newsletter@sensationalleague.com>",
 				to: [recipientEmail],
-				subject: testingMode ? `[TEST] Welcome to Sensational League ⚡ (for: ${email})` : "Welcome to Sensational League ⚡",
+				subject: "Welcome to Sensational League ⚡",
 				html: `
 <!DOCTYPE html>
 <html>
@@ -161,7 +159,6 @@ export async function POST(request: NextRequest) {
 						<td style="padding: 40px 40px 30px; text-align: center; background-color: #232324;">
 							<h1 style="margin: 0; color: #D4FF00; font-size: 32px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">SENSATIONAL LEAGUE</h1>
 							<p style="margin: 10px 0 0; color: #F7F7F7; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">Fast. Rebellious. Female.</p>
-							${testingMode ? `<p style="margin: 15px 0 0; padding: 10px; background-color: #FF4400; color: white; font-size: 12px; border-radius: 4px;"><strong>TEST MODE:</strong> This email was intended for ${email}</p>` : ''}
 						</td>
 					</tr>
 
@@ -231,7 +228,7 @@ export async function POST(request: NextRequest) {
 		try {
 			await resend.emails.send({
 				from: "Sensational League Newsletter <notifications@sensationalleague.com>",
-				to: testingMode ? ["gwelinder@gmail.com"] : ["saga@sagasportsgroup.com"],
+				to: ["saga@sagasportsgroup.com"],
 				subject: `[SL] Newsletter Signup: ${email}`,
 				text: `New newsletter subscription:
 
@@ -243,8 +240,7 @@ Consent given: ${consentGiven}
 Consent timestamp: ${consentTimestamp}
 
 Stored in SharePoint: ${sharePointSuccess ? "Yes" : "No"}
-Welcome email sent: ${emailSuccess ? "Yes" : "No"}
-${testingMode ? '\n[TEST MODE: Welcome email sent to gwelinder@gmail.com]' : ''}`,
+Welcome email sent: ${emailSuccess ? "Yes" : "No"}`,
 			});
 		} catch (notifyError) {
 			console.error("Admin notification error:", notifyError);
