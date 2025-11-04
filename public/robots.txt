@@ -1,0 +1,11 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin/studio paths
+User-agent: *
+Disallow: /studio
+Disallow: /api/draft-mode
+
+# Sitemap location
+Sitemap: https://sensationalleague.com/sitemap.xml

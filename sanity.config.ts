@@ -43,6 +43,10 @@ export default defineConfig({
 						filter: `_type == "homePage"`,
 					},
 					{
+						route: "/press",
+						filter: `_type == "pressRelease"`,
+					},
+					{
 						route: "/policies/:slug",
 						filter: `_type == "policy" && slug.current == $slug`,
 					},
@@ -58,6 +62,19 @@ export default defineConfig({
 								{
 									title: doc?.title || 'Home Page',
 									href: '/',
+								},
+							],
+						}),
+					},
+					pressRelease: {
+						select: {
+							headline: 'headline',
+						},
+						resolve: (doc) => ({
+							locations: [
+								{
+									title: doc?.headline || 'Press Release',
+									href: '/press',
 								},
 							],
 						}),

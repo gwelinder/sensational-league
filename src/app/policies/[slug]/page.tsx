@@ -59,8 +59,32 @@ export async function generateMetadata({ params }: PageProps) {
 	const { slug } = await params;
 	const policy = await getPolicy(slug);
 
+	const title = policy?.title ?? "Policy";
+	const description = `Read Sensational League's ${policy?.title ?? "policy"} - Fast. Rebellious. Female.`;
+
 	return {
-		title: policy?.title ?? "Policy",
-		description: `Read our ${policy?.title ?? "policy"}`,
+		title,
+		description,
+		openGraph: {
+			title: `${title} | Sensational League`,
+			description,
+			type: "article",
+			url: `https://sensationalleague.com/policies/${slug}`,
+			siteName: "Sensational League",
+			images: [
+				{
+					url: "/opengraph-image",
+					width: 1200,
+					height: 630,
+					alt: "Sensational League - Fast. Rebellious. Female.",
+				},
+			],
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: `${title} | Sensational League`,
+			description,
+			images: ["/opengraph-image"],
+		},
 	};
 }

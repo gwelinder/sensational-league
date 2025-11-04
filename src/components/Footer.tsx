@@ -149,13 +149,13 @@ export default function Footer({ settings }: FooterProps) {
 						</Link>
 						<span className="text-white">|</span>
 						<Link
-							href="/studio"
+							href="/press"
 							className={cn(
 								"brand-caption text-sm text-white uppercase tracking-wider font-bold",
 								"hover:text-[var(--color-volt)] transition-colors",
 							)}
 						>
-							Studio
+							Press release
 						</Link>
 					</div>
 

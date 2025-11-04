@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { PortableTextBlock } from "sanity";
+import { PortableText } from "@portabletext/react";
+import { createDataAttribute } from "@sanity/visual-editing";
 
 interface PressPhoto {
 	id: string;
@@ -12,7 +15,39 @@ interface PressPhoto {
 	};
 }
 
-export default function PressReleaseContent() {
+interface PressReleaseProps {
+	content: {
+		_id: string;
+		_type: string;
+		publishDate: string;
+		// Danish fields
+		headlineDa: string;
+		subheadlineDa?: string;
+		contentDa: PortableTextBlock[];
+		aboutSectionsDa?: Array<{
+			title: string;
+			content: string;
+		}>;
+		// English fields
+		headlineEn?: string;
+		subheadlineEn?: string;
+		contentEn?: PortableTextBlock[];
+		aboutSectionsEn?: Array<{
+			title: string;
+			content: string;
+		}>;
+		// Shared fields
+		contactPerson?: {
+			name?: string;
+			title?: string;
+			phone?: string;
+			email?: string;
+		};
+	};
+}
+
+export default function PressReleaseContent({ content: pressRelease }: PressReleaseProps) {
+	const [language, setLanguage] = useState<'da' | 'en'>('da');
 	const [photos, setPhotos] = useState<PressPhoto[]>([]);
 	const [loadingPhotos, setLoadingPhotos] = useState(true);
 
@@ -40,11 +75,76 @@ export default function PressReleaseContent() {
 	const bettinaPhoto = photos.find(p => p.name.toLowerCase().includes('bettina'));
 	const majkenPhoto = photos.find(p => p.name.toLowerCase().includes('majken'));
 
+	// Format date in Danish
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('da-DK', { year: 'numeric', month: 'long', day: 'numeric' });
+	};
+
+	// Check if English version exists
+	const hasEnglish = !!(pressRelease.headlineEn && pressRelease.contentEn);
+
+	// Get current language content
+	const headline = language === 'en' ? pressRelease.headlineEn : pressRelease.headlineDa;
+	const subheadline = language === 'en' ? pressRelease.subheadlineEn : pressRelease.subheadlineDa;
+	const content = language === 'en' ? pressRelease.contentEn : pressRelease.contentDa;
+	const aboutSections = language === 'en' ? pressRelease.aboutSectionsEn : pressRelease.aboutSectionsDa;
+
+	// Data attributes for visual editing
+	const headlineAttr = createDataAttribute({
+		id: pressRelease._id,
+		type: pressRelease._type,
+		path: language === 'en' ? 'headlineEn' : 'headlineDa',
+	});
+
+	const subheadlineAttr = createDataAttribute({
+		id: pressRelease._id,
+		type: pressRelease._type,
+		path: language === 'en' ? 'subheadlineEn' : 'subheadlineDa',
+	});
+
+	const contentAttr = createDataAttribute({
+		id: pressRelease._id,
+		type: pressRelease._type,
+		path: language === 'en' ? 'contentEn' : 'contentDa',
+	});
+
 	return (
 		<div>
-			{/* PDF Download Button - Sticky */}
-			<div className="sticky top-4 z-10 mb-8 flex justify-end print:hidden">
+			{/* Language Toggle & PDF Download - Sticky */}
+			<div className="sticky top-4 z-10 mb-8 flex justify-between items-center gap-4 print:hidden">
+				{/* Language Toggle - Only show if English version exists */}
+				{hasEnglish && (
+					<div className="flex gap-2 border-2 border-black">
+						<button
+							type="button"
+							onClick={() => setLanguage('da')}
+							className={`px-4 py-2 font-bold uppercase tracking-wider transition-all duration-200 ${
+								language === 'da'
+									? 'bg-[var(--color-volt)] text-black'
+									: 'bg-white text-black hover:bg-gray-100'
+							}`}
+							style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
+						>
+							🇩🇰 DA
+						</button>
+						<button
+							type="button"
+							onClick={() => setLanguage('en')}
+							className={`px-4 py-2 font-bold uppercase tracking-wider transition-all duration-200 ${
+								language === 'en'
+									? 'bg-[var(--color-volt)] text-black'
+									: 'bg-white text-black hover:bg-gray-100'
+							}`}
+							style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
+						>
+							🇬🇧 EN
+						</button>
+					</div>
+				)}
+
 				<button
+					type="button"
 					onClick={printAsPDF}
 					className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-volt)] text-black font-bold uppercase tracking-wider hover:bg-black hover:text-[var(--color-volt)] transition-all duration-200 border-2 border-black"
 					style={{ fontFamily: "'GT Standard Narrow', sans-serif", fontWeight: 700 }}
@@ -88,7 +188,7 @@ export default function PressReleaseContent() {
 							className="text-xs tracking-wide text-gray-600"
 							style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
 						>
-							4. november 2025
+							{formatDate(pressRelease.publishDate)}
 						</p>
 					</div>
 					<a
@@ -104,87 +204,85 @@ export default function PressReleaseContent() {
 				<h1
 					className="mb-8 text-[18pt] leading-[1.2] tracking-wide uppercase text-black"
 					style={{ fontFamily: "'GT Standard Large', sans-serif", fontWeight: 300 }}
+					data-sanity={headlineAttr?.toString()}
 				>
-					Dansk-skabt International Kvindefodboldliga får Millioninvestering fra Moonbug-stifter
+					{headline}
 				</h1>
 
 				{/* Subheader - GT Standard L Narrow */}
-				<h2
-					className="mb-12 text-xl md:text-2xl leading-relaxed text-black"
-					style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 500 }}
-				>
-					To danske kvindelige iværksættere lancerer professionel international kvindefodboldliga med innovativt format og kommerciel forretningsmodel
-				</h2>
+				{subheadline && (
+					<h2
+						className="mb-12 text-xl md:text-2xl leading-relaxed text-black"
+						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 500 }}
+						data-sanity={subheadlineAttr?.toString()}
+					>
+						{subheadline}
+					</h2>
+				)}
 
-				{/* Body Text - GT Standard S Narrow Medium */}
+				{/* Body Text - GT Standard S Narrow Medium with Portable Text */}
 				<div
-					className="space-y-6 text-base md:text-lg leading-relaxed text-black"
+					className="prose prose-lg max-w-none"
+					data-sanity={contentAttr?.toString()}
 					style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
 				>
-					<p>
-						<strong>KØBENHAVN, 4. november 2025</strong> – Sensational League, en ny international 7v7 professionel kvindefodboldliga, lancerer i april 2026 med København som første værtsby. Ligaen er skabt af Bettina Kuperman og Majken Gilmartin fra Saga Sports Group. René Rechtman, stifter af Moonbug Entertainment (Blippi, CoComelon) er investor.
-					</p>
-
-					<p>
-						Kvindesport oplever markant vækst globalt. Kvinder står for 75% af verdensøkonomiens forbrug og udgør over 700 millioner aktive sportsfans, men modtager under 5% af sportens sponsorkroner. Det er den markedsmulighed, Sensational League går efter.
-					</p>
-
-					<blockquote
-						className="my-8 pl-6 border-l-[6px] border-[var(--color-volt)] italic text-lg md:text-xl"
-						style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
-					>
-						"Vi bygger et kommercielt økosystem omkring kvindefodbold, hvor værdi skabes for spillere, fans og brands. Momentum i kvindefodbold er massivt, og markedspotentialet er kun lige begyndt at folde sig ud."
-						<footer className="mt-2 not-italic font-bold">— Bettina Kuperman, CEO</footer>
-					</blockquote>
-
-					<h3
-						className="text-xl md:text-2xl mt-12 mb-4 uppercase tracking-wide text-black"
-						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-					>
-						Investering fra Moonbug-stifter
-					</h3>
-
-					<p>
-						René Rechtman, en af Danmarks mest succesfulde iværksættere, investerer i ligaen.
-					</p>
-
-					<blockquote
-						className="my-8 pl-6 border-l-[6px] border-[var(--color-volt)] italic text-lg md:text-xl"
-						style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
-					>
-						"Sensational League har alt, investorer leder efter: Et erfarent team, en skalerbar forretningsmodel og perfekt timing. Grundlæggerne ved, hvordan man bygger sportsplatforme, der kan vokse internationalt. Kvindesport er uden tvivl det næste store vækstområde"
-						<footer className="mt-2 not-italic font-bold">— René Rechtman</footer>
-					</blockquote>
-
-					<h3
-						className="text-xl md:text-2xl mt-12 mb-4 uppercase tracking-wide text-black"
-						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-					>
-						Formatet
-					</h3>
-
-					<p>
-						Ligaen kombinerer professionel sport med underholdning og digitalt engagement:
-					</p>
-
-					<ul className="list-disc pl-6 space-y-2 my-6">
-						<li>8 hold med betalte spillere og influencer kaptajner</li>
-						<li>7v7-format optimeret til live-produktion og streaming</li>
-						<li>6 festival kampdage og finale der kombinerer sport, musik og livsstil</li>
-						<li>Point system baseret på sportsresultater, fan og community engagement</li>
-						<li>Digital platform med sports og livsstils-content</li>
-					</ul>
-
-					<h3
-						className="text-xl md:text-2xl mt-12 mb-4 uppercase tracking-wide text-black"
-						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-					>
-						Kvindelige iværksættere med international erfaring
-					</h3>
-
-					<p>
-						Bettina Kuperman og Majken Gilmartin har begge en lang karriere i den internationale sportsverden bag sig. Kuperman har lukket kommercielle aftaler for over $80M USD, har arbejdet med Olympiske budkampagner, Champions League og håndteret marketing og promovering ved adskillige EM og VM'er. Gilmartin er en verdensanerkendt pioner indenfor kvindefodbold og grundlagde den FN-anerkendte Global Goals World Cup og en fodbold specialdesignet til at mindske skader hos kvinder. Hun har blandt andet modtaget IOC's Women & Sport Trophy.
-					</p>
+					<PortableText
+						value={content || []}
+						components={{
+							block: {
+								normal: ({ children }) => (
+									<p className="mb-6 text-base md:text-lg leading-relaxed text-black">
+										{children}
+									</p>
+								),
+								h3: ({ children }) => (
+									<h3
+										className="text-xl md:text-2xl mt-12 mb-4 uppercase tracking-wide text-black"
+										style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+									>
+										{children}
+									</h3>
+								),
+								h4: ({ children }) => (
+									<h4
+										className="text-lg md:text-xl mt-8 mb-3 uppercase tracking-wide text-black"
+										style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+									>
+										{children}
+									</h4>
+								),
+								blockquote: ({ children }) => (
+									<blockquote
+										className="my-8 pl-6 border-l-[6px] border-[var(--color-volt)] italic text-lg md:text-xl text-black"
+										style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+									>
+										{children}
+									</blockquote>
+								),
+							},
+							list: {
+								bullet: ({ children }) => (
+									<ul className="list-disc pl-6 space-y-2 my-6 text-black">
+										{children}
+									</ul>
+								),
+								number: ({ children }) => (
+									<ol className="list-decimal pl-6 space-y-2 my-6 text-black">
+										{children}
+									</ol>
+								),
+							},
+							listItem: {
+								bullet: ({ children }) => <li className="text-black">{children}</li>,
+								number: ({ children }) => <li className="text-black">{children}</li>,
+							},
+							marks: {
+								strong: ({ children }) => <strong className="font-bold text-black">{children}</strong>,
+								em: ({ children }) => <em className="italic text-black">{children}</em>,
+							},
+						}}
+					/>
+				</div>
 
 					{/* Founder Photos - if available from SharePoint */}
 					{!loadingPhotos && (bettinaPhoto || majkenPhoto) && (
@@ -240,29 +338,8 @@ export default function PressReleaseContent() {
 						</div>
 					)}
 
-					<blockquote
-						className="my-8 pl-6 border-l-[6px] border-[var(--color-volt)] italic text-lg md:text-xl"
-						style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
-					>
-						"Vi designer ikke en liga, der efterligner herrefodbold. Vi bygger en platform, der er skabt til, hvordan kvinder konkurrerer, netværker og forbruger. Det er her, muligheden for gennembrud er,"
-						<footer className="mt-2 not-italic font-bold">— Majken Gilmartin, COO</footer>
-					</blockquote>
-
-					<h3
-						className="text-xl md:text-2xl mt-12 mb-4 uppercase tracking-wide text-black"
-						style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-					>
-						Ekspansion til UK og USA
-					</h3>
-
-					<p>
-						Efter lancering i Norden i april 2026 ekspanderer ligaen til Storbritannien og USA.
-					</p>
-
-					<p>
-						Kommende annonceringer dækker kaptajner og spillere, advisory board, præmiepenge og partnerskaber.
-					</p>
-
+				{/* Contact Person Section */}
+				{pressRelease.contactPerson && (
 					<div className="mt-16 pt-8 border-t-2 border-black">
 						<h3
 							className="text-xl md:text-2xl mb-6 uppercase tracking-wide text-black"
@@ -272,12 +349,32 @@ export default function PressReleaseContent() {
 						</h3>
 
 						<div className="space-y-2">
-							<p><strong>Mette Bom</strong></p>
-							<p>Head of Communications, Saga Sports Group</p>
+							{pressRelease.contactPerson.name && (
+								<p><strong>{pressRelease.contactPerson.name}</strong></p>
+							)}
+							{pressRelease.contactPerson.title && (
+								<p>{pressRelease.contactPerson.title}</p>
+							)}
 							<p>
-								<a href="tel:+4540550800" className="hover:text-[var(--color-volt)] transition-colors">+45 40 55 08 00</a>
-								{" | "}
-								<a href="mailto:media@sagasportsgroup.com" className="hover:text-[var(--color-volt)] transition-colors">media@sagasportsgroup.com</a>
+								{pressRelease.contactPerson.phone && (
+									<>
+										<a
+											href={`tel:${pressRelease.contactPerson.phone.replace(/\s/g, '')}`}
+											className="hover:text-[var(--color-volt)] transition-colors"
+										>
+											{pressRelease.contactPerson.phone}
+										</a>
+										{pressRelease.contactPerson.email && " | "}
+									</>
+								)}
+								{pressRelease.contactPerson.email && (
+									<a
+										href={`mailto:${pressRelease.contactPerson.email}`}
+										className="hover:text-[var(--color-volt)] transition-colors"
+									>
+										{pressRelease.contactPerson.email}
+									</a>
+								)}
 							</p>
 							<p>
 								<a href="https://sensationalleague.com" className="hover:text-[var(--color-volt)] transition-colors">sensationalleague.com</a>
@@ -288,58 +385,29 @@ export default function PressReleaseContent() {
 							</p>
 						</div>
 					</div>
+				)}
 
+				{/* About Sections (Om Founders, Om Saga Sports Group, etc.) */}
+				{aboutSections && aboutSections.length > 0 && (
 					<div className="mt-12 pt-8 border-t-2 border-gray-200 space-y-8">
-						<div>
-							<h4
-								className="text-lg md:text-xl mb-3 uppercase tracking-wide text-black"
-								style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-							>
-								Om Founders
-							</h4>
-
-							<div className="space-y-6">
-								<div>
-									<p className="font-bold mb-2">Bettina Kuperman - CEO, Saga Sports Group</p>
-									<p className="text-sm leading-relaxed">
-										Bettina Kuperman har over 20 års international erfaring fra Europa og Mellemøsten. Hun har arbejdet med nogle af verdens største sportsbegivenheder, fra OL-bud til Champions League og FIBA Basketball mesterskaber, og har rådgivet regeringer, forbund og topledere i, hvordan sport kan bruges strategisk til at skabe kommerciel og samfundsmæssig værdi. Hun har stået bag kommercielle aftaler for mere end 80 mio. USD og er kendt for at skabe synergi og netværk på tværs af sektorer. Cand.jur. fra Københavns Universitet og erfaren iværksætter. Tidligere bosat i Bruxelles, Lausanne, Istanbul.
-									</p>
-								</div>
-
-								<div>
-									<p className="font-bold mb-2">Majken Gilmartin - COO, Saga Sports Group</p>
-									<p className="text-sm leading-relaxed">
-										Majken Gilmartin er en internationalt anerkendt pioner inden for kvindesport og udviklingen af nye sportsformater for kvinder. Hun er grundlægger af Global Goals World Cup og står bag udviklingen af en fodbold designet til at reducere skaderisikoen for kvindelige spillere. Med en baggrund i filmproduktion – fra Hollywood til den nordiske filmbranche – har hun skabt internationale sportskoncepter og står ofte på globale scener som TED, Davos og FN's Generalforsamling. Majken har modtaget IOC Women & Sport Trophy og er blevet anerkendt af både UEFA og europæiske regeringer for sit lederskab inden for kvindesport. Tidligere bosat i Los Angeles og New York.
-									</p>
-								</div>
+						{aboutSections.map((section, index) => (
+							<div key={index}>
+								<h4
+									className="text-lg md:text-xl mb-3 uppercase tracking-wide text-black"
+									style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
+								>
+									{section.title}
+								</h4>
+								<p
+									className="text-sm md:text-base leading-relaxed whitespace-pre-line text-black"
+									style={{ fontFamily: "'GT Standard Small Narrow', sans-serif", fontWeight: 500 }}
+								>
+									{section.content}
+								</p>
 							</div>
-						</div>
-
-						<div>
-							<h4
-								className="text-lg md:text-xl mb-3 uppercase tracking-wide text-black"
-								style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-							>
-								Om Saga Sports Group
-							</h4>
-							<p className="text-sm leading-relaxed">
-								Saga Sports Group er en international sports- og entertainmentvirksomhed med fokus på kvindesport. Saga ejer og driver Sensational League og udvikler kommercielle sportsplatforme, der forener konkurrence, medieproduktion og partnerskaber. Saga Sports Group er støttet af erfarne investorer og ledere med baggrund i sport, medier og teknologi.
-							</p>
-						</div>
-
-						<div>
-							<h4
-								className="text-lg md:text-xl mb-3 uppercase tracking-wide text-black"
-								style={{ fontFamily: "'GT Standard Large Narrow', sans-serif", fontWeight: 700 }}
-							>
-								Om Sensational League
-							</h4>
-							<p className="text-sm leading-relaxed">
-								Sensational League er en professionel 7v7-fodboldliga for kvinder. Ligaen lanceres i Norden i april 2026 og udvides derefter til Storbritannien og USA. Formatet kombinerer elitefodbold med underholdning og digitalt indhold i en skalerbar, kommerciel model.
-							</p>
-						</div>
+						))}
 					</div>
-				</div>
+				)}
 			</div>
 
 			{/* Press Photos Section - Below the article */}

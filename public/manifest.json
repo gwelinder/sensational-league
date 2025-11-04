@@ -1,0 +1,22 @@
+{
+  "name": "Sensational League - Fast. Rebellious. Female.",
+  "short_name": "Sensational League",
+  "description": "Women's 7v7 football league combining athletic excellence with social impact",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#232324",
+  "theme_color": "#D4FF00",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "lifestyle"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/"
+}

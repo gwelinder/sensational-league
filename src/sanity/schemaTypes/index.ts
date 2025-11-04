@@ -4,6 +4,7 @@ import { styledText } from "./styledText";
 import { homePage } from "./homePage";
 import { page } from "./page";
 import { policy } from "./policy";
+import { pressRelease } from "./pressRelease";
 import { siteSettings } from "./siteSettings";
 import { contributorSettings } from "./contributorSettings";
 import { logo } from "./logo";
@@ -44,10 +45,11 @@ import {
 export const schema: { types: SchemaTypeDefinition[] } = {
 	types: [
     // Documents
-    siteSettings, 
+    siteSettings,
     homePage,
     page,
     policy,
+    pressRelease,
     contributorSettings,
     logo,
     
