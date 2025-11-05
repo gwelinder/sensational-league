@@ -148,7 +148,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			locale: "en_US",
 			images: [
 				{
-					url: "/press/opengraph-image",
+					url: "/press/og-image",
 					width: 1200,
 					height: 630,
 					alt: "Sensational League - Press Release",
@@ -163,7 +163,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			creator: "@SensationalLG",
 			images: [
 				{
-					url: "/press/opengraph-image",
+					url: "/press/og-image",
 					alt: "Sensational League - Press Release",
 				},
 			],
