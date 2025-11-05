@@ -1,5 +1,6 @@
 import HomePage from "./homepage";
 import { sanityFetch } from "@/sanity/lib/live";
+import { draftMode } from "next/headers";
 import type { PortableTextBlock } from '@portabletext/types';
 
 interface Stat {
@@ -93,12 +94,22 @@ async function getHomePageData(): Promise<HomePageContent | null> {
 }
 
 export async function generateMetadata() {
-	const content = await getHomePageData();
+    // In Presentation/draft mode, keep head metadata stable to avoid full-page reloads
+    const isDraft = (await draftMode()).isEnabled;
+    if (isDraft) {
+        return {
+            title: "Sensational League - Fast. Rebellious. Female.",
+            description: "Women's 7v7 football league combining athletic excellence with social impact.",
+        };
+    }
 
-	return {
-		title: content?.seo?.metaTitle || "Sensational League - Fast. Rebellious. Female.",
-		description: content?.seo?.metaDescription || "Women's 7v7 football league combining athletic excellence with social impact.",
-	};
+    const content = await getHomePageData();
+    return {
+        title: content?.seo?.metaTitle || "Sensational League - Fast. Rebellious. Female.",
+        description:
+            content?.seo?.metaDescription ||
+            "Women's 7v7 football league combining athletic excellence with social impact.",
+    };
 }
 
 // Cache page data, SanityLive triggers on-demand revalidation via revalidateTag

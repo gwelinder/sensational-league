@@ -3,8 +3,8 @@ import "./globals.css";
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { DisableDraftMode } from "@/components/DisableDraftMode";
-import { SanityLive, sanityFetch } from "@/sanity/lib/live";
-import ConditionalLayout from "@/components/ConditionalLayout";
+import { SanityLive } from "@/sanity/lib/live";
+import SiteChrome from "@/components/SiteChrome";
 import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/StructuredData";
 
 // GT Standard fonts are loaded via @font-face in globals.css
@@ -95,62 +95,12 @@ export const metadata: Metadata = {
   },
 };
 
-async function getSiteSettings() {
-	// Live API handles perspective automatically - don't override it
-	const { data } = await sanityFetch({
-		query: `*[_type == "siteSettings"][0] {
-      _id,
-      _type,
-      title,
-      navigation {
-        sparkLogo {
-          asset,
-          alt,
-          width,
-          height,
-          objectFit
-        },
-        wordmarkLogo {
-          asset,
-          alt,
-          width,
-          height,
-          objectFit
-        },
-        links
-      },
-      footer {
-        sparkLogo {
-          asset,
-          alt,
-          width,
-          height,
-          objectFit
-        },
-        wordmarkLogo {
-          asset,
-          alt,
-          width,
-          height,
-          objectFit
-        },
-        tagline,
-        description,
-        copyrightText,
-        additionalText
-      }
-    }`,
-	});
-	return data;
-}
-
 export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
 	const isEnabled = (await draftMode()).isEnabled;
-	const settings = await getSiteSettings();
 
 	return (
 		<html lang="en">
@@ -158,16 +108,16 @@ export default async function RootLayout({
 				<OrganizationStructuredData />
 				<WebsiteStructuredData />
 			</head>
-			<body className="min-h-dvh antialiased bg-[var(--color-surface)] text-[var(--color-text)]">
-				<ConditionalLayout settings={settings}>{children}</ConditionalLayout>
-				<SanityLive />
-				{isEnabled && (
-					<>
-						<VisualEditing />
-						<DisableDraftMode />
-					</>
-				)}
-			</body>
+				<body className="min-h-dvh antialiased bg-[var(--color-surface)] text-[var(--color-text)]">
+					<SiteChrome>{children}</SiteChrome>
+					<SanityLive />
+					{isEnabled && (
+						<>
+							<VisualEditing />
+							<DisableDraftMode />
+						</>
+					)}
+				</body>
 		</html>
 	);
 }

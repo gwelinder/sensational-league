@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import type { PortableTextBlock } from "sanity";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -69,7 +70,43 @@ async function getPressRelease(): Promise<PressRelease | null> {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-	const pressRelease = await getPressRelease();
+    // Keep metadata stable in Presentation/draft mode to prevent hard reloads on small edits
+    const isDraft = (await draftMode()).isEnabled;
+    if (isDraft) {
+        return {
+            title: "Press Release - Sensational League",
+            description: "Latest press releases from Sensational League",
+            openGraph: {
+                title: "Press Release - Sensational League",
+                description: "Latest press releases from Sensational League",
+                type: "website",
+                url: "https://sensationalleague.com/press",
+                siteName: "Sensational League",
+                locale: "en_US",
+                images: [
+                    {
+                        url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",
+                        width: 1200,
+                        height: 630,
+                        alt: "Sensational League - Press Release",
+                    },
+                ],
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: "Press Release - Sensational League",
+                description: "Latest press releases from Sensational League",
+                images: [
+                    {
+                        url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",
+                        alt: "Sensational League - Press Release",
+                    },
+                ],
+            },
+        };
+    }
+
+    const pressRelease = await getPressRelease();
 
 	if (!pressRelease) {
 		return {

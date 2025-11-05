@@ -1,7 +1,4 @@
 import { draftMode } from "next/headers";
-import { VisualEditing } from "next-sanity/visual-editing";
-import { DisableDraftMode } from "@/components/DisableDraftMode";
-import { SanityLive } from "@/sanity/lib/live";
 
 export default async function StudioLayout({
   children,
@@ -13,13 +10,9 @@ export default async function StudioLayout({
   return (
     <>
       {children}
-      <SanityLive />
-      {isEnabled && (
-        <>
-          <VisualEditing />
-          <DisableDraftMode />
-        </>
-      )}
+      {/* The Studio itself should not include VisualEditing/SanityLive.
+          Those belong in the site preview (the page being embedded by Presentation).
+          Keeping Studio lean avoids message/event duplication that can cause reloads. */}
     </>
   );
 }

@@ -4,114 +4,64 @@ export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Site Settings',
   type: 'document',
+  // Organize into tabs (built-in field groups)
+  groups: [
+    { name: 'brand', title: 'Brand & Basics', default: true },
+    { name: 'header', title: 'Header' },
+    { name: 'footer', title: 'Footer' },
+  ],
   fields: [
     defineField({
       name: 'title',
       type: 'string',
       title: 'Site title',
       validation: (rule) => rule.required(),
+      group: 'brand',
     }),
     defineField({
       name: 'logo',
-      type: 'image',
-      title: 'Logo',
-      options: {hotspot: true},
+      type: 'logoImage',
+      title: 'Primary Logo',
+      description: 'Default site logo used for generic contexts',
+      group: 'brand',
     }),
     defineField({
       name: 'description',
       type: 'text',
       title: 'Description',
       rows: 3,
+      group: 'brand',
     }),
     defineField({
       name: 'navigation',
       type: 'object',
       title: 'Header Navigation',
+      group: 'header',
+      options: { collapsible: true, collapsed: false },
+      fieldsets: [
+        { name: 'navLogos', title: 'Logos', options: { collapsible: true, collapsed: false } },
+        { name: 'navLinks', title: 'Links', options: { collapsible: true, collapsed: true } },
+      ],
       fields: [
         defineField({
           name: 'sparkLogo',
-          type: 'image',
+          type: 'logoImage',
           title: 'Spark Logo',
           description: 'The spark icon logo for the header',
-          options: {hotspot: true},
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt Text',
-              description: 'Alternative text for accessibility',
-            },
-            {
-              name: 'width',
-              type: 'number',
-              title: 'Width (pixels)',
-              description: 'Custom width. Leave empty for default (40px).',
-            },
-            {
-              name: 'height',
-              type: 'number',
-              title: 'Height (pixels)',
-              description: 'Custom height. Leave empty for default (40px).',
-            },
-            {
-              name: 'objectFit',
-              type: 'string',
-              title: 'Image Fit',
-              options: {
-                list: [
-                  { title: 'Cover', value: 'cover' },
-                  { title: 'Contain', value: 'contain' },
-                  { title: 'Fill', value: 'fill' },
-                ],
-              },
-              initialValue: 'contain',
-            },
-          ],
+          fieldset: 'navLogos',
         }),
         defineField({
           name: 'wordmarkLogo',
-          type: 'image',
+          type: 'logoImage',
           title: 'Wordmark Logo',
           description: 'The wordmark logo for the header (desktop)',
-          options: {hotspot: true},
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt Text',
-              description: 'Alternative text for accessibility',
-            },
-            {
-              name: 'width',
-              type: 'number',
-              title: 'Width (pixels)',
-              description: 'Custom width. Leave empty for responsive default.',
-            },
-            {
-              name: 'height',
-              type: 'number',
-              title: 'Height (pixels)',
-              description: 'Custom height. Leave empty for default (24px).',
-            },
-            {
-              name: 'objectFit',
-              type: 'string',
-              title: 'Image Fit',
-              options: {
-                list: [
-                  { title: 'Cover', value: 'cover' },
-                  { title: 'Contain', value: 'contain' },
-                  { title: 'Fill', value: 'fill' },
-                ],
-              },
-              initialValue: 'contain',
-            },
-          ],
+          fieldset: 'navLogos',
         }),
         defineField({
           name: 'links',
           type: 'array',
           title: 'Navigation Links',
+          fieldset: 'navLinks',
           of: [
             {
               type: 'object',
@@ -128,115 +78,62 @@ export const siteSettings = defineType({
       name: 'footer',
       type: 'object',
       title: 'Footer',
+      group: 'footer',
+      options: { collapsible: true, collapsed: false },
+      fieldsets: [
+        { name: 'footerLogos', title: 'Logos', options: { collapsible: true, collapsed: false } },
+        { name: 'footerCopy', title: 'Text Content', options: { collapsible: true, collapsed: false } },
+        { name: 'footerSocial', title: 'Social Links', options: { collapsible: true, collapsed: true } },
+      ],
       fields: [
         defineField({
           name: 'sparkLogo',
-          type: 'image',
+          type: 'logoImage',
           title: 'Spark Logo',
           description: 'The spark icon logo for the footer',
-          options: {hotspot: true},
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt Text',
-              description: 'Alternative text for accessibility',
-            },
-            {
-              name: 'width',
-              type: 'number',
-              title: 'Width (pixels)',
-              description: 'Custom width. Leave empty for default (80px).',
-            },
-            {
-              name: 'height',
-              type: 'number',
-              title: 'Height (pixels)',
-              description: 'Custom height. Leave empty for default (80px).',
-            },
-            {
-              name: 'objectFit',
-              type: 'string',
-              title: 'Image Fit',
-              options: {
-                list: [
-                  { title: 'Cover', value: 'cover' },
-                  { title: 'Contain', value: 'contain' },
-                  { title: 'Fill', value: 'fill' },
-                ],
-              },
-              initialValue: 'contain',
-            },
-          ],
+          fieldset: 'footerLogos',
         }),
         defineField({
           name: 'wordmarkLogo',
-          type: 'image',
+          type: 'logoImage',
           title: 'Wordmark Logo',
           description: 'The wordmark logo for the footer',
-          options: {hotspot: true},
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt Text',
-              description: 'Alternative text for accessibility',
-            },
-            {
-              name: 'width',
-              type: 'number',
-              title: 'Width (pixels)',
-              description: 'Custom width. Leave empty for responsive default.',
-            },
-            {
-              name: 'height',
-              type: 'number',
-              title: 'Height (pixels)',
-              description: 'Custom height. Leave empty for default (40px).',
-            },
-            {
-              name: 'objectFit',
-              type: 'string',
-              title: 'Image Fit',
-              options: {
-                list: [
-                  { title: 'Cover', value: 'cover' },
-                  { title: 'Contain', value: 'contain' },
-                  { title: 'Fill', value: 'fill' },
-                ],
-              },
-              initialValue: 'contain',
-            },
-          ],
+          fieldset: 'footerLogos',
         }),
         defineField({
           name: 'tagline',
           type: 'string',
           title: 'Tagline',
           description: 'e.g., "Fast. Rebellious. Female."',
+          fieldset: 'footerCopy',
         }),
         defineField({
           name: 'description',
           type: 'text',
           title: 'Description',
           rows: 3,
+          fieldset: 'footerCopy',
         }),
         defineField({
           name: 'copyrightText',
           type: 'string',
           title: 'Copyright Text',
+          fieldset: 'footerCopy',
         }),
         defineField({
           name: 'additionalText',
           type: 'string',
           title: 'Additional Text',
           description: 'Secondary footer text',
+          fieldset: 'footerCopy',
         }),
         defineField({
           name: 'socialLinks',
           type: 'object',
           title: 'Social Media Links',
           description: 'Links to social media profiles',
+          fieldset: 'footerSocial',
+          options: { columns: 2 },
           fields: [
             {
               name: 'twitter',

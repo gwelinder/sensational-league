@@ -8,6 +8,7 @@ import { pressRelease } from "./pressRelease";
 import { emailTemplate } from "./emailTemplate";
 import { siteSettings } from "./siteSettings";
 import { contributorSettings } from "./contributorSettings";
+import { logoImage } from "./objects/logoImage";
 import { logo } from "./logo";
 import { 
   heroSection, 
@@ -93,5 +94,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     statisticsBlock,
     socialProofBlock,
     newsletterSignupBlock,
+    
+    // Object types
+    logoImage,
   ],
 };
