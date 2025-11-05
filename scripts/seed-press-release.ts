@@ -332,9 +332,9 @@ const pressReleaseContent = {
 		},
 	],
 	contactPerson: {
-		name: "Mette Bom",
-		title: "Head of Communications, Saga Sports Group",
-		phone: "+45 40 55 08 00",
+		name: "Bettina Kuperman",
+		title: "CEO, Saga Sports Group",
+		phone: "",
 		email: "media@sagasportsgroup.com",
 	},
 	aboutSectionsDa: [
@@ -358,6 +358,364 @@ Majken Gilmartin er en internationalt anerkendt pioner inden for kvindesport og 
 			_key: 'about-sensational',
 			title: "Om Sensational League",
 			content: "Sensational League er en professionel 7v7-fodboldliga for kvinder. Ligaen lanceres i Norden i april 2026 og udvides derefter til Storbritannien og USA. Formatet kombinerer elitefodbold med underholdning og digitalt indhold i en skalerbar, kommerciel model.",
+		},
+	],
+	// English Version
+	headlineEn: "SENSATIONAL LEAGUE LAUNCHES: WOMEN'S FOOTBALL MEETS ENTERTAINMENT, MEDIA, AND LIFESTYLE",
+	subheadlineEn: "With investor backing and a model built for scale, Sensational League positions women's football for global commercial growth",
+	contentEn: [
+		{
+			_type: 'block',
+			_key: 'intro-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'intro-text-en',
+					text: 'COPENHAGEN, November 4th, 2025',
+					marks: ['strong'],
+				},
+				{
+					_type: 'span',
+					_key: 'intro-text-2-en',
+					text: ' - ',
+					marks: [],
+				},
+				{
+					_type: 'span',
+					_key: 'intro-text-3-en',
+					text: 'Sensational League',
+					marks: ['em'],
+				},
+				{
+					_type: 'span',
+					_key: 'intro-text-4-en',
+					text: ', a new international 7v7 professional women\'s football league, launches April 2026 across the Nordics -before expanding to the UK and US.',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'market-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'market-text-en',
+					text: 'The League combines elite competition with entertainment-driven festival match days, paid athletes, and year-round digital engagement, positioning women\'s football as a commercial sports entertainment platform.',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'market2-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'market2-text-en',
+					text: 'Women drive 75% of global consumer spending and represent over 700 million active sports fans, yet women\'s sports receive less than 5% of sports sponsorships. That\'s the opportunity ',
+					marks: [],
+				},
+				{
+					_type: 'span',
+					_key: 'market2-text-em-en',
+					text: 'Sensational League',
+					marks: ['em'],
+				},
+				{
+					_type: 'span',
+					_key: 'market2-text-2-en',
+					text: ' seizes, proving that women\'s football, when designed authentically for athletes and fans, can become one of the most valuable properties in global sports entertainment.',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'saga-intro-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'saga-text-en',
+					text: 'Sensational League',
+					marks: ['em'],
+				},
+				{
+					_type: 'span',
+					_key: 'saga-text-2-en',
+					text: ' is created and owned by Saga Sports Group, an international sports & entertainment business, founded by experienced sports executives Bettina Kuperman and Majken Gilmartin.',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'quote-bettina-en',
+			style: 'blockquote',
+			children: [
+				{
+					_type: 'span',
+					_key: 'quote-text-en',
+					text: '"We\'re building a new ecosystem for women\'s football, designed for the network economy where players, fans, brands, and cities are active co-creators," says Bettina Kuperman, CEO and Co-Founder. "We\'re rethinking the industry to prove that women\'s football can generate real commercial value on its own terms."',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'investment-header-en',
+			style: 'h3',
+			children: [
+				{
+					_type: 'span',
+					_key: 'inv-header-text-en',
+					text: 'BACKED BY MOONBUG FOUNDER',
+					marks: ['strong'],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'investment-text-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'inv-text-en',
+					text: 'The League is backed by entrepreneur and investor René Rechtman, founder of Moonbug Entertainment (Blippi, CoComelon).',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'quote-rene-en',
+			style: 'blockquote',
+			children: [
+				{
+					_type: 'span',
+					_key: 'quote-rene-text-en',
+					text: '"The Sensational League has everything investors look for: A proven team, a scalable model, and perfect timing. The founders know how to turn sports into global entertainment IP that connects with today\'s audiences. Women\'s sports is the next growth engine of the industry," says René Rechtman.',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-header-en',
+			style: 'h3',
+			children: [
+				{
+					_type: 'span',
+					_key: 'experience-header-text-en',
+					text: 'THE EXPERIENCE',
+					marks: ['strong'],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-list-en',
+			style: 'normal',
+			listItem: 'bullet',
+			level: 1,
+			children: [
+				{
+					_type: 'span',
+					_key: 'list-1-en',
+					text: 'Paid players across 8 teams led by athlete-influencer captains',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-list-2-en',
+			style: 'normal',
+			listItem: 'bullet',
+			level: 1,
+			children: [
+				{
+					_type: 'span',
+					_key: 'list-2-en',
+					text: '7v7 format: fast games made for broadcast and streaming',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-list-3-en',
+			style: 'normal',
+			listItem: 'bullet',
+			level: 1,
+			children: [
+				{
+					_type: 'span',
+					_key: 'list-3-en',
+					text: 'Point system rewards match performance, fan engagement, and community impact',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-list-4-en',
+			style: 'normal',
+			listItem: 'bullet',
+			level: 1,
+			children: [
+				{
+					_type: 'span',
+					_key: 'list-4-en',
+					text: '6 festival-like match days',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-list-5-en',
+			style: 'normal',
+			listItem: 'bullet',
+			level: 1,
+			children: [
+				{
+					_type: 'span',
+					_key: 'list-5-en',
+					text: 'League Finals - football, music, and lifestyle',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'experience-list-6-en',
+			style: 'normal',
+			listItem: 'bullet',
+			level: 1,
+			children: [
+				{
+					_type: 'span',
+					_key: 'list-6-en',
+					text: 'Year-round digital fan and content strategy',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'female-header-en',
+			style: 'h3',
+			children: [
+				{
+					_type: 'span',
+					_key: 'female-header-text-en',
+					text: 'FEMALE FANS AND PLAYERS',
+					marks: ['strong'],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'quote-majken-en',
+			style: 'blockquote',
+			children: [
+				{
+					_type: 'span',
+					_key: 'quote-majken-text-en',
+					text: '"The future of women\'s sports lies in design, not imitation," says Majken Gilmartin, Co-Founder and COO. "We\'ve built a format shaped by how women compete, connect, and consume and that\'s where the next commercial breakthrough will happen."',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'announcements-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'announcements-text-en',
+					text: 'Upcoming announcements will reveal city hosts, founding captains, expert advisory board, prize money, brand collaborations, and media partnerships ahead of the 2026 debut season.',
+					marks: [],
+				},
+			],
+			markDefs: [],
+		},
+		{
+			_type: 'block',
+			_key: 'signup-en',
+			style: 'normal',
+			children: [
+				{
+					_type: 'span',
+					_key: 'signup-text-en',
+					text: 'Sign up for the newsletter @ ',
+					marks: [],
+				},
+				{
+					_type: 'span',
+					_key: 'signup-link-en',
+					text: 'sensationalleague.com',
+					marks: ['link-website'],
+				},
+				{
+					_type: 'span',
+					_key: 'signup-text-2-en',
+					text: '.',
+					marks: [],
+				},
+			],
+			markDefs: [
+				{
+					_key: 'link-website',
+					_type: 'link',
+					href: 'https://sensationalleague.com',
+				},
+			],
+		},
+	],
+	aboutSectionsEn: [
+		{
+			_key: 'about-founders-en',
+			title: "ABOUT THE FOUNDERS",
+			content: `Bettina Kuperman - CEO, Saga Sports Group
+Over 20 years of international sports leadership across Europe and emerging markets. With a background in major events, from Olympic and UEFA Euro bids to the Champions League and FIBA Basketball Championships, she has advised governments, federations, and senior leaders on how to use sport strategically to generate commercial and societal value. Closed over $80M USD in deal value and is known for cross sector value creation. Master of Laws (LL.M), Sports Law and Economics; founder of international sports and entertainment agencies.
+
+Majken Gilmartin - COO, Saga Sports Group
+Internationally recognized pioneer in women's sport and innovative women's sports formats. Founder of the Global Goals World Cup and developer of a football designed specifically to reduce injury risk for female players. Background in film production with notable credits in Hollywood and the Nordic movie scene, creating international sports competitions, and an avid speaker on global stages including TED, Davos, and the UN General Assembly. Majken has been awarded the IOC Women & Sport Trophy and acknowledged by UEFA and European governments for her leadership in women's sports.`,
+		},
+		{
+			_key: 'about-saga-en',
+			title: "ABOUT SAGA SPORTS GROUP",
+			content: "Saga Sports Group, an international sports and entertainment business specializing in women's sports, is the owner and operator of Sensational League. Saga builds sports platforms designed for women, combining competition, content, and commerce in scalable business models.\n\nSaga Sports Group proves the business case for women's football by building profitable platforms that create professional careers for athletes and turn female fans into the most valuable community in sport.\n\nThe company is backed by leading entrepreneurs and investors committed to women's sports growth. For more information: www.sagasportsgroup.com",
+		},
+		{
+			_key: 'about-sensational-en',
+			title: "ABOUT SENSATIONAL LEAGUE",
+			content: "Sensational League is an international 7v7 professional women's football league launching in April 2026 across the Nordics, then UK and US. Combining elite competition, lifestyle and digital storytelling, the League is built for the network economy where performance, visibility, and community create shared growth.",
 		},
 	],
 	seo: {

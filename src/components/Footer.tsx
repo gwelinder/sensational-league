@@ -27,6 +27,13 @@ interface FooterProps {
 			description?: string;
 			copyrightText?: string;
 			additionalText?: string;
+			socialLinks?: {
+				twitter?: string;
+				instagram?: string;
+				facebook?: string;
+				tiktok?: string;
+				youtube?: string;
+			};
 		};
 	};
 }
@@ -71,6 +78,23 @@ export default function Footer({ settings }: FooterProps) {
 				path: "footer.additionalText",
 			})
 		: undefined;
+
+	const socialLinksAttribute = settings?._id
+		? createDataAttribute({
+				id: settings._id,
+				type: settings._type,
+				path: "footer.socialLinks",
+			})
+		: undefined;
+
+	// Get social links with fallback to hardcoded values
+	const socialLinks = {
+		twitter: settings?.footer?.socialLinks?.twitter || "https://twitter.com/SensationalLG",
+		instagram: settings?.footer?.socialLinks?.instagram || "https://instagram.com/sensational_league",
+		facebook: settings?.footer?.socialLinks?.facebook || "https://facebook.com/profile.php?id=61582488164825",
+		tiktok: settings?.footer?.socialLinks?.tiktok || "https://tiktok.com/@Sensationalleague",
+		youtube: settings?.footer?.socialLinks?.youtube || "https://youtube.com/@SensationalLeague",
+	};
 
 	return (
 		<footer
@@ -151,9 +175,12 @@ export default function Footer({ settings }: FooterProps) {
 				</div>
 
 				{/* Social Media Icons */}
-				<div className="flex items-center justify-center gap-8 mb-12">
+				<div
+					className="flex items-center justify-center gap-8 mb-12"
+					data-sanity={socialLinksAttribute?.toString()}
+				>
 					<a
-						href="https://twitter.com/SensationalLG"
+						href={socialLinks.twitter}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-white hover:text-[var(--color-volt)] transition-colors"
@@ -172,7 +199,7 @@ export default function Footer({ settings }: FooterProps) {
 						</svg>
 					</a>
 					<a
-						href="https://instagram.com/sensational_league"
+						href={socialLinks.instagram}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-white hover:text-[var(--color-volt)] transition-colors"
@@ -197,7 +224,7 @@ export default function Footer({ settings }: FooterProps) {
 						</svg>
 					</a>
 					<a
-						href="https://facebook.com/profile.php?id=61582488164825"
+						href={socialLinks.facebook}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-white hover:text-[var(--color-volt)] transition-colors"
@@ -216,7 +243,7 @@ export default function Footer({ settings }: FooterProps) {
 						</svg>
 					</a>
 					<a
-						href="https://tiktok.com/@Sensationalleague"
+						href={socialLinks.tiktok}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-white hover:text-[var(--color-volt)] transition-colors"
@@ -235,7 +262,7 @@ export default function Footer({ settings }: FooterProps) {
 						</svg>
 					</a>
 					<a
-						href="https://youtube.com/@SensationalLeague"
+						href={socialLinks.youtube}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-white hover:text-[var(--color-volt)] transition-colors"
