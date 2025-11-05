@@ -42,6 +42,29 @@ export const pressRelease = defineType({
       description: 'Date of press release',
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'featuredImage',
+      type: 'image',
+      title: 'Featured Image',
+      description: 'Main image for social sharing and display below subtitle (upload directly)',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative text',
+          description: 'Important for accessibility and SEO',
+        },
+      ],
+    }),
+    defineField({
+      name: 'featuredImageFromSharePoint',
+      type: 'string',
+      title: 'Featured Image from SharePoint',
+      description: 'Filename from SharePoint press kit (e.g., "Bettina, Majken og Rene.jpg"). Leave empty if using uploaded image above.',
+    }),
 
     // Danish Fields
     defineField({

@@ -20,6 +20,7 @@ interface PressReleaseProps {
 		_id: string;
 		_type: string;
 		publishDate: string;
+		featuredImageFromSharePoint?: string;
 		// Danish fields
 		headlineDa: string;
 		subheadlineDa?: string;
@@ -80,6 +81,11 @@ export default function PressReleaseContent({
 	// Find founder photos - specific profile photos
 	const bettinaPhoto = photos.find((p) => p.name === "Bettina Kuperman - Profil.jpg");
 	const majkenPhoto = photos.find((p) => p.name === "Majken Gilmartin - Profil.jpg");
+
+	// Find featured image from SharePoint
+	const featuredImage = pressRelease.featuredImageFromSharePoint
+		? photos.find((p) => p.name === pressRelease.featuredImageFromSharePoint)
+		: null;
 
 	// Format date in Danish
 	const formatDate = (dateString: string) => {
@@ -252,6 +258,18 @@ export default function PressReleaseContent({
 					>
 						{subheadline}
 					</h2>
+				)}
+
+				{/* Featured Image - displayed below subtitle */}
+				{!loadingPhotos && featuredImage && (
+					<div className="mb-12 border-4 border-black">
+						<img
+							src={featuredImage.thumbnails?.large || featuredImage.downloadUrl}
+							alt={featuredImage.name.replace('.jpg', '').replace('.jpeg', '').replace('.png', '')}
+							className="w-full aspect-video object-cover"
+							crossOrigin="anonymous"
+						/>
+					</div>
 				)}
 
 				{/* Body Text - GT Standard S Narrow Medium with Portable Text */}

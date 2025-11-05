@@ -11,6 +11,7 @@ interface PressRelease {
 	title: string;
 	slug: { current: string };
 	publishDate: string;
+	featuredImageFromSharePoint?: string;
 	// Danish fields
 	headlineDa: string;
 	subheadlineDa?: string;
@@ -49,6 +50,7 @@ async function getPressRelease(): Promise<PressRelease | null> {
 			title,
 			slug,
 			publishDate,
+			featuredImageFromSharePoint,
 			headlineDa,
 			subheadlineDa,
 			contentDa,
@@ -96,10 +98,12 @@ export async function generateMetadata(): Promise<Metadata> {
 		};
 	}
 
-	// Use English if available, fallback to Danish
+	// Always use English for social media sharing (OG tags), fallback to Danish only if English not available
 	const title = pressRelease.seo?.metaTitle || (pressRelease.headlineEn ? `${pressRelease.headlineEn} - Sensational League` : `${pressRelease.headlineDa} - Sensational League`);
 	const description = pressRelease.seo?.metaDescription || pressRelease.subheadlineEn || pressRelease.headlineEn || pressRelease.subheadlineDa || pressRelease.headlineDa;
+	// For social sharing, prioritize English
 	const ogTitle = pressRelease.headlineEn || pressRelease.headlineDa;
+	const ogDescription = pressRelease.subheadlineEn || pressRelease.subheadlineDa || pressRelease.headlineEn || pressRelease.headlineDa;
 
 	return {
 		title,
@@ -112,7 +116,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		],
 		openGraph: {
 			title: ogTitle,
-			description: description,
+			description: ogDescription,
 			type: "article",
 			publishedTime: pressRelease.publishDate,
 			authors: ["Saga Sports Group"],
@@ -131,7 +135,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		twitter: {
 			card: "summary_large_image",
 			title: ogTitle,
-			description: description,
+			description: ogDescription,
 			site: "@SensationalLG",
 			creator: "@SensationalLG",
 			images: ["/press/opengraph-image"],

@@ -44,6 +44,7 @@ const pressReleaseContent = {
 		current: 'moonbug-investment-2025',
 	},
 	publishDate: "2025-11-04",
+	featuredImageFromSharePoint: "Bettina, Majken og Rene.jpg",
 	headlineDa: "Dansk-skabt International Kvindefodboldliga får Millioninvestering fra Moonbug-stifter",
 	subheadlineDa: "To danske kvindelige iværksættere lancerer professionel international kvindefodboldliga med innovativt format og kommerciel forretningsmodel",
 	contentDa: [
