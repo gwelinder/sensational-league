@@ -9,6 +9,7 @@ export const siteSettings = defineType({
     { name: 'brand', title: 'Brand & Basics', default: true },
     { name: 'header', title: 'Header' },
     { name: 'footer', title: 'Footer' },
+    { name: 'social', title: 'Social & Sharing' },
   ],
   fields: [
     defineField({
@@ -165,6 +166,35 @@ export const siteSettings = defineType({
               title: 'YouTube URL',
               description: 'Full URL to YouTube channel',
             },
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: 'social',
+      type: 'object',
+      title: 'Social & Sharing',
+      description: 'Default Open Graph images used when a page does not specify its own',
+      group: 'social',
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({
+          name: 'defaultOg',
+          type: 'image',
+          title: 'Default OG Image (1200×630)',
+          options: { hotspot: true },
+          fields: [
+            { name: 'alt', type: 'string', title: 'Alt text' },
+          ],
+        }),
+        defineField({
+          name: 'squareOg',
+          type: 'image',
+          title: 'Square OG Image (1200×1200)',
+          description: 'Optional override for square contexts. Falls back to Default OG when empty.',
+          options: { hotspot: true },
+          fields: [
+            { name: 'alt', type: 'string', title: 'Alt text' },
           ],
         }),
       ],
