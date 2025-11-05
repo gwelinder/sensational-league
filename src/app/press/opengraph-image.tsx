@@ -32,16 +32,36 @@ export default async function Image() {
 	let featuredImageUrl: string | null = null;
 	if (featuredImageName) {
 		try {
-			const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://sensationalleague.com'}/api/press-kit`);
+			console.log(`[OG Image] Looking for featured image: "${featuredImageName}"`);
+			const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sensationalleague.com'}/api/press-kit`;
+			console.log(`[OG Image] Fetching from: ${apiUrl}`);
+
+			const response = await fetch(apiUrl, {
+				cache: 'no-store',
+				headers: {
+					'Accept': 'application/json',
+				},
+			});
+
+			if (!response.ok) {
+				console.error(`[OG Image] API response not OK: ${response.status} ${response.statusText}`);
+			}
+
 			const data = await response.json();
+			console.log(`[OG Image] API success: ${data.success}, photos count: ${data.photos?.length || 0}`);
+
 			if (data.success && data.photos) {
 				const photo = data.photos.find((p: any) => p.name === featuredImageName);
 				if (photo) {
 					featuredImageUrl = photo.thumbnails?.large || photo.downloadUrl;
+					console.log(`[OG Image] Found featured image URL: ${featuredImageUrl?.substring(0, 100)}...`);
+				} else {
+					console.log(`[OG Image] Photo "${featuredImageName}" not found in ${data.photos.length} photos`);
+					console.log(`[OG Image] Available photos:`, data.photos.map((p: any) => p.name).slice(0, 5));
 				}
 			}
 		} catch (error) {
-			console.error("Error fetching featured image:", error);
+			console.error("[OG Image] Error fetching featured image:", error);
 		}
 	}
 

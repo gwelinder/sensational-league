@@ -101,9 +101,17 @@ export async function generateMetadata(): Promise<Metadata> {
 	// Always use English for social media sharing (OG tags), fallback to Danish only if English not available
 	const title = pressRelease.seo?.metaTitle || (pressRelease.headlineEn ? `${pressRelease.headlineEn} - Sensational League` : `${pressRelease.headlineDa} - Sensational League`);
 	const description = pressRelease.seo?.metaDescription || pressRelease.subheadlineEn || pressRelease.headlineEn || pressRelease.subheadlineDa || pressRelease.headlineDa;
+
 	// For social sharing, prioritize English
 	const ogTitle = pressRelease.headlineEn || pressRelease.headlineDa;
 	const ogDescription = pressRelease.subheadlineEn || pressRelease.subheadlineDa || pressRelease.headlineEn || pressRelease.headlineDa;
+
+	// Twitter title (max 70 characters) - shortened version
+	const twitterTitle = pressRelease.headlineEn
+		? (pressRelease.headlineEn.length > 70
+			? "Sensational League Launches: Women's Football Meets Entertainment"
+			: pressRelease.headlineEn)
+		: pressRelease.headlineDa;
 
 	return {
 		title,
@@ -134,11 +142,14 @@ export async function generateMetadata(): Promise<Metadata> {
 		},
 		twitter: {
 			card: "summary_large_image",
-			title: ogTitle,
+			title: twitterTitle,
 			description: ogDescription,
 			site: "@SensationalLG",
 			creator: "@SensationalLG",
-			images: ["/press/opengraph-image"],
+			images: [{
+				url: "/press/opengraph-image",
+				alt: "Sensational League - Press Release",
+			}],
 		},
 		alternates: {
 			canonical: "https://sensationalleague.com/press",
