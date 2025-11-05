@@ -84,7 +84,7 @@ export async function generateMetadata(): Promise<Metadata> {
 				locale: "en_US",
 				images: [
 					{
-						url: "/press/opengraph-image",
+						url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",
 						width: 1200,
 						height: 630,
 						alt: "Sensational League - Press Release",
@@ -95,7 +95,10 @@ export async function generateMetadata(): Promise<Metadata> {
 				card: "summary_large_image",
 				title: "Press Release - Sensational League",
 				description: "Latest press releases from Sensational League",
-				images: ["/press/opengraph-image"],
+				images: [{
+					url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",
+					alt: "Sensational League - Press Release",
+				}],
 			},
 		};
 	}
@@ -148,7 +151,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			locale: "en_US",
 			images: [
 				{
-					url: "/press/og-image",
+					url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",
 					width: 1200,
 					height: 630,
 					alt: "Sensational League - Press Release",
@@ -163,7 +166,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			creator: "@SensationalLG",
 			images: [
 				{
-					url: "/press/og-image",
+					url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",
 					alt: "Sensational League - Press Release",
 				},
 			],
