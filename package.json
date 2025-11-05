@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "icons:build": "tsx scripts/generate-icons.ts",
     "seed:policies": "tsx scripts/seed-policies.ts",
     "seed:home": "tsx scripts/seed-home.ts",
     "seed:homepage-sections": "tsx scripts/seed-homepage-sections.ts",
