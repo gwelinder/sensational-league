@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
 	title: "Privacy Policy - Sensational League",
@@ -21,6 +22,20 @@ export default function PrivacyPage() {
 	return (
 		<div className="bg-[var(--background)] text-[var(--foreground)]">
 			<PageHeader>Privacy Policy</PageHeader>
+
+			{/* Back to home link */}
+			<div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl pt-8">
+				<Link
+					href="/"
+					className="inline-flex items-center text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition-colors"
+					style={{
+						fontFamily: "'GT Standard Small Narrow', sans-serif",
+						fontWeight: 500,
+					}}
+				>
+					← Back to home
+				</Link>
+			</div>
 
 			<section className="py-20 md:py-24">
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
