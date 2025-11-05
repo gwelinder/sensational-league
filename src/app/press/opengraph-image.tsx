@@ -23,16 +23,11 @@ export default async function Image() {
 	try {
 		const pressRelease = await client.fetch<{
 			ogImageUrl?: string;
-			featuredImage?: { asset?: { _ref: string } };
+			featuredImage?: any;
 		}>(
 			`*[_type == "pressRelease"] | order(publishDate desc)[0] {
 				ogImageUrl,
-				featuredImage {
-					asset->{
-						_id,
-						url
-					}
-				}
+				featuredImage
 			}`
 		);
 
@@ -48,6 +43,8 @@ export default async function Image() {
 				.width(1200)
 				.height(630)
 				.fit('crop')
+				.quality(85)
+				.format('jpg')
 				.url();
 		}
 	} catch (error) {
