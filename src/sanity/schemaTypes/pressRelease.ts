@@ -65,6 +65,12 @@ export const pressRelease = defineType({
       title: 'Featured Image from SharePoint',
       description: 'Filename from SharePoint press kit (e.g., "Bettina, Majken og Rene.jpg"). Leave empty if using uploaded image above.',
     }),
+    defineField({
+      name: 'ogImageUrl',
+      type: 'url',
+      title: 'OpenGraph Image URL',
+      description: 'Direct URL to image for social media sharing (Twitter/Facebook). Use a stable, publicly accessible URL.',
+    }),
 
     // Danish Fields
     defineField({

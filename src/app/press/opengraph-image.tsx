@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "next-sanity";
+import imageUrlBuilder from '@sanity/image-url';
 
 export const runtime = "edge";
 export const alt = "Sensational League - Press Release";
@@ -10,7 +11,7 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-	// Fetch press release to get featured image
+	// Fetch press release to get OpenGraph image URL or Sanity image
 	const client = createClient({
 		projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "",
 		dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "",
@@ -18,51 +19,39 @@ export default async function Image() {
 		useCdn: true,
 	});
 
-	let featuredImageName: string | null = null;
+	let featuredImageUrl: string | null = null;
 	try {
-		const pressRelease = await client.fetch<{ featuredImageFromSharePoint?: string }>(
-			`*[_type == "pressRelease"] | order(publishDate desc)[0] { featuredImageFromSharePoint }`
+		const pressRelease = await client.fetch<{
+			ogImageUrl?: string;
+			featuredImage?: { asset?: { _ref: string } };
+		}>(
+			`*[_type == "pressRelease"] | order(publishDate desc)[0] {
+				ogImageUrl,
+				featuredImage {
+					asset->{
+						_id,
+						url
+					}
+				}
+			}`
 		);
-		featuredImageName = pressRelease?.featuredImageFromSharePoint || null;
+
+		// Priority 1: Use explicit ogImageUrl if provided
+		if (pressRelease?.ogImageUrl) {
+			featuredImageUrl = pressRelease.ogImageUrl;
+		}
+		// Priority 2: Generate URL from Sanity-hosted featuredImage
+		else if (pressRelease?.featuredImage?.asset) {
+			const builder = imageUrlBuilder(client);
+			featuredImageUrl = builder
+				.image(pressRelease.featuredImage)
+				.width(1200)
+				.height(630)
+				.fit('crop')
+				.url();
+		}
 	} catch (error) {
 		console.error("Error fetching press release:", error);
-	}
-
-	// If featured image exists, try to fetch from SharePoint
-	let featuredImageUrl: string | null = null;
-	if (featuredImageName) {
-		try {
-			console.log(`[OG Image] Looking for featured image: "${featuredImageName}"`);
-			const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sensationalleague.com'}/api/press-kit`;
-			console.log(`[OG Image] Fetching from: ${apiUrl}`);
-
-			const response = await fetch(apiUrl, {
-				cache: 'no-store',
-				headers: {
-					'Accept': 'application/json',
-				},
-			});
-
-			if (!response.ok) {
-				console.error(`[OG Image] API response not OK: ${response.status} ${response.statusText}`);
-			}
-
-			const data = await response.json();
-			console.log(`[OG Image] API success: ${data.success}, photos count: ${data.photos?.length || 0}`);
-
-			if (data.success && data.photos) {
-				const photo = data.photos.find((p: any) => p.name === featuredImageName);
-				if (photo) {
-					featuredImageUrl = photo.thumbnails?.large || photo.downloadUrl;
-					console.log(`[OG Image] Found featured image URL: ${featuredImageUrl?.substring(0, 100)}...`);
-				} else {
-					console.log(`[OG Image] Photo "${featuredImageName}" not found in ${data.photos.length} photos`);
-					console.log(`[OG Image] Available photos:`, data.photos.map((p: any) => p.name).slice(0, 5));
-				}
-			}
-		} catch (error) {
-			console.error("[OG Image] Error fetching featured image:", error);
-		}
 	}
 
 	// Use absolute URL for the logo in edge runtime

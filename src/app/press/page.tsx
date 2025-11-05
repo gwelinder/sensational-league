@@ -12,6 +12,7 @@ interface PressRelease {
 	slug: { current: string };
 	publishDate: string;
 	featuredImageFromSharePoint?: string;
+	ogImageUrl?: string;
 	// Danish fields
 	headlineDa: string;
 	subheadlineDa?: string;
@@ -51,6 +52,7 @@ async function getPressRelease(): Promise<PressRelease | null> {
 			slug,
 			publishDate,
 			featuredImageFromSharePoint,
+			ogImageUrl,
 			headlineDa,
 			subheadlineDa,
 			contentDa,

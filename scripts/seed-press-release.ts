@@ -1,6 +1,10 @@
 /**
  * Seed script to populate press release in Sanity
  * Run with: pnpm seed:press
+ *
+ * NOTE: After seeding, upload the featured image ("Bettina, Majken og Rene.jpg")
+ * to the Press Release in Sanity Studio. The OpenGraph image will be automatically
+ * generated from the Sanity-hosted image.
  */
 
 import * as dotenv from "dotenv";
@@ -45,6 +49,7 @@ const pressReleaseContent = {
 	},
 	publishDate: "2025-11-04",
 	featuredImageFromSharePoint: "Bettina, Majken og Rene.jpg",
+	// ogImageUrl will be automatically generated from featuredImage uploaded in Sanity Studio
 	headlineDa: "Dansk-skabt International Kvindefodboldliga får Millioninvestering fra Moonbug-stifter",
 	subheadlineDa: "To danske kvindelige iværksættere lancerer professionel international kvindefodboldliga med innovativt format og kommerciel forretningsmodel",
 	contentDa: [
