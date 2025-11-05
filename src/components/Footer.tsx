@@ -197,7 +197,7 @@ export default function Footer({ settings }: FooterProps) {
 						</svg>
 					</a>
 					<a
-						href="https://facebook.com/SensationalLeague"
+						href="https://facebook.com/profile.php?id=61582488164825"
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-white hover:text-[var(--color-volt)] transition-colors"

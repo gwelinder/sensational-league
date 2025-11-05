@@ -79,7 +79,7 @@ export function OrganizationSchema() {
 		"sameAs": [
 			"https://twitter.com/SensationalLG",
 			"https://instagram.com/sensational_league",
-			"https://facebook.com/SensationalLeague",
+			"https://facebook.com/profile.php?id=61582488164825",
 			"https://tiktok.com/@Sensationalleague",
 			"https://youtube.com/@SensationalLeague",
 			"https://linkedin.com/company/saga-sports-group"

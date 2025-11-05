@@ -143,7 +143,7 @@ const welcomeEmailTemplate = {
 				{
 					_key: 'link-facebook',
 					_type: 'link',
-					href: 'https://facebook.com/SensationalLeague',
+					href: 'https://facebook.com/profile.php?id=61582488164825',
 				},
 				{
 					_key: 'link-tiktok',
@@ -166,7 +166,7 @@ const welcomeEmailTemplate = {
 	socialLinks: {
 		youtube: "https://youtube.com/@SensationalLeague",
 		instagram: "https://instagram.com/sensational_league",
-		facebook: "https://facebook.com/SensationalLeague",
+		facebook: "https://facebook.com/profile.php?id=61582488164825",
 		tiktok: "https://tiktok.com/@Sensationalleague",
 		twitter: "https://twitter.com/SensationalLG",
 	},
