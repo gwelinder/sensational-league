@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import type { PortableTextBlock } from "sanity";
 import { sanityFetch } from "@/sanity/lib/live";
-import { notFound } from "next/navigation";
 import PressReleaseContent from "./PressReleaseContent";
-import { PressReleaseSchema, OrganizationSchema } from "./schema-markup";
+import { OrganizationSchema, PressReleaseSchema } from "./schema-markup";
 
 interface PressRelease {
 	_id: string;
@@ -99,18 +99,31 @@ export async function generateMetadata(): Promise<Metadata> {
 	}
 
 	// Always use English for social media sharing (OG tags), fallback to Danish only if English not available
-	const title = pressRelease.seo?.metaTitle || (pressRelease.headlineEn ? `${pressRelease.headlineEn} - Sensational League` : `${pressRelease.headlineDa} - Sensational League`);
-	const description = pressRelease.seo?.metaDescription || pressRelease.subheadlineEn || pressRelease.headlineEn || pressRelease.subheadlineDa || pressRelease.headlineDa;
+	const title =
+		pressRelease.seo?.metaTitle ||
+		(pressRelease.headlineEn
+			? `${pressRelease.headlineEn} - Sensational League`
+			: `${pressRelease.headlineDa} - Sensational League`);
+	const description =
+		pressRelease.seo?.metaDescription ||
+		pressRelease.subheadlineEn ||
+		pressRelease.headlineEn ||
+		pressRelease.subheadlineDa ||
+		pressRelease.headlineDa;
 
 	// For social sharing, prioritize English
 	const ogTitle = pressRelease.headlineEn || pressRelease.headlineDa;
-	const ogDescription = pressRelease.subheadlineEn || pressRelease.subheadlineDa || pressRelease.headlineEn || pressRelease.headlineDa;
+	const ogDescription =
+		pressRelease.subheadlineEn ||
+		pressRelease.subheadlineDa ||
+		pressRelease.headlineEn ||
+		pressRelease.headlineDa;
 
 	// Twitter title (max 70 characters) - shortened version
 	const twitterTitle = pressRelease.headlineEn
-		? (pressRelease.headlineEn.length > 70
+		? pressRelease.headlineEn.length > 70
 			? "Sensational League Launches: Women's Football Meets Entertainment"
-			: pressRelease.headlineEn)
+			: pressRelease.headlineEn
 		: pressRelease.headlineDa;
 
 	return {
@@ -120,7 +133,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			"women's football",
 			"Sensational League",
 			"sports innovation",
-			"kvindefodbold"
+			"kvindefodbold",
 		],
 		openGraph: {
 			title: ogTitle,
@@ -146,10 +159,12 @@ export async function generateMetadata(): Promise<Metadata> {
 			description: ogDescription,
 			site: "@SensationalLG",
 			creator: "@SensationalLG",
-			images: [{
-				url: "/press/opengraph-image",
-				alt: "Sensational League - Press Release",
-			}],
+			images: [
+				{
+					url: "/press/opengraph-image",
+					alt: "Sensational League - Press Release",
+				},
+			],
 		},
 		alternates: {
 			canonical: "https://sensationalleague.com/press",
@@ -160,8 +175,8 @@ export async function generateMetadata(): Promise<Metadata> {
 			googleBot: {
 				index: true,
 				follow: true,
-				'max-image-preview': 'large',
-				'max-snippet': -1,
+				"max-image-preview": "large",
+				"max-snippet": -1,
 			},
 		},
 	};
