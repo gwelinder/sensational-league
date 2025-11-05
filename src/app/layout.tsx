@@ -33,11 +33,11 @@ export const metadata: Metadata = {
     },
   },
   icons: {
+    // Prefer SVG favicon, provide ICO fallback for legacy browsers
     icon: [
-      { url: '/icon', sizes: '32x32', type: 'image/png' },
       { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
     ],
-    shortcut: '/favicon.ico',
     apple: [
       { url: '/apple-icon', sizes: '180x180', type: 'image/png' },
     ],
