@@ -4,15 +4,62 @@ import { useEffect, useState } from "react";
 
 const CONSENT_KEY = "cookie-consent-v1";
 
+type ConsentState = "accepted" | "declined";
+
+type ConsentPayload = {
+  ad_storage: "granted" | "denied";
+  ad_user_data: "granted" | "denied";
+  ad_personalization: "granted" | "denied";
+  analytics_storage: "granted" | "denied";
+};
+
+type ConsentCommand = ["consent", "update", ConsentPayload];
+
+interface WindowWithConsent extends Window {
+  gtag?: (...args: ConsentCommand) => void;
+  dataLayer?: Array<ConsentCommand | unknown>;
+}
+
+function pushConsentUpdate(action: ConsentState) {
+  try {
+    const consentPayload: ConsentPayload = action === "accepted"
+      ? {
+        ad_storage: "granted",
+        ad_user_data: "granted",
+        ad_personalization: "granted",
+        analytics_storage: "granted",
+      }
+      : {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+      };
+
+    const win = window as WindowWithConsent;
+
+    win.dataLayer = win.dataLayer || [];
+    if (typeof win.gtag === "function") {
+      win.gtag("consent", "update", consentPayload);
+    } else {
+      win.dataLayer.push(["consent", "update", consentPayload]);
+    }
+  } catch (error) {
+    console.error("Failed to push consent update", error);
+  }
+}
+
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(CONSENT_KEY);
+      const stored = localStorage.getItem(CONSENT_KEY) as ConsentState | null;
       if (!stored) {
         // Defer state update to avoid calling setState directly in effect
         setTimeout(() => setVisible(true), 0);
+      } else if (stored === "accepted" || stored === "declined") {
+        pushConsentUpdate(stored);
       }
     } catch {
       setTimeout(() => setVisible(true), 0);
@@ -21,10 +68,11 @@ export default function CookieBanner() {
 
   if (!visible) return null;
 
-  function setConsent(value: "accepted" | "declined") {
+  function setConsent(value: ConsentState) {
     try {
       localStorage.setItem(CONSENT_KEY, value);
     } catch {}
+    pushConsentUpdate(value);
     setVisible(false);
   }
 
