@@ -169,7 +169,7 @@ const imageSizeClasses = {
 function RichTextBlock({ block }: { block: RichTextBlockData }) {
   return (
     <div className="prose prose-lg max-w-none prose-zinc [&>h1]:brand-headline [&>h2]:brand-subhead [&>h3]:brand-subhead-light [&>p]:brand-body [&>li]:brand-body [&>blockquote]:border-l-[var(--color-volt)] [&>blockquote]:pl-6 [&>a]:text-[var(--color-volt)] [&>a]:brand-fast">
-      <RenderPortableText value={block.content} />
+      <RenderPortableText value={block.content ?? []} />
     </div>
   );
 }
@@ -433,15 +433,15 @@ export function FlexibleSection({ data, documentId, documentType, path }: Flexib
               
               switch (block._type) {
                 case 'richText':
-                  return <RichTextBlock key={blockKey} block={block} />;
+                  return <RichTextBlock key={blockKey} block={block as RichTextBlockData} />;
                 case 'imageBlock':
-                  return <ImageBlock key={blockKey} block={block} />;
+                  return <ImageBlock key={blockKey} block={block as ImageBlockData} />;
                 case 'featureCard':
-                  return <FeatureCard key={blockKey} block={block} />;
+                  return <FeatureCard key={blockKey} block={block as FeatureCardBlock} />;
                 case 'ctaButton':
-                  return <CTAButton key={blockKey} block={block} />;
+                  return <CTAButton key={blockKey} block={block as CTAButtonBlock} />;
                 case 'videoEmbed':
-                  return <VideoEmbed key={blockKey} block={block} />;
+                  return <VideoEmbed key={blockKey} block={block as VideoEmbedBlock} />;
                 default:
                   return (
                     <div key={blockKey} className="p-4 bg-[var(--color-gray-light)] rounded text-center">

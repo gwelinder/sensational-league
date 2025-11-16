@@ -19,7 +19,7 @@ interface EmailTemplate {
 	};
 }
 
-interface EmailVariables {
+export interface EmailVariables {
 	email: string;
 	firstName?: string;
 	[key: string]: string | undefined;

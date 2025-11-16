@@ -45,15 +45,16 @@ interface FAQSectionProps {
 }
 
 function stringifyAnswer(answer?: PortableTextBlock[]) {
-	if (!answer?.length) return "";
+	if (!Array.isArray(answer) || answer.length === 0) return "";
 	return answer
-		.map((block) =>
-			block?.children
-				?.map((child: PortableTextBlock["children"][number]) =>
-					typeof child?.text === "string" ? child.text : "",
-				)
-				.join(" ") || "",
-		)
+		.map((block) => {
+			const children = Array.isArray(block?.children)
+				? (block.children as Array<{ text?: string }>)
+				: [];
+			return children
+				.map((child) => (typeof child?.text === "string" ? child.text : ""))
+				.join(" ");
+		})
 		.join(" ")
 		.toLowerCase();
 }

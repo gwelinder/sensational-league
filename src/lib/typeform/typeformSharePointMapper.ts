@@ -149,7 +149,8 @@ export function mapPlayerDraftResponse(
     }
 
     if (entry.formatter) {
-      processedValue = entry.formatter(processedValue ?? "", sourceValue as FieldValue);
+      const safeValue = (processedValue ?? "") as FieldValue;
+      processedValue = entry.formatter(safeValue, sourceValue as FieldValue);
     }
 
     if (processedValue !== null && processedValue !== undefined && processedValue !== "") {

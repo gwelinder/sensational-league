@@ -40,8 +40,8 @@ interface CountdownConfig {
 }
 
 interface PageSection {
-	_key?: string;
-	_type?: string;
+	_key: string;
+	_type: string;
 	[key: string]: unknown;
 }
 
@@ -627,7 +627,7 @@ function MediaGrid({
 	images?: SanityImage[];
 	dataAttribute?: string;
 }) {
-	const gallery = images?.slice(0, 8);
+	const gallery = images?.slice(0, 8) ?? [];
 	const fallback = [
 		"/logos/image_046_page_39.jpeg",
 		"/logos/image_063_page_42.jpeg",
@@ -635,12 +635,13 @@ function MediaGrid({
 		"/logos/image_073_page_44.jpeg",
 	];
 
-	const cards = gallery?.length
+const cards = gallery.length
 		? gallery.map((image, index) => {
 				const imageProps = getImageProps(image, 800);
+				const keyValue = (image as { _key?: string })?._key ?? `gallery-${index}`;
 				return (
 					<div
-						key={image?._key ?? `gallery-${index}`}
+						key={keyValue}
 						className={cn(
 							"group relative aspect-[3/4] overflow-hidden border-4 border-black",
 							"bg-white transition-all duration-500 hover:-translate-y-2 hover:translate-x-1",
@@ -762,6 +763,14 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
+	const normalizedSections: PageSection[] = (content?.sections ?? []).map(
+		(section, index) => ({
+			...section,
+			_key: section._key ?? `section-${index}`,
+			_type: section._type ?? "contentSection",
+		}),
+	) as PageSection[];
+
 	const pressCtaAttribute = content?._id
 		? createDataAttribute({
 				id: content._id,
@@ -796,7 +805,7 @@ export default function HomePage({ content }: HomePageProps) {
 
 	const heroVideoUrl = content?.hero?.video?.url;
 	const heroPosterUrl = content?.hero?.video?.poster
-		? getImageUrl(content.hero.video.poster, 2400)
+		? getImageUrl(content.hero.video.poster, 2400) ?? undefined
 		: undefined;
 	const heroCtaText = resolveHeroCtaText(content?.hero?.ctaText);
 	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;
@@ -1183,7 +1192,7 @@ export default function HomePage({ content }: HomePageProps) {
 						<SectionsRenderer
 							documentId={content._id}
 							documentType={content._type}
-							sections={content.sections as PageSection[]}
+							sections={normalizedSections}
 						/>
 					</section>
 				)}

@@ -1,6 +1,6 @@
 import { resendClient } from "./resendClient";
 import { client as sanityClient } from "@/sanity/lib/client";
-import { renderEmailTemplate } from "@/lib/email-renderer";
+import { renderEmailTemplate, type EmailVariables } from "@/lib/email-renderer";
 
 interface SendPlayerDraftThankYouOptions {
   email: string;
@@ -76,12 +76,12 @@ export async function sendPlayerDraftThankYou({
       '*[_type == "emailTemplate" && templateId == "player-draft-thanks" && enabled == true][0] { subject, content, signature, ctaButton, socialLinks }',
     );
 
-    const variables = {
+    const variables: EmailVariables = {
       email,
       firstName: fullName?.split(" ")[0],
       position: positionPreference,
       submittedAt: submittedAt || new Date().toISOString(),
-    } as Record<string, string | undefined>;
+    };
 
     let subject: string;
     let html: string;

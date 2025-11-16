@@ -17,7 +17,7 @@ export interface FieldMapEntry {
 	kind: FieldKind;
 	required?: boolean;
 	/** Optional custom formatter */
-	formatter?: (value: FieldValue, rawValue?: FieldValue) => unknown;
+	formatter?: (value: FieldValue, rawValue?: FieldValue) => FieldValue;
 	/** Optional source (defaults to answers array) */
 	source?: "answers" | "hidden";
 }

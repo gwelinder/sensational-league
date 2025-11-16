@@ -30,7 +30,6 @@ export function TypeformWidget({ formId, height = 760, className }: TypeformWidg
 				style={{ width: "100%", height }}
 				source="sensational-league-player-draft-inline"
 				keepSession
-				recordConversions
 			/>
 		</div>
 	);
