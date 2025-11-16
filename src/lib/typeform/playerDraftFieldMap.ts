@@ -30,6 +30,7 @@ export interface FieldMapEntry {
 export const PLAYER_DRAFT_NAME_FIELD_REF = "5aa8e9df-1f61-4ec9-aa7c-8c94e4292438"; // First name
 export const PLAYER_DRAFT_LAST_NAME_FIELD_REF = "602744a3-bda7-4f47-831e-223b36fa00ec";
 export const PLAYER_DRAFT_EMAIL_FIELD_REF = "1344d8a0-7a64-4a7b-a5a3-6fb8dbc92392";
+export const PLAYER_DRAFT_PHONE_FIELD_REF = "3c7b9e3c-bc7f-40ab-afba-63fc8dff724a";
 export const PLAYER_DRAFT_POSITION_FIELD_REF = "c32c5729-8ced-41b9-96ca-0062923ce8e8";
 
 /**
@@ -84,7 +85,8 @@ const basePlayerDraftFieldMap: FieldMapEntry[] = [
 		spField: "Interestifnotselected",
 		kind: "multiChoice",
 	},
-	{ ref: PLAYER_DRAFT_EMAIL_FIELD_REF, kind: "email", required: true },
+	{ ref: PLAYER_DRAFT_PHONE_FIELD_REF, spField: "Phonenumber", kind: "text" },
+	{ ref: PLAYER_DRAFT_EMAIL_FIELD_REF, spField: "E_x002d_mail", kind: "email", required: true },
 ];
 
 const motivationalVideoRef = process.env.TYPEFORM_PLAYERDRAFT_VIDEO_FIELD_REF;
