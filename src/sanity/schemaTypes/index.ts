@@ -2,6 +2,7 @@ import type { SchemaTypeDefinition } from "sanity";
 import { blockContent } from "./blockContent";
 import { styledText } from "./styledText";
 import { homePage } from "./homePage";
+import { playerDraftPage } from "./playerDraftPage";
 import { page } from "./page";
 import { policy } from "./policy";
 import { pressRelease } from "./pressRelease";
@@ -49,6 +50,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     // Documents
     siteSettings,
     homePage,
+    playerDraftPage,
     page,
     policy,
     pressRelease,

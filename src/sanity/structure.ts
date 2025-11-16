@@ -14,6 +14,14 @@ export const structure: StructureResolver = (S) =>
             .documentId('homePage')
         ),
       S.listItem()
+        .title('Player Draft Page')
+        .child(
+          S.editor()
+            .id('playerDraftPage')
+            .schemaType('playerDraftPage')
+            .documentId('playerDraftPage')
+        ),
+      S.listItem()
         .title('Site Settings')
         .child(
           S.editor()
@@ -22,5 +30,5 @@ export const structure: StructureResolver = (S) =>
             .documentId('siteSettings')
         ),
       S.divider(),
-      ...S.documentTypeListItems().filter((item) => !['siteSettings', 'homePage'].includes(item.getId() ?? '')),
+      ...S.documentTypeListItems().filter((item) => !['siteSettings', 'homePage', 'playerDraftPage'].includes(item.getId() ?? '')),
     ])
