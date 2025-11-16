@@ -37,8 +37,6 @@ export default function Header({ settings }: HeaderProps) {
 		{ href: "/#about", label: "About" },
 		{ href: "/player-draft", label: "Draft" },
 		{ href: "/press", label: "News" },
-		{ href: "/dashboard", label: "Dashboard" },
-		{ href: "/policies", label: "Policies" },
 	];
 
 	const links = settings?.navigation?.links?.length

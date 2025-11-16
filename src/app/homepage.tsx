@@ -323,7 +323,7 @@ function HeroNewsletterSignup() {
 				<label className="sr-only" htmlFor="hero-newsletter-email">
 					Email address
 				</label>
-				<input
+		<input
 					id="hero-newsletter-email"
 					type="email"
 					value={email}
@@ -332,17 +332,17 @@ function HeroNewsletterSignup() {
 					required
 					disabled={status === "loading"}
 					className={cn(
-						"flex-1 rounded-none border-2 border-white/20 bg-black/90 px-4 py-3 text-sm text-white",
-						"placeholder:text-white/50 focus:border-[var(--color-volt)] focus:outline-none",
-						"disabled:cursor-not-allowed disabled:opacity-60",
+				"flex-1 rounded-none border-2 border-black/15 bg-white px-4 py-3 text-sm text-black",
+				"placeholder:text-black/40 focus:border-black focus:outline-none",
+				"disabled:cursor-not-allowed disabled:opacity-60",
 					)}
 				/>
-				<button
+		<button
 					type="submit"
 					disabled={status === "loading"}
 					className={cn(
-						"w-full rounded-none border-2 border-black bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white",
-						"transition-all duration-200 hover:-translate-y-0.5 hover:translate-x-0.5",
+				"w-full rounded-none border-2 border-black bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white",
+				"transition-all duration-200 hover:-translate-y-0.5 hover:translate-x-0.5",
 						"sm:w-auto",
 						status === "loading" && "opacity-70",
 					)}
@@ -350,26 +350,26 @@ function HeroNewsletterSignup() {
 					{status === "loading" ? "Sending…" : "Join newsletter"}
 				</button>
 			</div>
-			<label className="flex items-start gap-2 text-[11px] text-white/80">
+	<label className="flex items-start gap-2 text-[11px] text-black/70">
 				<input
 					type="checkbox"
 					checked={agreed}
 					onChange={(event) => setAgreed(event.target.checked)}
-					className="mt-1 h-3.5 w-3.5 cursor-pointer border border-white/40 bg-transparent text-black accent-[var(--color-volt)]"
+			className="mt-1 h-3.5 w-3.5 cursor-pointer border border-black/40 bg-transparent text-black accent-[var(--color-volt)]"
 				/>
 				<span>
 					I agree to the{" "}
-					<Link href="/policies" className="underline text-white">
+			<Link href="/privacy" className="underline text-black">
 						privacy policy
 					</Link>
 					.
 				</span>
 			</label>
-			{status === "error" && (
-				<p className="text-xs text-red-400">{errorMessage}</p>
-			)}
-			{status === "success" && (
-				<p className="text-xs text-[var(--color-volt)]">
+	{status === "error" && (
+		<p className="text-xs text-red-500">{errorMessage}</p>
+	)}
+	{status === "success" && (
+		<p className="text-xs text-black">
 					Thanks! You&apos;re on the list.
 				</p>
 			)}
@@ -934,7 +934,7 @@ export default function HomePage({ content }: HomePageProps) {
 		<main className="min-h-screen bg-white">
 			{/* Hero Section */}
 			<section
-				className="relative isolate overflow-hidden bg-white px-4 pt-12 pb-24 text-black"
+				className="relative isolate overflow-hidden bg-gradient-to-b from-[#040404] via-[#0b0b0b] to-[#111111] px-4 pt-12 pb-24 text-white"
 				data-sanity={heroDataAttribute?.toString()}
 			>
 				{heroVideoUrl ? (
@@ -950,37 +950,44 @@ export default function HomePage({ content }: HomePageProps) {
 						/>
 						<div className="absolute inset-0 bg-black opacity-70 mix-blend-multiply" />
 					</div>
-				) : (
-					<div className="absolute inset-0 bg-gradient-to-b from-white via-black/50 to-white" />
-				)}
+				) : null}
+
+				<div
+					className="pointer-events-none absolute inset-0 opacity-45 mix-blend-screen"
+					aria-hidden="true"
+					style={{
+						background:
+							"radial-gradient(circle at 12% 12%, rgba(255,255,255,0.12), transparent 42%), radial-gradient(circle at 78% 8%, rgba(212,255,0,0.05), transparent 60%)",
+					}}
+				/>
+				<div
+					className="pointer-events-none absolute inset-x-[-15%] top-1/3 h-[40%] rounded-full bg-white/8 blur-[160px]"
+					aria-hidden="true"
+				/>
+				<div
+					className="pointer-events-none absolute inset-x-0 bottom-0 h-60 bg-gradient-to-t from-[#151515] via-[#0f0f0f]/85 to-transparent"
+					aria-hidden="true"
+				/>
+				<div
+					className="pointer-events-none absolute inset-x-0 bottom-[-140px] h-[200px] bg-gradient-to-b from-transparent via-[#0b0b0b] to-[#151515]"
+					aria-hidden="true"
+				/>
 
 
 
 				<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row lg:items-end">
 					<div className="flex-1">
-						{content?.hero?.logo && getImageUrl(content.hero.logo) ? (
-							<img
-								{...getImageProps(content.hero.logo, 1800)}
-								alt={content.hero.logo.alt || "Sensational League"}
-								className="mb-10 w-full max-w-[720px]"
-								style={{
-									...getImageProps(content.hero.logo, 1800).style,
-									objectFit: "contain",
-								}}
-							/>
-						) : (
-							<img
-								src="/logos/SL-PRIMARY LOCKUP.svg"
-								alt="Sensational League"
-								className="mb-10 w-full max-w-[760px]"
-							/>
-						)}
-						<p className="brand-caption text-xs uppercase tracking-[0.4em] text-black/50">
+					<img
+						src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
+						alt="Sensational League"
+						className="mb-10 w-full max-w-[760px]"
+					/>
+						<p className="brand-caption text-xs uppercase tracking-[0.4em] text-white/60">
 							{HERO_LOCATION_LABEL}
 						</p>
 
 						<p
-							className="brand-body mt-6 max-w-2xl text-lg text-black/70"
+							className="brand-body mt-6 max-w-2xl text-lg text-white/75"
 							data-sanity={heroSublineAttribute?.toString()}
 						>
 							{content?.hero?.subline || HERO_SUBLINE_DEFAULT}
@@ -988,19 +995,19 @@ export default function HomePage({ content }: HomePageProps) {
 
 
 
-						<HeroStats stats={content?.hero?.stats} variant="light" />
+						<HeroStats stats={content?.hero?.stats} variant="dark" />
 
 						<div className="mt-10 flex flex-wrap gap-4">
 							<Link
 								href="/player-draft"
-								className="inline-flex items-center gap-2 rounded-full border border-black px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+								className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
 							>
 								About the Player Draft
 								<span aria-hidden>→</span>
 							</Link>
 							<Link
 								href="#about"
-								className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+								className="inline-flex items-center gap-2 rounded-full bg-[var(--color-volt)] px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
 							>
 								About the League
 							</Link>
@@ -1012,21 +1019,27 @@ export default function HomePage({ content }: HomePageProps) {
 							applicationCardAttribute?.toString() ??
 							heroCtaAttribute?.toString()
 						}
-						className="w-full max-w-md lg:self-end lg:translate-y-6"
+						className="relative w-full max-w-md lg:self-end lg:translate-y-6"
 					>
-						<ApplicationCard
-							badge={heroCardBadge}
-							title={heroCardTitle}
-							description={heroCardDescription}
-							ctaText={heroCardCtaText}
-							ctaLink={heroCardLink}
-							helperText={heroCardHelperText}
-							deadlineLabel={heroCardDeadline}
-							countdown={countdownConfig}
-							resourceEyebrow={heroResourceEyebrow}
-							resourceLinkLabel={heroResourceLinkLabel}
-							resourceLinkHref={heroResourceLinkHref}
-						/>
+					<div
+						className="pointer-events-none absolute -inset-6 rounded-[44px] bg-white/15 blur-3xl"
+						aria-hidden="true"
+					/>
+						<div className="relative">
+							<ApplicationCard
+								badge={heroCardBadge}
+								title={heroCardTitle}
+								description={heroCardDescription}
+								ctaText={heroCardCtaText}
+								ctaLink={heroCardLink}
+								helperText={heroCardHelperText}
+								deadlineLabel={heroCardDeadline}
+								countdown={countdownConfig}
+								resourceEyebrow={heroResourceEyebrow}
+								resourceLinkLabel={heroResourceLinkLabel}
+								resourceLinkHref={heroResourceLinkHref}
+							/>
+						</div>
 					</div>
 				</div>
 
@@ -1037,41 +1050,31 @@ export default function HomePage({ content }: HomePageProps) {
 				)}
 			</section>
 
-			<section className="bg-white px-4 py-14">
+			<section className="relative -mt-16 bg-gradient-to-b from-[#151515] via-[#1b1b1b] to-[#f7f7f2] px-4 pt-28 pb-16">
+				<div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#151515] via-[#111111]/80 to-transparent" aria-hidden="true" />
 				<div className="mx-auto max-w-7xl">
-					<MediaGrid
-						images={content?.hero?.images}
-						dataAttribute={
-							content?._id
-								? createDataAttribute({
+					<div className="rounded-[32px] border border-black/10 bg-[#fdfdf8] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.25)]">
+						<MediaGrid
+							images={content?.hero?.images}
+							dataAttribute={
+								content?._id
+									? createDataAttribute({
 										id: content._id,
 										type: content._type || "homePage",
 										path: "hero.images",
 									}).toString()
 								: undefined
-						}
-					/>
+							}
+						/>
+					</div>
 				</div>
 			</section>
 
-			<section id="newsletter" className="bg-black px-4 py-12">
-				<div className="mx-auto flex w-full max-w-7xl flex-col gap-6 rounded-3xl border-4 border-white/20 bg-gradient-to-r from-black to-[#1a1a1a] px-6 py-8 text-white md:flex-row md:items-center">
-					<div className="flex-1">
-						<p className="brand-caption text-sm uppercase tracking-[0.4em] text-white/70">
-							Stay in the loop
-						</p>
-						<h3 className="mt-2 text-3xl font-black tracking-tight">
-							Newsletter: Captain drops, venue intel, trial invites
-						</h3>
-						<p className="brand-body mt-2 text-white/80">
-							Fast hits on draft milestones, venue drops, and behind-the-scenes
-							moves straight from the Sensational captains.
-						</p>
-					</div>
-					<div className="flex-1">
-						<HeroNewsletterSignup />
-					</div>
+			<section id="newsletter" className="bg-[#f7f7f2] px-4 py-12">
+				<div className="mx-auto max-w-2xl text-center">
+								<HeroNewsletterSignup />
 				</div>
+
 			</section>
 
 
@@ -1119,26 +1122,6 @@ export default function HomePage({ content }: HomePageProps) {
 						<div className="mx-auto h-2 w-24 bg-black" />
 					</div>
 
-					<div className="mx-auto mb-12 max-w-4xl text-center">
-						<div data-sanity={aboutTitleAttribute?.toString()}>
-							{content?.about?.title ? (
-								<StyledTextRenderer
-									value={content.about.title}
-									className="brand-body text-2xl md:text-3xl font-bold text-black"
-								/>
-							) : (
-								<p className="brand-body text-2xl md:text-3xl font-bold text-black">
-									Play Football. Drive Impact. Change the World.
-								</p>
-							)}
-						</div>
-						<p
-							className="brand-body text-lg text-black/80"
-							data-sanity={aboutDataAttribute?.toString()}
-						>
-							{aboutDescription}
-						</p>
-					</div>
 
 					{/* Info Box - Point System */}
 					<div
@@ -1250,7 +1233,7 @@ export default function HomePage({ content }: HomePageProps) {
 				<div className="mx-auto max-w-5xl px-4">
 					<div className="mb-8 text-center">
 						<h3 className="text-4xl font-black uppercase tracking-[0.2em] text-black">
-							Stay in the loop
+							Stay updated
 						</h3>
 						<p className="brand-body mt-4 text-lg text-black/70">
 							Get news, behind-the-scenes drops, and draft updates from

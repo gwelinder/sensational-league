@@ -341,29 +341,3 @@ seed().catch((error) => {
 	console.error("❌ Failed to seed player draft page", error);
 	process.exit(1);
 });
-				]),
-			],
-		},
-	],
-};
-
-async function seed() {
-	console.log("🌱 Seeding player draft page...");
-
-	await client.createOrReplace(playerDraftPage);
-	console.log("✅ Published page document");
-
-	try {
-		await client.delete(`drafts.${playerDraftPage._id}`);
-		console.log("✅ Removed existing draft");
-	} catch (error) {
-		console.log("ℹ️  No draft to remove", error instanceof Error ? error.message : "");
-	}
-
-	console.log("✨ Player draft page ready!");
-}
-
-seed().catch((error) => {
-	console.error("❌ Failed to seed player draft page", error);
-	process.exit(1);
-});

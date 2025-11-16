@@ -285,27 +285,17 @@ export default function Footer({ settings }: FooterProps) {
 				{/* Bottom Section */}
 				<div className="border-t border-white/10 pt-8">
 					{/* Links */}
-					<div className="flex items-center justify-center gap-4 mb-6">
-						<Link
-							href="/privacy"
-							className={cn(
-								"brand-caption text-sm text-white uppercase tracking-wider font-bold",
-								"hover:text-[var(--color-volt)] transition-colors",
-							)}
-						>
-							Privacy Policy
-						</Link>
-						<span className="text-white/50">|</span>
-						<Link
-							href="/press"
-							className={cn(
-								"brand-caption text-sm text-white uppercase tracking-wider font-bold",
-								"hover:text-[var(--color-volt)] transition-colors",
-							)}
-						>
-							Press release
-						</Link>
-					</div>
+				<div className="flex items-center justify-center gap-4 mb-6">
+					<Link
+						href="/privacy"
+						className={cn(
+							"brand-caption text-sm text-white uppercase tracking-wider font-bold",
+							"hover:text-[var(--color-volt)] transition-colors",
+						)}
+					>
+						Privacy Policy
+					</Link>
+				</div>
 
 					{/* Copyright and Tagline */}
 					<div className="text-center space-y-3">

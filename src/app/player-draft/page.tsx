@@ -16,7 +16,7 @@ const DEFAULT_PAGE_DESCRIPTION =
 const DEFAULT_HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_HERO_HEADLINE = "Join the Sensational 80";
 const DEFAULT_HERO_DESCRIPTION =
-	"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football. Submit your application, share your story, and play in front of the world.";
+	"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football. Submit your application.";
 const DEFAULT_APPLICATION_HELPER_TEXT =
 	"Captains review weekly. Early submissions are encouraged so your profile is in the first batch.";
 const DEFAULT_FINAL_CTA_HELPER =
@@ -46,7 +46,7 @@ const DEFAULT_APPLICATION_SNAPSHOT = [
 
 const DEFAULT_LEAGUE_INTRO_PARAGRAPHS = [
 	"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026, before expanding to the UK and the US.",
-	"Eight teams. Eight captains. High-tempo matches. Festival-style game days. A sports entertainment format built for modern players and modern audiences.",
+	"Eight teams. Legendary captains. High-tempo matches. Festival-style game days. A sports entertainment format built for modern players and modern audiences.",
 ];
 
 const DEFAULT_WHY_STATEMENTS = [
@@ -66,28 +66,6 @@ const DEFAULT_WHY_STATEMENTS = [
 			"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven and community-first. Powered by content and visibility.",
 	},
 ];
-
-const DEFAULT_PARTICIPATION_PARAGRAPHS = [
-	"When you join the Sensational League, you become part of the first-ever group of players in a new international format. You help define how women’s football is seen, covered, talked about, and celebrated.",
-	"We train players to become powerful storytellers and digital creators, because media visibility on and off the pitch is how we grow the game. Your voice, your personality, and your story will inspire more girls to play and more fans and brands to care.",
-	"How do we know this? Because we know how fun and giving playing, leading, and watching football is. Participate, elevate, and reciprocate.",
-];
-
-const DEFAULT_QUOTE_CARD = {
-	eyebrow: "We know the feeling",
-	quote: "Football is electric when the stage is yours.",
-	body: "Every player gets the tools to perform, tell their story, and move culture forward.",
-};
-
-const DEFAULT_TOOLS_CARD = {
-	title: "Tools you get",
-	items: [
-		"Story lab + creator coaching",
-		"Community platform + CRM access",
-		"Impact scoring + spotlights",
-		"Access to gamedays & future tours",
-	],
-};
 
 const DEFAULT_FORMAT_HIGHLIGHTS = [
 	"The League features eight teams, each led by a Sensational captain, competing in a fast, entertainment-driven 7v7 format.",
@@ -112,7 +90,7 @@ const DEFAULT_DRAFT_STEPS = [
 	{
 		title: "Weekly captain reviews",
 		description:
-			"Applications are reviewed continuously by all eight Sensational captains together with the Saga team.",
+			"Applications are reviewed continuously by all Sensational captains together with the Saga team.",
 	},
 	{
 		title: "Selections & invitations",
@@ -158,7 +136,7 @@ const DEFAULT_FAQ_ITEMS = [
 	{
 		question: "How are players selected?",
 		answer:
-			"Applications go straight to the eight captains and Sensational staff, who assess every applicant to build eight equally strong teams.",
+			"Applications go straight to the Sensational captains and staff, who assess every applicant to build eight equally strong teams.",
 	},
 	{
 		question: "Can I study or work while playing?",
@@ -221,7 +199,7 @@ const DEFAULT_IMPACT_PILLARS = [
 	{
 		title: "Performance",
 		description:
-			"High-tempo 7v7 football fronted by eight legendary captains and creator-grade coaching.",
+			"High-tempo 7v7 football fronted by legendary captains and creator-grade coaching.",
 	},
 	{
 		title: "Visibility",
@@ -231,12 +209,12 @@ const DEFAULT_IMPACT_PILLARS = [
 	{
 		title: "Community",
 		description:
-			"Each team drives a Community Challenge that earns points for uplifting women’s sport beyond the pitch.",
+			"Each team drives a Community Challenge that earns points for amplifying women’s sport beyond the pitch.",
 	},
 	{
 		title: "Opportunity",
 		description:
-			"Paid match days, commercial spotlights, and future tours across Europe and the US.",
+			"Paid match days and commercial spotlights.",
 	},
 ];
 
@@ -249,9 +227,6 @@ const DEFAULT_ABOUT_SUBTITLE = "International 7v7 built for storyteller-athletes
 const DEFAULT_WHY_EYEBROW = "Why Sensational League";
 const DEFAULT_WHY_TITLE = "Grow the game. Own the format.";
 const DEFAULT_WHY_SUBTITLE = "Women’s sports deserve purpose-built platforms.";
-const DEFAULT_PARTICIPATION_EYEBROW = "You’re not just playing";
-const DEFAULT_PARTICIPATION_TITLE = "Participate. Elevate. Reciprocate.";
-const DEFAULT_PARTICIPATION_SUBTITLE = "Players become co-creators of a new women’s football culture.";
 const DEFAULT_FORMAT_EYEBROW = "Our format";
 const DEFAULT_FORMAT_TITLE = "Purpose-built 7v7";
 const DEFAULT_FORMAT_SUBTITLE = "Football meets a community challenge to score on and off the pitch.";
@@ -301,17 +276,6 @@ interface CountdownConfig {
 	label?: string;
 	deadline?: string;
 	timezone?: string;
-}
-
-interface QuoteCard {
-	eyebrow?: string;
-	quote?: string;
-	body?: string;
-}
-
-interface ToolsCard {
-	title?: string;
-	items?: string[];
 }
 
 interface Step {
@@ -379,14 +343,6 @@ interface PlayerDraftContent {
 		title?: string;
 		subtitle?: string;
 		statements?: Statement[];
-	};
-	participationSection?: {
-		eyebrow?: string;
-		title?: string;
-		subtitle?: string;
-		paragraphs?: string[];
-		quoteCard?: QuoteCard;
-		toolsCard?: ToolsCard;
 	};
 	formatSection?: {
 		eyebrow?: string;
@@ -488,21 +444,6 @@ const PLAYER_DRAFT_QUERY = `*[_type == "playerDraftPage"][0] {
 		statements[] {
 			title,
 			description
-		}
-	},
-	participationSection {
-		eyebrow,
-		title,
-		subtitle,
-		paragraphs,
-		quoteCard {
-			eyebrow,
-			quote,
-			body
-		},
-		toolsCard {
-			title,
-			items
 		}
 	},
 	formatSection {
@@ -672,28 +613,6 @@ function PlayerDraftPageContent({
 		? whySection.statements
 		: DEFAULT_WHY_STATEMENTS;
 
-	const participationSection = content?.participationSection;
-	const participationEyebrow =
-		participationSection?.eyebrow || DEFAULT_PARTICIPATION_EYEBROW;
-	const participationTitle =
-		participationSection?.title || DEFAULT_PARTICIPATION_TITLE;
-	const participationSubtitle =
-		participationSection?.subtitle || DEFAULT_PARTICIPATION_SUBTITLE;
-	const participationParagraphs =
-		participationSection?.paragraphs?.length
-			? participationSection.paragraphs
-			: DEFAULT_PARTICIPATION_PARAGRAPHS;
-	const quoteCard = {
-		...DEFAULT_QUOTE_CARD,
-		...participationSection?.quoteCard,
-	};
-	const toolsCard = {
-		...DEFAULT_TOOLS_CARD,
-		...participationSection?.toolsCard,
-		items: participationSection?.toolsCard?.items?.length
-			? participationSection.toolsCard.items
-			: DEFAULT_TOOLS_CARD.items,
-	};
 
 	const formatSection = content?.formatSection;
 	const formatEyebrow = formatSection?.eyebrow || DEFAULT_FORMAT_EYEBROW;
@@ -759,10 +678,6 @@ function PlayerDraftPageContent({
 	const timelineDataAttribute = getDataAttribute(content, "timeline");
 	const aboutDataAttribute = getDataAttribute(content, "about");
 	const whyDataAttribute = getDataAttribute(content, "whySection");
-	const participationDataAttribute = getDataAttribute(
-		content,
-		"participationSection",
-	);
 	const formatDataAttribute = getDataAttribute(content, "formatSection");
 	const draftDataAttribute = getDataAttribute(
 		content,
@@ -985,64 +900,6 @@ function PlayerDraftPageContent({
 								</p>
 							</div>
 						))}
-					</div>
-				</div>
-			</section>
-			<section
-				className="bg-[#FDFDF5] px-4 py-16 sm:px-6"
-				id="participate"
-				data-sanity={participationDataAttribute}
-			>
-				<div className="mx-auto max-w-6xl space-y-10">
-					<SectionHeader
-						eyebrow={participationEyebrow}
-						title={participationTitle}
-						subtitle={participationSubtitle}
-					/>
-					<div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-						<div className="space-y-6 text-lg leading-relaxed text-black/80 brand-body">
-							{participationParagraphs.map((paragraph, index) => (
-								<p key={`${paragraph.slice(0, 32)}-${index}`}>{paragraph}</p>
-							))}
-						</div>
-						<div className="space-y-6">
-							<div className="rounded-3xl border border-black/10 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.06)]">
-								{quoteCard.eyebrow && (
-									<p className="brand-caption text-xs uppercase tracking-[0.35em] text-black/55">
-										{quoteCard.eyebrow}
-									</p>
-								)}
-								{quoteCard.quote && (
-									<p className="mt-4 text-lg font-black uppercase tracking-[0.18em]">
-										“{quoteCard.quote}”
-									</p>
-								)}
-								{quoteCard.body && (
-									<p className="brand-body mt-4 text-black/70">{quoteCard.body}</p>
-								)}
-							</div>
-							<div className="rounded-3xl border-2 border-black bg-[var(--color-volt)] p-7 shadow-[12px_12px_0px_rgba(35,35,36,0.85)]">
-								<div className="flex items-center justify-between">
-									<p className="text-sm font-black uppercase tracking-[0.3em] text-black/70">
-										{toolsCard.title || "Tools"}
-									</p>
-									<span aria-hidden="true" className="-mr-2">
-										<Logo
-											variant="secondary-mark"
-											color="black"
-											width={120}
-											height={40}
-											className="p-0"
-										/>
-									</span>
-								</div>
-								<ul className="mt-4 space-y-2 text-sm font-black uppercase tracking-[0.12em] text-black">
-									{(toolsCard.items ?? []).map((item, index) => (
-										<li key={`${item}-${index}`}>{item}</li>
-									))}
-								</ul>
-							</div>
-						</div>
 					</div>
 				</div>
 			</section>

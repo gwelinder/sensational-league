@@ -1,0 +1,64 @@
+{
+  "event_id": "01KA7BG8785HGC17AGJN0T0QTS",
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "ZmJZ6YB2",
+    "token": "01KA7BG8785HGC17AGJN0T0QTS",
+    "landed_at": "2025-11-16T22:10:23Z",
+    "submitted_at": "2025-11-16T22:10:23Z",
+    "definition": {
+      "id": "ZmJZ6YB2",
+      "title": "Sensational League Player Draft DK/SE",
+      "fields": [
+        { "id": "YaDEGj0ujWny", "ref": "5aa8e9df-1f61-4ec9-aa7c-8c94e4292438", "type": "short_text", "title": "First name", "properties": {} },
+        { "id": "WDIeoujYjOmb", "ref": "602744a3-bda7-4f47-831e-223b36fa00ec", "type": "short_text", "title": "Last name", "properties": {} },
+        { "id": "BjyOMF7Lfo9C", "ref": "6c7909fd-43b6-4364-b5d1-1101ffbebbb7", "type": "short_text", "title": "What city do you live in?", "properties": {} },
+        { "id": "k1iDLiQQHD6a", "ref": "214f283a-4639-4bc3-8500-30ab884a4107", "type": "dropdown", "title": "Which age group do you belong to?", "properties": {} },
+        { "id": "P0MQ7auvhnB8", "ref": "e800711a-6c8b-4e48-9bfd-0695cde52847", "type": "dropdown", "title": "What's the highest level of football you have played?", "properties": {} },
+        { "id": "p8dYMJauwUpG", "ref": "c32c5729-8ced-41b9-96ca-0062923ce8e8", "type": "multiple_choice", "title": "What's your preferred player position?", "properties": {}, "allow_multiple_selections": true, "choices": [] },
+        { "id": "Niwyxv2loikc", "ref": "d1b9952e-d449-4b49-8aef-0eb67e2c13d1", "type": "yes_no", "title": "Are you currently active in a football club?", "properties": {} },
+        { "id": "gtopJzo8qZEd", "ref": "4a83d967-7882-445e-8ece-514f18daaa56", "type": "short_text", "title": "What club are you active in?", "properties": {} },
+        { "id": "WvS3koJiP4Pt", "ref": "3e59cf61-2f98-410f-a5f0-991de5704523", "type": "yes_no", "title": "Have you been active in a football club in the past?", "properties": {} },
+        { "id": "gOGepOamUKcc", "ref": "c5d76cf8-728b-4c37-8151-d3df08a49c4d", "type": "short_text", "title": "What club(s) have you been active in?", "properties": {} },
+        { "id": "q5v6rAQKSXMq", "ref": "fe493c99-d514-4b6b-a4e0-55a7f99d05bf", "type": "long_text", "title": "What’s your biggest superpower as a player and as a teammate?", "properties": {} },
+        { "id": "auTaZWpig6pH", "ref": "f727661e-eea7-4651-a09f-3eefd6c33efa", "type": "long_text", "title": "What player idol represents you the best, and why?", "properties": {} },
+        { "id": "Fgxl5Y5E0n7w", "ref": "2a2b5747-7373-4e92-a3a8-cbde342e877b", "type": "long_text", "title": "What’s your definition of fun and success in a football match?", "properties": {} },
+        { "id": "CltbJ7EsxDV9", "ref": "9aa71f75-0a6d-410c-9863-194e609ef265", "type": "yes_no", "title": "Are you active on social media platforms?", "properties": {} },
+        { "id": "TaAzWAt38DSP", "ref": "8a44b217-206f-4c4f-8a1d-64d9f00d9c4b", "type": "multiple_choice", "title": "What social media platforms do you use the most?", "properties": {}, "allow_multiple_selections": true, "allow_other_choice": true, "choices": [] },
+        { "id": "1ehwLRBvPSgy", "ref": "c60e34de-71fc-4e84-b264-b9c84b53997c", "type": "short_text", "title": "Please share your social media handle(s) below", "properties": {} },
+        { "id": "C0TKmjwFKk9q", "ref": "f4acdd57-f3ac-460a-9978-6b9e08621527", "type": "multiple_choice", "title": "If you are NOT selected to play the first league. Would you be interested in any of the following?", "properties": {}, "allow_multiple_selections": true, "allow_other_choice": true, "choices": [] },
+        { "id": "M3Crb8qp6Guy", "ref": "3c7b9e3c-bc7f-40ab-afba-63fc8dff724a", "type": "phone_number", "title": "Phone number", "properties": {} },
+        { "id": "Xum0ZCYejOSK", "ref": "1344d8a0-7a64-4a7b-a5a3-6fb8dbc92392", "type": "email", "title": "Email", "properties": {} }
+      ],
+      "endings": [],
+      "settings": {
+        "partial_responses_to_all_integrations": true
+      }
+    },
+    "answers": [
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "YaDEGj0ujWny", "type": "short_text", "ref": "5aa8e9df-1f61-4ec9-aa7c-8c94e4292438" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "WDIeoujYjOmb", "type": "short_text", "ref": "602744a3-bda7-4f47-831e-223b36fa00ec" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "BjyOMF7Lfo9C", "type": "short_text", "ref": "6c7909fd-43b6-4364-b5d1-1101ffbebbb7" } },
+      { "type": "choice", "choice": { "id": "S1LpbkFYAebO", "label": "18-24", "ref": "6d6aa85f-5e75-4157-9a3e-1dcef7ab7f0a" }, "field": { "id": "k1iDLiQQHD6a", "type": "dropdown", "ref": "214f283a-4639-4bc3-8500-30ab884a4107" } },
+      { "type": "choice", "choice": { "id": "tUIkF0tyHNF0", "label": "Amateur", "ref": "13889ed2-e8c9-41f3-8496-03f0e5610b09" }, "field": { "id": "P0MQ7auvhnB8", "type": "dropdown", "ref": "e800711a-6c8b-4e48-9bfd-0695cde52847" } },
+      { "type": "choices", "choices": { "labels": ["Goalkeeper", "Wing-back"], "refs": ["f9b9e958-3c99-4d09-a549-ce267aabda9e", "9c54b3d1-2643-4bb7-b2e1-671f148cde9f"] }, "field": { "id": "p8dYMJauwUpG", "type": "multiple_choice", "ref": "c32c5729-8ced-41b9-96ca-0062923ce8e8" } },
+      { "type": "boolean", "boolean": true, "field": { "id": "Niwyxv2loikc", "type": "yes_no", "ref": "d1b9952e-d449-4b49-8aef-0eb67e2c13d1" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "gtopJzo8qZEd", "type": "short_text", "ref": "4a83d967-7882-445e-8ece-514f18daaa56" } },
+      { "type": "boolean", "boolean": true, "field": { "id": "WvS3koJiP4Pt", "type": "yes_no", "ref": "3e59cf61-2f98-410f-a5f0-991de5704523" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "gOGepOamUKcc", "type": "short_text", "ref": "c5d76cf8-728b-4c37-8151-d3df08a49c4d" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "q5v6rAQKSXMq", "type": "long_text", "ref": "fe493c99-d514-4b6b-a4e0-55a7f99d05bf" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "auTaZWpig6pH", "type": "long_text", "ref": "f727661e-eea7-4651-a09f-3eefd6c33efa" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "Fgxl5Y5E0n7w", "type": "long_text", "ref": "2a2b5747-7373-4e92-a3a8-cbde342e877b" } },
+      { "type": "boolean", "boolean": true, "field": { "id": "CltbJ7EsxDV9", "type": "yes_no", "ref": "9aa71f75-0a6d-410c-9863-194e609ef265" } },
+      { "type": "choices", "choices": { "labels": ["Instagram", "Facebook"], "refs": ["f3e8acb1-6503-4af2-a86b-35b9dfcaf3fc", "4e243e45-c8ac-492d-b75c-e23b415b2855"] }, "field": { "id": "TaAzWAt38DSP", "type": "multiple_choice", "ref": "8a44b217-206f-4c4f-8a1d-64d9f00d9c4b" } },
+      { "type": "text", "text": "Lorem ipsum dolor", "field": { "id": "1ehwLRBvPSgy", "type": "short_text", "ref": "c60e34de-71fc-4e84-b264-b9c84b53997c" } },
+      { "type": "choices", "choices": { "labels": ["Being an extra player"], "refs": ["7a55fade-b294-4b01-a112-1dc6b3d4b254"] }, "field": { "id": "C0TKmjwFKk9q", "type": "multiple_choice", "ref": "f4acdd57-f3ac-460a-9978-6b9e08621527" } },
+      { "type": "phone_number", "phone_number": "+34123456789", "field": { "id": "M3Crb8qp6Guy", "type": "phone_number", "ref": "3c7b9e3c-bc7f-40ab-afba-63fc8dff724a" } },
+      { "type": "email", "email": "an_account@example.com", "field": { "id": "Xum0ZCYejOSK", "type": "email", "ref": "1344d8a0-7a64-4a7b-a5a3-6fb8dbc92392" } }
+    ],
+    "ending": {
+      "id": "48YJH7aP8FCm",
+      "ref": "thankyou-screen"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { draftMode } from "next/headers";
@@ -67,10 +67,6 @@ export const metadata: Metadata = {
 		],
 	},
 	manifest: "/manifest",
-	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "#D4FF00" },
-		{ media: "(prefers-color-scheme: dark)", color: "#232324" },
-	],
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "black-translucent",
@@ -115,6 +111,13 @@ export const metadata: Metadata = {
 		// google: "your-google-verification-code",
 		// yandex: "your-yandex-verification-code",
 	},
+};
+
+export const viewport: Viewport = {
+	themeColor: [
+		{ media: "(prefers-color-scheme: light)", color: "#D4FF00" },
+		{ media: "(prefers-color-scheme: dark)", color: "#232324" },
+	],
 };
 
 export default async function RootLayout({
