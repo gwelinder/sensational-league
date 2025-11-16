@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { client } from "@/sanity/lib/client";
+import { resendClient } from "@/lib/email/resendClient";
 import { renderEmailTemplate } from "@/lib/email-renderer";
 import { getGraphClient } from "@/lib/sharepoint/graphClient";
-import { resendClient } from "@/lib/email/resendClient";
+import { client } from "@/sanity/lib/client";
 
 // Graph client + Resend helpers are shared across API routes
 
@@ -12,7 +12,7 @@ async function saveToSharePoint(
 	consentGiven: boolean,
 	consentTimestamp: string,
 	timestamp: string,
-	source?: string
+	source?: string,
 ): Promise<boolean> {
 	if (
 		!process.env.AZURE_TENANT_ID ||
@@ -31,11 +31,11 @@ async function saveToSharePoint(
 		// Check if email already exists
 		const existingItems = await graphClient
 			.api(
-				`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`
+				`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`,
 			)
-			.header('Prefer', 'HonorNonIndexedQueriesWarningMayFailRandomly')
+			.header("Prefer", "HonorNonIndexedQueriesWarningMayFailRandomly")
 			.filter(`fields/Email eq '${email}'`)
-			.expand('fields')
+			.expand("fields")
 			.get();
 
 		if (existingItems.value && existingItems.value.length > 0) {
@@ -50,7 +50,7 @@ async function saveToSharePoint(
 
 			await graphClient
 				.api(
-					`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items/${itemId}/fields`
+					`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items/${itemId}/fields`,
 				)
 				.update(updateFields);
 
@@ -70,7 +70,7 @@ async function saveToSharePoint(
 
 			await graphClient
 				.api(
-					`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`
+					`/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_NEWSLETTER_LIST_ID}/items`,
 				)
 				.post({ fields });
 
@@ -81,7 +81,7 @@ async function saveToSharePoint(
 	} catch (spError) {
 		console.error("❌ SharePoint error:", spError);
 		console.error("SharePoint error details:", {
-			message: spError instanceof Error ? spError.message : 'Unknown error',
+			message: spError instanceof Error ? spError.message : "Unknown error",
 			stack: spError instanceof Error ? spError.stack : undefined,
 			siteId: process.env.SHAREPOINT_SITE_ID,
 			listId: process.env.SHAREPOINT_NEWSLETTER_LIST_ID,
@@ -126,7 +126,10 @@ function getFallbackEmailHTML(email: string, timestamp: string): string {
 }
 
 // Helper: Send welcome email (independent operation)
-async function sendWelcomeEmail(email: string, timestamp: string): Promise<boolean> {
+async function sendWelcomeEmail(
+	email: string,
+	timestamp: string,
+): Promise<boolean> {
 	if (!process.env.RESEND_API_KEY) {
 		console.warn("⚠️ Resend not configured - missing RESEND_API_KEY");
 		return false;
@@ -135,7 +138,7 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 	try {
 		// Fetch email template from Sanity
 		const template = await client.fetch(
-			'*[_type == "emailTemplate" && templateId == "welcome-email" && enabled == true][0] { subject, content, signature, ctaButton, socialLinks }'
+			'*[_type == "emailTemplate" && templateId == "welcome-email" && enabled == true][0] { subject, content, signature, ctaButton, socialLinks }',
 		);
 
 		// Use verified domain
@@ -159,7 +162,7 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 			console.warn("⚠️ No Sanity template found - using fallback HTML");
 		}
 
-	const { error } = await resendClient.emails.send({
+		const { error } = await resendClient.emails.send({
 			from: fromEmail,
 			to: [email],
 			subject: emailSubject,
@@ -176,7 +179,8 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 	} catch (emailError) {
 		console.error("❌ Email error:", emailError);
 		console.error("Email error details:", {
-			message: emailError instanceof Error ? emailError.message : 'Unknown error',
+			message:
+				emailError instanceof Error ? emailError.message : "Unknown error",
 			hasApiKey: !!process.env.RESEND_API_KEY,
 		});
 		return false;
@@ -192,7 +196,7 @@ async function sendAdminNotification(
 	consentGiven: boolean,
 	consentTimestamp: string,
 	sharePointSuccess: boolean,
-	emailSuccess: boolean
+	emailSuccess: boolean,
 ): Promise<void> {
 	try {
 		if (!process.env.RESEND_API_KEY) {
@@ -205,7 +209,7 @@ async function sendAdminNotification(
 			? `Sensational League Newsletter <notifications@${process.env.RESEND_VERIFIED_DOMAIN}>`
 			: "Sensational League Newsletter <onboarding@resend.dev>";
 
-	await resendClient.emails.send({
+		await resendClient.emails.send({
 			from: fromEmail,
 			to: ["saga@sagasportsgroup.com"],
 			subject: `[SL] Newsletter Signup: ${email}`,
@@ -250,38 +254,54 @@ export async function POST(request: NextRequest) {
 		}
 
 		const timestamp = new Date().toISOString();
-		const ipAddress = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "Unknown";
+		const ipAddress =
+			request.headers.get("x-forwarded-for") ||
+			request.headers.get("x-real-ip") ||
+			"Unknown";
 
-		console.log(`📧 Newsletter signup: ${email} from ${source || 'unknown source'}`);
+		console.log(
+			`📧 Newsletter signup: ${email} from ${source || "unknown source"}`,
+		);
 
 		// Run SharePoint and Email operations in parallel using Promise.allSettled
 		// This ensures they are completely independent - failures don't cascade
 		const [sharePointResult, emailResult] = await Promise.allSettled([
-			saveToSharePoint(email, consentGiven, consentTimestamp || timestamp, timestamp, source),
+			saveToSharePoint(
+				email,
+				consentGiven,
+				consentTimestamp || timestamp,
+				timestamp,
+				source,
+			),
 			sendWelcomeEmail(email, timestamp),
 		]);
 
-		const sharePointSuccess = sharePointResult.status === 'fulfilled' && sharePointResult.value;
-		const emailSuccess = emailResult.status === 'fulfilled' && emailResult.value;
+		const sharePointSuccess =
+			sharePointResult.status === "fulfilled" && sharePointResult.value;
+		const emailSuccess =
+			emailResult.status === "fulfilled" && emailResult.value;
 
 		// Log results
-		if (sharePointResult.status === 'rejected') {
-			console.error("❌ SharePoint operation rejected:", sharePointResult.reason);
+		if (sharePointResult.status === "rejected") {
+			console.error(
+				"❌ SharePoint operation rejected:",
+				sharePointResult.reason,
+			);
 		}
-		if (emailResult.status === 'rejected') {
+		if (emailResult.status === "rejected") {
 			console.error("❌ Email operation rejected:", emailResult.reason);
 		}
 
 		// Send admin notification (non-blocking, fire-and-forget)
 		sendAdminNotification(
 			email,
-			source || 'unknown',
+			source || "unknown",
 			timestamp,
 			ipAddress,
 			consentGiven,
 			consentTimestamp || timestamp,
 			sharePointSuccess,
-			emailSuccess
+			emailSuccess,
 		).catch((err: Error) => console.error("Admin notification failed:", err));
 
 		return NextResponse.json({
