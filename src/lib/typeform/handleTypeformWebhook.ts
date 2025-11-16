@@ -46,11 +46,25 @@ function verifyTypeformSignature(
 		return false;
 	}
 
-	const signature = signatureHeader.slice(expectedPrefix.length);
-	const computed = crypto.createHmac("sha256", secret).update(rawBody).digest("base64");
+	const signature = signatureHeader.slice(expectedPrefix.length).trim();
+	let providedSignature: Buffer;
+	try {
+		providedSignature = Buffer.from(signature, "base64");
+	} catch {
+		return false;
+	}
+
+	const computedSignature = crypto
+		.createHmac("sha256", secret)
+		.update(rawBody)
+		.digest();
+
+	if (providedSignature.length !== computedSignature.length) {
+		return false;
+	}
 
 	try {
-		return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(computed));
+		return crypto.timingSafeEqual(providedSignature, computedSignature);
 	} catch {
 		return false;
 	}
