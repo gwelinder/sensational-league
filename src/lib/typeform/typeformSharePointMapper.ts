@@ -92,6 +92,8 @@ function extractAnswerValue(
       }
       return answer.boolean ?? null;
     }
+	case "file":
+		return answer.file_url ?? answer.url ?? answer.text ?? null;
     default:
       return answer.text ?? null;
   }

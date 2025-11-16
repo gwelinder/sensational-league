@@ -109,7 +109,7 @@ interface HomePageProps {
 	};
 }
 
-const PLAYER_DRAFT_FORM_ID = "01KA5BSF5MKR532MTGZ6G48MD4";
+const PLAYER_DRAFT_FORM_ID = "ZmJZ6YB2";
 const DEFAULT_TYPEFORM_URL =
 	process.env.NEXT_PUBLIC_TYPEFORM_PLAYERDRAFT_URL ||
 	`https://form.typeform.com/to/${PLAYER_DRAFT_FORM_ID}`;
@@ -117,9 +117,9 @@ const APPLICATION_CTA_TEXT = "Start application";
 const DEFAULT_DEADLINE = "2026-01-01T23:59:59+01:00";
 const DEFAULT_COUNTDOWN_LABEL = "Applications close";
 const DEFAULT_APPLICATION_HELPER_TEXT =
-	"Applications are reviewed weekly by all eight Sensational captains. Early submissions are encouraged.";
+	"Applications are reviewed weekly by the Sensational captains. Early submissions are encouraged.";
 const DEFAULT_EMBED_DESCRIPTION =
-	"Fill out the Typeform below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
+	"Submit your application below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
 const DEFAULT_EMBED_BULLETS = [
 	"Share your football profile, background, and ambitions",
 	"Attach links or handles that showcase how you play and create",
@@ -401,10 +401,10 @@ function useCountdown(deadline?: string) {
 	);
 
 	useEffect(() => {
-		if (!deadline) return;
 		const interval = setInterval(() => {
 			setParts(calculateCountdown(deadline));
 		}, 1000);
+
 		return () => clearInterval(interval);
 	}, [deadline]);
 
@@ -610,6 +610,11 @@ function ApplicationEmbedSection({
 							))}
 						</ul>
 					) : null}
+				<p className="brand-body text-white/70">
+					Optional: if you feel like it you’re welcome to upload a super short
+					motivational video of yourself, where you let us know why you want to be
+					a Sensational player.
+				</p>
 					{deadlineNote && (
 						<p className="brand-body text-white/70">{deadlineNote}</p>
 					)}
@@ -811,7 +816,7 @@ export default function HomePage({ content }: HomePageProps) {
 	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;
 	const heroCtaDescription =
 		content?.hero?.ctaDescription ||
-		"Submit your Typeform application to join the inaugural Sensational League season. All positions, all backgrounds, all personalities welcome.";
+	"Submit your application to join the inaugural Sensational League season. All positions, backgrounds, and personalities welcome.";
 	const countdownConfig = content?.hero?.countdown;
 
 	const countdownLabel =
@@ -840,15 +845,15 @@ export default function HomePage({ content }: HomePageProps) {
 		applicationCardSettings?.resourceEyebrow || "Need more info?";
 	const heroResourceLinkLabel =
 		applicationCardSettings?.resourceLinkLabel ||
-		"Read about the league & player draft";
+		"Read about the player draft";
 	const heroResourceLinkHref =
 		applicationCardSettings?.resourceLinkHref ||
-		"/about-the-league-player-draft";
+	"/player-draft";
 
 	const pressButtonText =
 		content?.pressCta?.buttonText ||
 		content?.pressCta?.label ||
-		"Press release";
+		"News";
 	const pressEmoji = content?.pressCta?.emoji || "📰";
 	const pressHref = content?.pressCta?.href || "/press";
 
@@ -899,7 +904,7 @@ export default function HomePage({ content }: HomePageProps) {
 					<div className="absolute inset-0 bg-gradient-to-br from-black via-black to-[var(--color-purple)]/60" />
 				)}
 
-				<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row">
+			<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row lg:items-end">
 					<div className="flex-1">
 						{content?.hero?.logo && getImageUrl(content.hero.logo) ? (
 							<img
@@ -942,30 +947,30 @@ export default function HomePage({ content }: HomePageProps) {
 
 						<HeroStats stats={content?.hero?.stats} />
 
-						<div className="mt-10 flex flex-wrap gap-4">
-							<Link
-								href="/about-the-league-player-draft"
-								className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
-							>
-								About the League & Draft
-								<span aria-hidden>→</span>
-							</Link>
-							<Link
-								href="#about"
-								className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
-							>
-								About Sensational League
-							</Link>
-						</div>
+					<div className="mt-10 flex flex-wrap gap-4">
+					<Link
+						href="/player-draft"
+							className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+						>
+							About the Player Draft
+							<span aria-hidden>→</span>
+						</Link>
+						<Link
+							href="#about"
+							className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+						>
+							About the League
+						</Link>
 					</div>
-					<div
-						id="player-draft"
-						data-sanity={
-							applicationCardAttribute?.toString() ??
-							heroCtaAttribute?.toString()
-						}
-						className="w-full max-w-md"
-					>
+					</div>
+				<div
+					id="player-draft"
+					data-sanity={
+						applicationCardAttribute?.toString() ??
+						heroCtaAttribute?.toString()
+					}
+					className="w-full max-w-md lg:self-end lg:translate-y-6"
+				>
 						<ApplicationCard
 							badge={heroCardBadge}
 							title={heroCardTitle}
@@ -989,19 +994,19 @@ export default function HomePage({ content }: HomePageProps) {
 				)}
 			</section>
 
-			<section className="bg-black px-4 py-12">
+		<section id="newsletter" className="bg-black px-4 py-12">
 				<div className="mx-auto flex w-full max-w-7xl flex-col gap-6 rounded-3xl border-4 border-white/20 bg-gradient-to-r from-black to-[#1a1a1a] px-6 py-8 text-white md:flex-row md:items-center">
 					<div className="flex-1">
 						<p className="brand-caption text-sm uppercase tracking-[0.4em] text-white/70">
 							Stay in the loop
 						</p>
-						<h3 className="mt-2 text-3xl font-black tracking-tight">
-							Newsletter: captain drops, venues, trial invites
-						</h3>
-						<p className="brand-body mt-2 text-white/80">
-							Weekly updates on player draft milestones, community events, and
-							behind-the-scenes moves from the Sensational captains.
-						</p>
+					<h3 className="mt-2 text-3xl font-black tracking-tight">
+						Newsletter: Captain drops, venue intel, trial invites
+					</h3>
+					<p className="brand-body mt-2 text-white/80">
+						Fast hits on draft milestones, venue drops, and behind-the-scenes
+						moves straight from the Sensational captains.
+					</p>
 					</div>
 					<div className="flex-1">
 						<HeroNewsletterSignup />

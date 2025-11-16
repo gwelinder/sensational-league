@@ -5,7 +5,8 @@ export type FieldKind =
 	| "email"
 	| "choice"
 	| "multiChoice"
-	| "boolean";
+	| "boolean"
+	| "file";
 
 export type FieldValue = string | number | boolean | string[];
 
@@ -33,7 +34,7 @@ export const PLAYER_DRAFT_EMAIL_FIELD_REF = "01K9VNVT8BRNHF4CWQ4XE5JVAV";
 	* columns are renamed, update `spField`. Use `node check-list-columns.mjs PlayerApplications --show-hidden`
 	* to inspect current column internals before editing this file.
 	*/
-export const playerDraftFieldMap: FieldMapEntry[] = [
+const basePlayerDraftFieldMap: FieldMapEntry[] = [
 	{ ref: PLAYER_DRAFT_NAME_FIELD_REF, spField: "Title", kind: "text", required: true },
 	{ ref: "6c7909fd-43b6-4364-b5d1-1101ffbebbb7", spField: "City", kind: "text" },
 	{ ref: "214f283a-4639-4bc3-8500-30ab884a4107", spField: "Agegroup", kind: "choice" },
@@ -72,3 +73,14 @@ export const playerDraftFieldMap: FieldMapEntry[] = [
 	},
 	{ ref: PLAYER_DRAFT_EMAIL_FIELD_REF, kind: "email", required: true },
 ];
+
+const motivationalVideoRef = process.env.TYPEFORM_PLAYERDRAFT_VIDEO_FIELD_REF;
+if (motivationalVideoRef) {
+	basePlayerDraftFieldMap.push({
+		ref: motivationalVideoRef,
+		spField: process.env.SHAREPOINT_PLAYER_APPLICATIONS_VIDEO_FIELD,
+		kind: "file",
+	});
+}
+
+export const playerDraftFieldMap: FieldMapEntry[] = basePlayerDraftFieldMap;

@@ -34,9 +34,9 @@ interface HeaderProps {
 
 export default function Header({ settings }: HeaderProps) {
 	const defaultLinks = [
-		{ href: "/about-the-league-player-draft", label: "About the League & Player Draft" },
 		{ href: "/#about", label: "About" },
-		{ href: "/press", label: "Press" },
+		{ href: "/player-draft", label: "Draft" },
+		{ href: "/press", label: "News" },
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/policies", label: "Policies" },
 	];

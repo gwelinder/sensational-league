@@ -13,7 +13,13 @@ interface SanityImage {
 	objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 }
 
-interface PageDocument {
+export interface PageSection {
+	_key: string;
+	_type: string;
+	[key: string]: unknown;
+}
+
+export interface PageDocument {
 	_id: string;
 	_type: string;
 	title?: string;
@@ -38,7 +44,7 @@ interface PageDocument {
 			style?: string;
 		};
 	};
-	sections?: Array<{ _key: string; _type: string; [key: string]: unknown }>;
+	sections?: PageSection[];
 }
 
 const RESERVED_SLUGS = new Set([
@@ -52,7 +58,7 @@ const RESERVED_SLUGS = new Set([
 
 export const revalidate = 3600;
 
-async function getPageBySlug(slug: string): Promise<PageDocument | null> {
+export async function getPageBySlug(slug: string): Promise<PageDocument | null> {
 	const { data } = await sanityFetch({
 		query: `*[_type == "page" && slug.current == $slug][0] {
       _id,
