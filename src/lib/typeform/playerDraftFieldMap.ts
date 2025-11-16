@@ -23,8 +23,9 @@ export interface FieldMapEntry {
 	source?: "answers" | "hidden";
 }
 
-export const PLAYER_DRAFT_NAME_FIELD_REF = "21081364-8f56-4f7a-b4fc-eb17bcbeb5ef";
-export const PLAYER_DRAFT_EMAIL_FIELD_REF = "01K9VNVT8BRNHF4CWQ4XE5JVAV";
+export const PLAYER_DRAFT_NAME_FIELD_REF = "5aa8e9df-1f61-4ec9-aa7c-8c94e4292438"; // First name
+export const PLAYER_DRAFT_LAST_NAME_FIELD_REF = "602744a3-bda7-4f47-831e-223b36fa00ec";
+export const PLAYER_DRAFT_EMAIL_FIELD_REF = "1344d8a0-7a64-4a7b-a5a3-6fb8dbc92392";
 
 /**
 	* Centralized mapping between the Player Draft Typeform (WS. Sensational League Player Draft 2025/2026)
@@ -35,7 +36,8 @@ export const PLAYER_DRAFT_EMAIL_FIELD_REF = "01K9VNVT8BRNHF4CWQ4XE5JVAV";
 	* to inspect current column internals before editing this file.
 	*/
 const basePlayerDraftFieldMap: FieldMapEntry[] = [
-	{ ref: PLAYER_DRAFT_NAME_FIELD_REF, spField: "Title", kind: "text", required: true },
+	{ ref: PLAYER_DRAFT_NAME_FIELD_REF, kind: "text", required: true },
+	{ ref: PLAYER_DRAFT_LAST_NAME_FIELD_REF, kind: "text" },
 	{ ref: "6c7909fd-43b6-4364-b5d1-1101ffbebbb7", spField: "City", kind: "text" },
 	{ ref: "214f283a-4639-4bc3-8500-30ab884a4107", spField: "Agegroup", kind: "choice" },
 	{ ref: "e800711a-6c8b-4e48-9bfd-0695cde52847", spField: "Highestlevel", kind: "choice" },

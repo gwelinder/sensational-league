@@ -1,8 +1,9 @@
 import type { FieldKind, FieldMapEntry, FieldValue } from "./playerDraftFieldMap";
 import {
-  PLAYER_DRAFT_EMAIL_FIELD_REF,
-  PLAYER_DRAFT_NAME_FIELD_REF,
-  playerDraftFieldMap,
+	PLAYER_DRAFT_EMAIL_FIELD_REF,
+	PLAYER_DRAFT_LAST_NAME_FIELD_REF,
+	PLAYER_DRAFT_NAME_FIELD_REF,
+	playerDraftFieldMap,
 } from "./playerDraftFieldMap";
 
 export interface TypeformField {
@@ -160,10 +161,16 @@ export function mapPlayerDraftResponse(
     }
   }
 
-  const emailAnswer = answerByRef.get(PLAYER_DRAFT_EMAIL_FIELD_REF);
-  const nameAnswer = answerByRef.get(PLAYER_DRAFT_NAME_FIELD_REF);
-  const email = (extractAnswerValue(emailAnswer, "email") as string | null) ?? undefined;
-  const fullName = (extractAnswerValue(nameAnswer, "text") as string | null) ?? undefined;
+	const emailAnswer = answerByRef.get(PLAYER_DRAFT_EMAIL_FIELD_REF);
+	const firstNameAnswer = answerByRef.get(PLAYER_DRAFT_NAME_FIELD_REF);
+	const lastNameAnswer = PLAYER_DRAFT_LAST_NAME_FIELD_REF
+		? answerByRef.get(PLAYER_DRAFT_LAST_NAME_FIELD_REF)
+		: undefined;
+
+	const email = (extractAnswerValue(emailAnswer, "email") as string | null) ?? undefined;
+	const firstName = (extractAnswerValue(firstNameAnswer, "text") as string | null) ?? undefined;
+	const lastName = (extractAnswerValue(lastNameAnswer, "text") as string | null) ?? undefined;
+	const fullName = [firstName, lastName].filter(Boolean).join(" ").trim() || firstName || lastName || undefined;
 
   if (fullName && !fields.Title) {
     fields.Title = fullName;
