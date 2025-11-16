@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { type NextRequest, NextResponse } from "next/server";
 import { sendPlayerDraftThankYou } from "@/lib/email/sendPlayerDraftThankYou";
 import { createSharePointListItem } from "@/lib/sharepoint/saveListItem";
@@ -14,10 +15,10 @@ import { handleTypeformWebhook } from "@/lib/typeform/handleTypeformWebhook";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-	const rawBody = await request.text();
+	const rawBodyBuffer = Buffer.from(await request.arrayBuffer());
 
 	const result = await handleTypeformWebhook(
-		rawBody,
+		rawBodyBuffer,
 		request.headers.get("Typeform-Signature"),
 		{
 			deps: { createSharePointListItem, sendPlayerDraftThankYou },

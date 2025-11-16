@@ -17,6 +17,8 @@ export interface HandleTypeformWebhookEnv {
 	sharePointListId?: string | null;
 }
 
+export type RawWebhookBody = string | Buffer;
+
 export interface HandleTypeformWebhookResult {
 	status: number;
 	body: Record<string, unknown>;
@@ -27,8 +29,16 @@ const defaultDeps: Required<HandleTypeformWebhookDeps> = {
 	sendPlayerDraftThankYou: sendPlayerDraftThankYouImpl,
 };
 
+function toBuffer(body: RawWebhookBody): Buffer {
+	return typeof body === "string" ? Buffer.from(body, "utf8") : body;
+}
+
+function toJsonString(body: RawWebhookBody): string {
+	return typeof body === "string" ? body : body.toString("utf8");
+}
+
 function verifyTypeformSignature(
-	rawBody: string,
+	rawBody: RawWebhookBody,
 	signatureHeader: string | null,
 	secret?: string | null,
 ): boolean {
@@ -48,7 +58,7 @@ function verifyTypeformSignature(
 
 	const computedSignature = `${expectedPrefix}${crypto
 		.createHmac("sha256", secret)
-		.update(rawBody)
+		.update(toBuffer(rawBody))
 		.digest("base64")}`;
 
 	const providedSignature = signatureHeader.trim();
@@ -59,8 +69,8 @@ function verifyTypeformSignature(
 
 	try {
 		return crypto.timingSafeEqual(
-			Buffer.from(providedSignature, "utf-8"),
-			Buffer.from(computedSignature, "utf-8"),
+			Buffer.from(providedSignature, "utf8"),
+			Buffer.from(computedSignature, "utf8"),
 		);
 	} catch {
 		return false;
@@ -80,7 +90,7 @@ function parseFormResponse(payload: unknown): TypeformFormResponse | null {
 }
 
 export async function handleTypeformWebhook(
-	rawBody: string,
+	rawBody: RawWebhookBody,
 	signatureHeader: string | null,
 	options: {
 		deps?: HandleTypeformWebhookDeps;
@@ -102,7 +112,7 @@ export async function handleTypeformWebhook(
 
 	let parsedBody: unknown;
 	try {
-		parsedBody = JSON.parse(rawBody);
+		parsedBody = JSON.parse(toJsonString(rawBody));
 	} catch {
 		return {
 			status: 400,
