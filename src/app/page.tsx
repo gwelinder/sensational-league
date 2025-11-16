@@ -24,6 +24,12 @@ interface SanityImage {
 	objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
+interface PageSection {
+	_key: string;
+	_type: string;
+	[key: string]: unknown;
+}
+
 interface HomePageContent {
 	_id: string;
 	_type: string;
@@ -35,16 +41,65 @@ interface HomePageContent {
 	hero?: {
 		logo?: SanityImage;
 		headline?: PortableTextBlock[] | null;
+		video?: {
+			url?: string;
+			poster?: SanityImage;
+			credit?: string;
+		};
 		subline?: string;
 		ctaText?: string;
+		ctaLink?: string;
+		ctaDescription?: string;
 		stats?: Stat[];
 		images?: SanityImage[];
+		countdown?: {
+			enabled?: boolean;
+			label?: string;
+			deadline?: string;
+			timezone?: string;
+		};
 	};
 	about?: {
 		title?: PortableTextBlock[] | null;
 		description?: string;
 		pillars?: Pillar[];
+		infoCard?: {
+			title?: string;
+			body?: string;
+		};
 	};
+	pressCta?: {
+		label?: string;
+		emoji?: string;
+		href?: string;
+		buttonText?: string;
+	};
+	application?: {
+		card?: {
+			badge?: string;
+			title?: string;
+			description?: string;
+			ctaText?: string;
+			ctaLink?: string;
+			helperText?: string;
+			countdownLabel?: string;
+				formId?: string;
+				resourceEyebrow?: string;
+				resourceLinkLabel?: string;
+				resourceLinkHref?: string;
+		};
+		embed?: {
+			enabled?: boolean;
+			badge?: string;
+			title?: string;
+			description?: string;
+			bulletPoints?: string[];
+			deadlineNote?: string;
+			formId?: string;
+			height?: number;
+		};
+	};
+	sections?: PageSection[];
 }
 
 async function getHomePageData(): Promise<HomePageContent | null> {
@@ -65,8 +120,21 @@ async function getHomePageData(): Promise<HomePageContent | null> {
           objectFit
         },
         headline,
+        video {
+          url,
+          poster {
+            asset,
+            alt,
+            width,
+            height,
+            objectFit
+          },
+          credit
+        },
         subline,
         ctaText,
+        ctaLink,
+        ctaDescription,
         stats[] {
           value,
           label
@@ -77,6 +145,12 @@ async function getHomePageData(): Promise<HomePageContent | null> {
           width,
           height,
           objectFit
+        },
+        countdown {
+          enabled,
+          label,
+          deadline,
+          timezone
         }
       },
       about {
@@ -85,6 +159,66 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         pillars[] {
           title,
           description
+        },
+        infoCard {
+          title,
+          body
+        }
+      },
+      pressCta {
+        label,
+        emoji,
+        href,
+        buttonText
+      },
+      application {
+        card {
+          badge,
+          title,
+          description,
+          ctaText,
+          ctaLink,
+          helperText,
+          countdownLabel,
+		  formId,
+		  resourceEyebrow,
+		  resourceLinkLabel,
+		  resourceLinkHref
+        },
+        embed {
+          enabled,
+          badge,
+          title,
+          description,
+          bulletPoints,
+          deadlineNote,
+          formId,
+          height
+        }
+      },
+      sections[] {
+        ...,
+        content[] {
+          ...,
+          image {
+            asset,
+            alt,
+            crop,
+            hotspot
+          },
+          thumbnail {
+            asset,
+            alt,
+            crop,
+            hotspot
+          }
+        },
+        categories[] {
+          ...,
+          faqs[] {
+            ...,
+            answer[]
+          }
         }
       }
     }`,

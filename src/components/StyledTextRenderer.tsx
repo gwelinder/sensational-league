@@ -38,5 +38,11 @@ export default function StyledTextRenderer({ value, className }: StyledTextRende
     return null;
   }
 
-  return <PortableText value={value} components={components} />;
+	const content = <PortableText value={value} components={components} />;
+
+	if (className) {
+		return <div className={className}>{content}</div>;
+	}
+
+	return content;
 }

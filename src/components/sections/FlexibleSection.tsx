@@ -9,6 +9,70 @@ import { ResponsiveLogo } from "@/components/Logo";
 import Link from "next/link";
 import Image from "next/image";
 import type { PortableTextBlock } from "sanity";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+
+type BackgroundOverlay = "none" | "dark-50" | "dark-70" | "brand-gradient";
+
+type StyledImageSource = SanityImageSource & {
+	overlay?: BackgroundOverlay;
+};
+
+interface BaseBlock {
+	_key?: string;
+	_type: string;
+}
+
+interface RichTextBlockData extends BaseBlock {
+	_type: "richText";
+	content?: PortableTextBlock[];
+}
+
+interface ImageBlockData extends BaseBlock {
+	_type: "imageBlock";
+	image?: SanityImageSource | null;
+	alt?: string;
+	caption?: string;
+	size?: keyof typeof imageSizeClasses;
+}
+
+interface FeatureCardBlock extends BaseBlock {
+	_type: "featureCard";
+	icon?: string;
+	title?: string;
+	description?: string;
+	link?: {
+		text?: string;
+		url?: string;
+	};
+}
+
+type ButtonStyle = "primary" | "secondary" | "ghost" | "large-primary";
+type ButtonSize = keyof typeof buttonSizeClasses;
+
+interface CTAButtonBlock extends BaseBlock {
+	_type: "ctaButton";
+	text?: string;
+	url?: string;
+	size?: ButtonSize;
+	style?: ButtonStyle;
+}
+
+type AspectRatio = "16:9" | "4:3" | "1:1" | "9:16";
+
+interface VideoEmbedBlock extends BaseBlock {
+	_type: "videoEmbed";
+	title?: string;
+	url?: string;
+	aspectRatio?: AspectRatio;
+}
+
+type FlexibleContentBlock =
+	| RichTextBlockData
+	| ImageBlockData
+	| FeatureCardBlock
+	| CTAButtonBlock
+	| VideoEmbedBlock
+	| BaseBlock;
 
 interface FlexibleSectionProps {
   data: {
@@ -17,11 +81,7 @@ interface FlexibleSectionProps {
     title?: string;
     subtitle?: string;
     layout?: string;
-    content?: Array<{
-      _type: string;
-      _key: string;
-      [key: string]: any;
-    }>;
+    content?: FlexibleContentBlock[];
     gridSettings?: {
       columns?: string;
       gap?: string;
@@ -30,7 +90,7 @@ interface FlexibleSectionProps {
     styling?: {
       backgroundColor?: string;
       backgroundType?: string;
-      backgroundImage?: any;
+      backgroundImage?: StyledImageSource | null;
       gradientDirection?: string;
       spacing?: {
         top?: string;
@@ -106,7 +166,7 @@ const imageSizeClasses = {
 };
 
 // Content block renderers
-function RichTextBlock({ block }: { block: any }) {
+function RichTextBlock({ block }: { block: RichTextBlockData }) {
   return (
     <div className="prose prose-lg max-w-none prose-zinc [&>h1]:brand-headline [&>h2]:brand-subhead [&>h3]:brand-subhead-light [&>p]:brand-body [&>li]:brand-body [&>blockquote]:border-l-[var(--color-volt)] [&>blockquote]:pl-6 [&>a]:text-[var(--color-volt)] [&>a]:brand-fast">
       <RenderPortableText value={block.content} />
@@ -114,7 +174,7 @@ function RichTextBlock({ block }: { block: any }) {
   );
 }
 
-function ImageBlock({ block }: { block: any }) {
+function ImageBlock({ block }: { block: ImageBlockData }) {
   const imageUrl = block.image ? urlFor(block.image).width(800).height(600).url() : null;
   
   if (!imageUrl) return null;
@@ -138,52 +198,52 @@ function ImageBlock({ block }: { block: any }) {
   );
 }
 
-function FeatureCard({ block }: { block: any }) {
-  const hasLink = block.link?.text && block.link?.url;
+function FeatureCard({ block }: { block: FeatureCardBlock }) {
+  const hasLink = Boolean(block.link?.text && block.link?.url);
 
-  const CardContent = () => (
-    <div className={cn(
-      "group p-6 rounded-lg border border-[var(--color-gray-light)] bg-[var(--color-surface-2)]",
-      "brand-motion-container hover:shadow-lg transition-all duration-200",
-      hasLink && "cursor-pointer hover:border-[var(--color-volt)]"
-    )}>
-      {block.icon && (
-        <div className="mb-4">
-          {block.icon === 'spark' ? (
-            <ResponsiveLogo type="spark" color="black" />
-          ) : (
-            <div className="text-3xl">{block.icon}</div>
-          )}
-        </div>
-      )}
-      <h3 className="brand-subhead-light mb-3 group-hover:text-[var(--color-volt)] transition-colors">
-        {block.title}
-      </h3>
-      {block.description && (
-        <p className="brand-body text-[var(--color-text-muted)] mb-4">
-          {block.description}
-        </p>
-      )}
-      {hasLink && (
-        <div className="brand-caption text-[var(--color-volt)] brand-direction-right">
-          {block.link.text}
-        </div>
-      )}
-    </div>
-  );
+  const cardContent = (
+	<div
+		className={cn(
+			"group rounded-lg border border-[var(--color-gray-light)] bg-[var(--color-surface-2)] p-6",
+			"brand-motion-container transition-all duration-200 hover:shadow-lg",
+			hasLink && "cursor-pointer hover:border-[var(--color-volt)]",
+		)}
+	>
+		{block.icon && (
+			<div className="mb-4">
+				{block.icon === "spark" ? (
+					<ResponsiveLogo type="spark" color="black" />
+				) : (
+					<div className="text-3xl">{block.icon}</div>
+				)}
+			</div>
+		)}
+		<h3 className="brand-subhead-light mb-3 transition-colors group-hover:text-[var(--color-volt)]">
+			{block.title}
+		</h3>
+		{block.description && (
+			<p className="brand-body mb-4 text-[var(--color-text-muted)]">{block.description}</p>
+		)}
+		{hasLink && block.link?.text && (
+			<div className="brand-caption brand-direction-right text-[var(--color-volt)]">
+				{block.link.text}
+			</div>
+		)}
+	</div>
+	);
 
-  if (hasLink) {
-    return (
-      <Link href={block.link.url}>
-        <CardContent />
-      </Link>
-    );
-  }
+	if (hasLink && block.link?.url) {
+		return <Link href={block.link.url}>{cardContent}</Link>;
+	}
 
-  return <CardContent />;
+	return cardContent;
 }
 
-function CTAButton({ block }: { block: any }) {
+function CTAButton({ block }: { block: CTAButtonBlock }) {
+  if (!block.url || !block.text) {
+    return null;
+  }
+
   return (
     <Link
       href={block.url}
@@ -193,7 +253,7 @@ function CTAButton({ block }: { block: any }) {
         "hover:scale-105 transform-gpu",
         "focus:outline-none focus:ring-2 focus:ring-offset-2",
         "transition-all duration-200",
-        buttonSizeClasses[block.size as keyof typeof buttonSizeClasses] || buttonSizeClasses.md,
+        buttonSizeClasses[block.size as ButtonSize] || buttonSizeClasses.md,
         block.style === "primary" && "bg-[var(--color-volt)] text-[var(--color-black)] focus:ring-[var(--color-volt)]",
         block.style === "secondary" && "border-2 border-current bg-transparent focus:ring-current",
         block.style === "ghost" && "bg-transparent hover:bg-current/10 focus:ring-current",
@@ -205,7 +265,7 @@ function CTAButton({ block }: { block: any }) {
   );
 }
 
-function VideoEmbed({ block }: { block: any }) {
+function VideoEmbed({ block }: { block: VideoEmbedBlock }) {
   const aspectRatioClasses = {
     "16:9": "aspect-video",
     "4:3": "aspect-[4/3]",
@@ -320,12 +380,12 @@ export function FlexibleSection({ data, documentId, documentType, path }: Flexib
             fill
             className="object-cover"
           />
-          {styling.backgroundImage?.overlay !== 'none' && (
+          {styling.backgroundImage?.overlay !== "none" && (
             <div className={cn(
               "absolute inset-0",
-              styling.backgroundImage?.overlay === 'dark-50' && "bg-black/50",
-              styling.backgroundImage?.overlay === 'dark-70' && "bg-black/70",
-              styling.backgroundImage?.overlay === 'brand-gradient' && "bg-gradient-to-br from-black/60 via-transparent to-[var(--color-volt)]/20"
+              styling.backgroundImage?.overlay === "dark-50" && "bg-black/50",
+              styling.backgroundImage?.overlay === "dark-70" && "bg-black/70",
+              styling.backgroundImage?.overlay === "brand-gradient" && "bg-gradient-to-br from-black/60 via-transparent to-[var(--color-volt)]/20"
             )} />
           )}
         </div>

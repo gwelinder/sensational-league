@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useOptimistic } from '@sanity/visual-editing';
 import type { SanityDocument } from '@sanity/client';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 import CookieBanner from '@/components/CookieBanner';
 import { SKIP_TO_CONTENT_ID } from '@/constants/accessibility';
 
@@ -69,7 +70,8 @@ export default function ConditionalLayout({ children, settings: initialSettings 
 
   return (
     <>
-      <div id={SKIP_TO_CONTENT_ID}>{children}</div>
+			<Header settings={settings} />
+			<div id={SKIP_TO_CONTENT_ID}>{children}</div>
       <Footer settings={settings} />
       <CookieBanner />
     </>

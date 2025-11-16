@@ -5,11 +5,13 @@ import { HeroSection, SignupSection, ContentSection, PartnersSection } from "./s
 import { AdvancedHeroSection } from "./advanced/AdvancedHeroSection";
 import { MediaSection } from "./advanced/MediaSection";
 import { StatsSection } from "./advanced/StatsSection";
+import { FlexibleSection } from "./sections/FlexibleSection";
+import { FAQSection } from "./sections/FAQSection";
 
 interface Section {
   _key: string;
   _type: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface SectionsRendererProps {
@@ -171,6 +173,36 @@ export function SectionsRenderer({
                 />
               </div>
             );
+
+          case 'flexibleSection':
+            return (
+              <div
+                key={section._key}
+                data-sanity={sectionAttribute.toString()}
+              >
+                <FlexibleSection
+                  data={section}
+                  documentId={documentId}
+                  documentType={documentType}
+                  path={sectionPath}
+                />
+              </div>
+            );
+
+          case 'faqSection':
+            return (
+              <div
+                key={section._key}
+                data-sanity={sectionAttribute.toString()}
+              >
+                <FAQSection
+                  data={section}
+                  documentId={documentId}
+                  documentType={documentType}
+                  path={sectionPath}
+                />
+              </div>
+            );
             
           default:
             console.warn(`Unknown section type: ${section._type}`);
@@ -185,7 +217,7 @@ export function SectionsRenderer({
                     Unknown Section Type
                   </h2>
                   <p className="brand-body text-[var(--color-text-muted)]">
-                    Section type "{section._type}" is not supported yet.
+                    Section type &quot;{section._type}&quot; is not supported yet.
                   </p>
                 </div>
               </div>

@@ -1,11 +1,13 @@
 "use client";
 
 import type { PortableTextBlock } from "@portabletext/types";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { createDataAttribute } from "@sanity/visual-editing";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { SectionsRenderer } from "@/components/SectionsRenderer";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
+import TypeformApplyButton from "@/components/TypeformApplyButton";
+import TypeformWidget from "@/components/TypeformWidget";
 import { getImageProps, getImageUrl } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +32,19 @@ interface SanityImage {
 	objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 }
 
+interface CountdownConfig {
+	enabled?: boolean;
+	label?: string;
+	deadline?: string;
+	timezone?: string;
+}
+
+interface PageSection {
+	_key?: string;
+	_type?: string;
+	[key: string]: unknown;
+}
+
 interface HomePageProps {
 	content?: {
 		_id?: string;
@@ -37,17 +52,92 @@ interface HomePageProps {
 		hero?: {
 			logo?: SanityImage;
 			headline?: PortableTextBlock[] | null;
+			video?: {
+				url?: string;
+				poster?: SanityImage;
+				credit?: string;
+			};
 			subline?: string;
 			ctaText?: string;
+			ctaLink?: string;
+			ctaDescription?: string;
 			stats?: Stat[];
 			images?: SanityImage[];
+			countdown?: CountdownConfig;
 		};
 		about?: {
 			title?: PortableTextBlock[] | null;
 			description?: string;
 			pillars?: Pillar[];
+			infoCard?: {
+				title?: string;
+				body?: string;
+			};
 		};
+		pressCta?: {
+			label?: string;
+			emoji?: string;
+			href?: string;
+			buttonText?: string;
+		};
+		application?: {
+			card?: {
+				badge?: string;
+				title?: string;
+				description?: string;
+				ctaText?: string;
+				ctaLink?: string;
+				helperText?: string;
+				countdownLabel?: string;
+				formId?: string;
+				resourceEyebrow?: string;
+				resourceLinkLabel?: string;
+				resourceLinkHref?: string;
+			};
+			embed?: {
+				enabled?: boolean;
+				badge?: string;
+				title?: string;
+				description?: string;
+				bulletPoints?: string[];
+				deadlineNote?: string;
+				formId?: string;
+				height?: number;
+			};
+		};
+		sections?: PageSection[];
 	};
+}
+
+const PLAYER_DRAFT_FORM_ID = "01KA5BSF5MKR532MTGZ6G48MD4";
+const DEFAULT_TYPEFORM_URL =
+	process.env.NEXT_PUBLIC_TYPEFORM_PLAYERDRAFT_URL ||
+	`https://form.typeform.com/to/${PLAYER_DRAFT_FORM_ID}`;
+const APPLICATION_CTA_TEXT = "Start application";
+const DEFAULT_DEADLINE = "2026-01-01T23:59:59+01:00";
+const DEFAULT_COUNTDOWN_LABEL = "Applications close";
+const DEFAULT_APPLICATION_HELPER_TEXT =
+	"Applications are reviewed weekly by all eight Sensational captains. Early submissions are encouraged.";
+const DEFAULT_EMBED_DESCRIPTION =
+	"Fill out the Typeform below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
+const DEFAULT_EMBED_BULLETS = [
+	"Share your football profile, background, and ambitions",
+	"Attach links or handles that showcase how you play and create",
+	"Captains review weekly. Early submissions get priority",
+];
+const DEFAULT_EMBED_DEADLINE_NOTE =
+	"Deadline: January 1, 2026 – but we encourage early applications as spots are limited to 80 players.";
+
+function resolveHeroCtaText(raw?: string | null): string {
+	if (!raw) {
+		return APPLICATION_CTA_TEXT;
+	}
+	const trimmed = raw.trim();
+	if (!trimmed) return APPLICATION_CTA_TEXT;
+	if (trimmed.toLowerCase().includes("newsletter")) {
+		return APPLICATION_CTA_TEXT;
+	}
+	return trimmed;
 }
 
 function SignupForm() {
@@ -58,8 +148,8 @@ function SignupForm() {
 	>("idle");
 	const [errorMessage, setErrorMessage] = useState("");
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
 
 		if (!agreedToPrivacy) {
 			setErrorMessage("Please accept the privacy policy to continue");
@@ -85,7 +175,6 @@ function SignupForm() {
 			});
 
 			const data = await response.json();
-
 			if (!response.ok) {
 				throw new Error(data.error || "Failed to subscribe");
 			}
@@ -93,11 +182,7 @@ function SignupForm() {
 			setStatus("success");
 			setEmail("");
 			setAgreedToPrivacy(false);
-
-			// Reset success message after 5 seconds
-			setTimeout(() => {
-				setStatus("idle");
-			}, 5000);
+			setTimeout(() => setStatus("idle"), 5000);
 		} catch (err) {
 			setStatus("error");
 			setErrorMessage(
@@ -109,24 +194,23 @@ function SignupForm() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-12">
-			<div className="flex flex-col sm:flex-row gap-3 mb-3">
+		<form onSubmit={handleSubmit} className="mx-auto mb-12 max-w-2xl">
+			<div className="mb-3 flex flex-col gap-3 sm:flex-row">
 				<input
 					type="email"
 					value={email}
-					onChange={(e) => setEmail(e.target.value)}
+					onChange={(event) => setEmail(event.target.value)}
 					placeholder="Enter your email"
 					required
 					disabled={status === "loading"}
 					className={cn(
-						"flex-1 px-6 py-4 border-2 border-black rounded-none",
+						"flex-1 rounded-none border-2 border-black px-6 py-4",
 						"text-black placeholder-gray-500 brand-body",
-						"focus:outline-none focus:border-[var(--color-volt)]",
+						"focus:border-[var(--color-volt)] focus:outline-none",
 						"transition-colors duration-200",
-						"disabled:opacity-50 disabled:cursor-not-allowed",
+						"disabled:cursor-not-allowed disabled:opacity-50",
 					)}
 				/>
-
 				<button
 					type="submit"
 					disabled={status === "loading" || !agreedToPrivacy}
@@ -146,38 +230,465 @@ function SignupForm() {
 							: "JOIN →"}
 				</button>
 			</div>
-
-			{/* Privacy Consent - Compact */}
-			<div className="flex items-center gap-2 justify-center">
+			<div className="flex items-center justify-center gap-2">
 				<input
 					type="checkbox"
 					id="privacy-consent"
 					checked={agreedToPrivacy}
-					onChange={(e) => setAgreedToPrivacy(e.target.checked)}
+					onChange={(event) => setAgreedToPrivacy(event.target.checked)}
 					disabled={status === "loading"}
 					required
-					className="w-4 h-4 border-2 border-gray-400 cursor-pointer accent-black disabled:opacity-50 disabled:cursor-not-allowed"
+					className="h-4 w-4 cursor-pointer border-2 border-gray-400 accent-black disabled:cursor-not-allowed disabled:opacity-50"
 				/>
-				<label
-					htmlFor="privacy-consent"
-					className="text-xs text-gray-600 cursor-pointer"
-				>
+				<label htmlFor="privacy-consent" className="text-xs text-gray-600">
 					I want to join Sensational League and receive updates about the
 					world&apos;s most innovative women&apos;s football league.{" "}
 					<Link
 						href="/privacy"
-						className="underline hover:text-black transition-colors"
+						className="underline transition-colors hover:text-black"
 					>
 						Privacy Policy
 					</Link>
 				</label>
 			</div>
-
-			{/* Error Message */}
 			{status === "error" && errorMessage && (
-				<p className="text-xs text-red-600 text-center mt-2">{errorMessage}</p>
+				<p className="mt-2 text-center text-xs text-red-600">{errorMessage}</p>
 			)}
 		</form>
+	);
+}
+
+function HeroNewsletterSignup() {
+	const [email, setEmail] = useState("");
+	const [agreed, setAgreed] = useState(false);
+	const [status, setStatus] = useState<
+		"idle" | "loading" | "success" | "error"
+	>("idle");
+	const [errorMessage, setErrorMessage] = useState("");
+
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
+
+		if (!agreed) {
+			setStatus("error");
+			setErrorMessage("Please accept the privacy policy to subscribe.");
+			return;
+		}
+
+		setStatus("loading");
+		setErrorMessage("");
+
+		try {
+			const response = await fetch("/api/newsletter", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					consentGiven: true,
+					consentTimestamp: new Date().toISOString(),
+					source: "hero-card",
+				}),
+			});
+
+			if (!response.ok) {
+				const data = await response.json();
+				throw new Error(data.error || "Failed to subscribe");
+			}
+
+			setStatus("success");
+			setEmail("");
+			setAgreed(false);
+		} catch (error) {
+			setStatus("error");
+			setErrorMessage(
+				error instanceof Error ? error.message : "Something went wrong",
+			);
+		}
+	};
+
+	return (
+		<form onSubmit={handleSubmit} className="mt-6 space-y-3">
+			<div className="flex flex-col gap-3 sm:flex-row">
+				<label className="sr-only" htmlFor="hero-newsletter-email">
+					Email address
+				</label>
+				<input
+					id="hero-newsletter-email"
+					type="email"
+					value={email}
+					onChange={(event) => setEmail(event.target.value)}
+					placeholder="Get league updates"
+					required
+					disabled={status === "loading"}
+					className={cn(
+						"flex-1 rounded-none border-2 border-white/20 bg-black/90 px-4 py-3 text-sm text-white",
+						"placeholder:text-white/50 focus:border-[var(--color-volt)] focus:outline-none",
+						"disabled:cursor-not-allowed disabled:opacity-60",
+					)}
+				/>
+				<button
+					type="submit"
+					disabled={status === "loading"}
+					className={cn(
+						"w-full rounded-none border-2 border-black bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white",
+						"transition-all duration-200 hover:-translate-y-0.5 hover:translate-x-0.5",
+						"sm:w-auto",
+						status === "loading" && "opacity-70",
+					)}
+				>
+					{status === "loading" ? "Sending…" : "Join newsletter"}
+				</button>
+			</div>
+			<label className="flex items-start gap-2 text-[11px] text-white/80">
+				<input
+					type="checkbox"
+					checked={agreed}
+					onChange={(event) => setAgreed(event.target.checked)}
+					className="mt-1 h-3.5 w-3.5 cursor-pointer border border-white/40 bg-transparent text-black accent-[var(--color-volt)]"
+				/>
+				<span>
+					I agree to the{" "}
+					<Link href="/policies" className="underline text-white">
+						privacy policy
+					</Link>
+					.
+				</span>
+			</label>
+			{status === "error" && (
+				<p className="text-xs text-red-400">{errorMessage}</p>
+			)}
+			{status === "success" && (
+				<p className="text-xs text-[var(--color-volt)]">
+					Thanks! You&apos;re on the list.
+				</p>
+			)}
+		</form>
+	);
+}
+
+interface CountdownParts {
+	days: number;
+	hours: number;
+	minutes: number;
+	seconds: number;
+	expired: boolean;
+}
+
+function calculateCountdown(deadline?: string): CountdownParts | null {
+	if (!deadline) return null;
+	const target = new Date(deadline).getTime();
+	if (Number.isNaN(target)) return null;
+	const now = Date.now();
+	const diff = Math.max(0, target - now);
+	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+	const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+	const minutes = Math.floor((diff / (1000 * 60)) % 60);
+	const seconds = Math.floor((diff / 1000) % 60);
+	return {
+		days,
+		hours,
+		minutes,
+		seconds,
+		expired: diff === 0,
+	};
+}
+
+function useCountdown(deadline?: string) {
+	const [parts, setParts] = useState<CountdownParts | null>(() =>
+		calculateCountdown(deadline),
+	);
+
+	useEffect(() => {
+		if (!deadline) return;
+		const interval = setInterval(() => {
+			setParts(calculateCountdown(deadline));
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [deadline]);
+
+	return parts;
+}
+
+function CountdownTimer({ countdown }: { countdown?: CountdownConfig }) {
+	const isEnabled = countdown?.enabled ?? true;
+	const target = countdown?.deadline || DEFAULT_DEADLINE;
+	const label = countdown?.label || DEFAULT_COUNTDOWN_LABEL;
+	const timezone = countdown?.timezone;
+	const parts = useCountdown(isEnabled ? target : undefined);
+
+	if (!isEnabled || !parts) {
+		return null;
+	}
+
+	return (
+		<div className="mt-8">
+			<p className="brand-caption text-white/80 uppercase tracking-[0.2em]">
+				{label}
+				{timezone ? ` • ${timezone}` : ""}
+			</p>
+			<div className="mt-4 flex flex-wrap gap-4 text-white">
+				{[
+					{ label: "Days", value: parts.days },
+					{ label: "Hours", value: parts.hours },
+					{ label: "Minutes", value: parts.minutes },
+					{ label: "Seconds", value: parts.seconds },
+				].map((segment) => (
+					<div
+						key={segment.label}
+						className="min-w-[80px] rounded border border-white/30 bg-white/10 px-4 py-3 text-center"
+					>
+						<div className="text-3xl font-black tracking-wide">
+							{String(segment.value).padStart(2, "0")}
+						</div>
+						<p className="brand-caption text-xs uppercase tracking-[0.3em] text-white/70">
+							{segment.label}
+						</p>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function HeroStats({ stats }: { stats?: Stat[] }) {
+	if (!stats?.length) return null;
+
+	return (
+		<div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			{stats.map((stat, index) => (
+				<div
+					key={`${stat.label}-${index}`}
+					className="rounded-lg border border-white/30 bg-white/10 px-6 py-5 text-white"
+				>
+					<p className="text-4xl font-black tracking-tight">{stat.value}</p>
+					<p className="brand-caption uppercase tracking-[0.3em] text-white/70">
+						{stat.label}
+					</p>
+				</div>
+			))}
+		</div>
+	);
+}
+
+interface ApplicationCardProps {
+	badge?: string;
+	title?: string;
+	description?: string;
+	ctaText: string;
+	ctaLink: string;
+	helperText?: string;
+	deadlineLabel: string;
+	countdown?: CountdownConfig;
+	resourceEyebrow?: string;
+	resourceLinkLabel?: string;
+	resourceLinkHref?: string;
+}
+
+function ApplicationCard({
+	badge = "Player Draft 2025–26",
+	title = "We’re looking for 80 football players",
+	description,
+	ctaText,
+	ctaLink,
+	helperText,
+	deadlineLabel,
+	countdown,
+	resourceEyebrow,
+	resourceLinkHref,
+	resourceLinkLabel,
+}: ApplicationCardProps) {
+	const helperCopy = helperText || DEFAULT_APPLICATION_HELPER_TEXT;
+	const showResource = Boolean(resourceLinkHref && resourceLinkLabel);
+
+	return (
+		<div className="rounded-3xl border-4 border-black bg-white px-6 py-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+			<p className="brand-caption text-sm uppercase tracking-[0.4em] text-black/70">
+				{badge}
+			</p>
+			<h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
+				{title}
+			</h3>
+			{description && (
+				<p className="brand-body mt-4 text-base text-black/80">{description}</p>
+			)}
+			<TypeformApplyButton
+				formUrl={ctaLink}
+				className={cn(
+					"mt-6 inline-flex w-full items-center justify-center gap-2 rounded-none border-4 border-black",
+					"bg-[var(--color-volt)] px-6 py-4 text-lg font-black uppercase tracking-[0.3em] text-black",
+					"transition-all duration-200 hover:-translate-y-1 hover:translate-x-1",
+				)}
+			>
+				{ctaText}
+				<span aria-hidden>→</span>
+			</TypeformApplyButton>
+			<p className="brand-caption mt-4 text-xs uppercase tracking-[0.3em] text-black/60">
+				{deadlineLabel}
+			</p>
+			{countdown?.enabled !== false && (
+				<p className="brand-body mt-2 text-sm text-black/70">{helperCopy}</p>
+			)}
+			{showResource && (
+				<div className="mt-6 rounded-lg bg-black/5 px-4 py-3">
+					{resourceEyebrow && (
+						<p className="brand-caption text-xs uppercase tracking-[0.2em] text-black/70">
+							{resourceEyebrow}
+						</p>
+					)}
+					<Link
+						href={resourceLinkHref!}
+						className="brand-body text-base font-semibold text-black underline"
+					>
+						{resourceLinkLabel}
+					</Link>
+				</div>
+			)}
+		</div>
+	);
+}
+
+interface ApplicationEmbedProps {
+	badge?: string;
+	title?: string;
+	description?: string;
+	bulletPoints?: string[];
+	deadlineNote?: string;
+	formId?: string;
+	height?: number;
+	enabled?: boolean;
+	dataAttribute?: string;
+}
+
+function ApplicationEmbedSection({
+	badge,
+	title,
+	description,
+	bulletPoints,
+	deadlineNote,
+	formId,
+	height = 760,
+	enabled = true,
+	dataAttribute,
+}: ApplicationEmbedProps) {
+	if (!enabled) {
+		return null;
+	}
+
+	const resolvedFormId = formId || PLAYER_DRAFT_FORM_ID;
+	const bullets =
+		bulletPoints && bulletPoints.length > 0
+			? bulletPoints
+			: DEFAULT_EMBED_BULLETS;
+
+	return (
+		<section
+			id="apply"
+			className="bg-black py-20 text-white"
+			data-sanity={dataAttribute}
+		>
+			<div className="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
+				<div className="space-y-6">
+					{badge && (
+						<p className="brand-caption text-sm uppercase tracking-[0.3em] text-white/70">
+							{badge}
+						</p>
+					)}
+					{title && (
+						<h2 className="text-4xl font-black uppercase tracking-[0.15em]">
+							{title}
+						</h2>
+					)}
+					{description && (
+						<p className="brand-body text-lg text-white/80">{description}</p>
+					)}
+					{bullets?.length ? (
+						<ul className="list-disc space-y-2 pl-6 text-white/80 brand-body">
+							{bullets.map((item) => (
+								<li key={item}>{item}</li>
+							))}
+						</ul>
+					) : null}
+					{deadlineNote && (
+						<p className="brand-body text-white/70">{deadlineNote}</p>
+					)}
+				</div>
+				<TypeformWidget formId={resolvedFormId} height={height} />
+			</div>
+		</section>
+	);
+}
+
+function MediaGrid({
+	images,
+	dataAttribute,
+}: {
+	images?: SanityImage[];
+	dataAttribute?: string;
+}) {
+	const gallery = images?.slice(0, 8);
+	const fallback = [
+		"/logos/image_046_page_39.jpeg",
+		"/logos/image_063_page_42.jpeg",
+		"/logos/image_067_page_43.jpeg",
+		"/logos/image_073_page_44.jpeg",
+	];
+
+	const cards = gallery?.length
+		? gallery.map((image, index) => {
+				const imageProps = getImageProps(image, 800);
+				return (
+					<div
+						key={image?._key ?? `gallery-${index}`}
+						className={cn(
+							"group relative aspect-[3/4] overflow-hidden border-4 border-black",
+							"bg-white transition-all duration-500 hover:-translate-y-2 hover:translate-x-1",
+							index % 2 === 1 && "md:mt-8",
+						)}
+					>
+						<img
+							{...imageProps}
+							alt={image.alt || `Sensational League ${index + 1}`}
+							className={cn(
+								"h-full w-full transition-all duration-500",
+								"group-hover:scale-110",
+								!image.objectFit && "object-cover",
+							)}
+							style={{
+								...imageProps.style,
+								objectFit: image.objectFit || "cover",
+							}}
+						/>
+						<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+					</div>
+				);
+			})
+		: fallback.map((src, index) => (
+				<div
+					key={src}
+					className={cn(
+						"relative aspect-[3/4] overflow-hidden border-4 border-black",
+						"bg-white transition-all duration-500 hover:-translate-y-2 hover:translate-x-1",
+						index % 2 === 1 && "md:mt-8",
+					)}
+				>
+					<img
+						src={src}
+						alt={`Sensational League ${index + 1}`}
+						className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
+					/>
+					<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20" />
+				</div>
+			));
+
+	return (
+		<div
+			className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
+			data-sanity={dataAttribute}
+		>
+			{cards}
+		</div>
 	);
 }
 
@@ -202,6 +713,30 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
+	const heroHeadlineAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "hero.headline",
+			})
+		: undefined;
+
+	const heroCtaAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "hero.ctaDescription",
+			})
+		: undefined;
+
+	const heroCountdownAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "hero.countdown",
+			})
+		: undefined;
+
 	// About section attributes
 	const aboutDataAttribute = content?._id
 		? createDataAttribute({
@@ -219,167 +754,363 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
+	const sectionsAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "sections",
+			})
+		: undefined;
+
+	const pressCtaAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "pressCta",
+			})
+		: undefined;
+
+	const applicationCardAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "application.card",
+			})
+		: undefined;
+
+	const applicationEmbedAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "application.embed",
+			})
+		: undefined;
+
+	const aboutInfoCardAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "about.infoCard",
+			})
+		: undefined;
+
+	const heroVideoUrl = content?.hero?.video?.url;
+	const heroPosterUrl = content?.hero?.video?.poster
+		? getImageUrl(content.hero.video.poster, 2400)
+		: undefined;
+	const heroCtaText = resolveHeroCtaText(content?.hero?.ctaText);
+	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;
+	const heroCtaDescription =
+		content?.hero?.ctaDescription ||
+		"Submit your Typeform application to join the inaugural Sensational League season. All positions, all backgrounds, all personalities welcome.";
+	const countdownConfig = content?.hero?.countdown;
+
+	const countdownLabel =
+		countdownConfig?.label || "Applications close Jan 1, 2026";
+
+	const applicationCardSettings = content?.application?.card;
+	const applicationEmbedSettings = content?.application?.embed;
+	const embedEnabled = applicationEmbedSettings?.enabled === true;
+	const applicationFormId =
+		applicationCardSettings?.formId ||
+		applicationEmbedSettings?.formId ||
+		PLAYER_DRAFT_FORM_ID;
+	const heroCardDescription =
+		applicationCardSettings?.description || heroCtaDescription;
+	const heroCardCtaText = resolveHeroCtaText(
+		applicationCardSettings?.ctaText || heroCtaText,
+	);
+	const heroCardLink = applicationCardSettings?.ctaLink || heroCtaLink;
+	const heroCardHelperText =
+		applicationCardSettings?.helperText || DEFAULT_APPLICATION_HELPER_TEXT;
+	const heroCardDeadline =
+		applicationCardSettings?.countdownLabel || countdownLabel;
+	const heroCardBadge = applicationCardSettings?.badge;
+	const heroCardTitle = applicationCardSettings?.title;
+	const heroResourceEyebrow =
+		applicationCardSettings?.resourceEyebrow || "Need more info?";
+	const heroResourceLinkLabel =
+		applicationCardSettings?.resourceLinkLabel ||
+		"Read about the league & player draft";
+	const heroResourceLinkHref =
+		applicationCardSettings?.resourceLinkHref ||
+		"/about-the-league-player-draft";
+
+	const pressButtonText =
+		content?.pressCta?.buttonText ||
+		content?.pressCta?.label ||
+		"Press release";
+	const pressEmoji = content?.pressCta?.emoji || "📰";
+	const pressHref = content?.pressCta?.href || "/press";
+
+	const infoCardTitle =
+		content?.about?.infoCard?.title || "THE SENSATIONAL POINT SYSTEM";
+	const infoCardBody =
+		content?.about?.infoCard?.body ||
+		"Champions are crowned for winning matches, growing their following, and amplifying women’s sports through community projects. This built-in growth mechanism makes promotion of the game part of the competition model itself.";
+
+	const embedBullets = applicationEmbedSettings?.bulletPoints?.length
+		? applicationEmbedSettings.bulletPoints
+		: DEFAULT_EMBED_BULLETS;
+	const embedDescription =
+		applicationEmbedSettings?.description || DEFAULT_EMBED_DESCRIPTION;
+	const embedBadge = applicationEmbedSettings?.badge || "Apply to play";
+	const embedTitle =
+		applicationEmbedSettings?.title ||
+		"Start your Sensational League Player Draft application";
+	const embedDeadlineNote =
+		applicationEmbedSettings?.deadlineNote || DEFAULT_EMBED_DEADLINE_NOTE;
+	const embedHeight = applicationEmbedSettings?.height || 760;
+
+	const aboutDescription =
+		content?.about?.description ||
+		"Sensational League is an international 7v7 professional women’s football league launching April 2026 in Copenhagen before expanding across Europe and the US.";
+
 	return (
 		<main className="min-h-screen bg-white">
 			{/* Hero Section */}
 			<section
-				className="relative min-h-screen flex items-center justify-center px-4 pt-8 pb-20 bg-white"
+				className="relative isolate overflow-hidden bg-black px-4 pt-16 pb-24 text-white"
 				data-sanity={heroDataAttribute?.toString()}
 			>
-				<div className="w-full max-w-[1400px] mx-auto">
-					{/* Logo - Extra Large and Prominent, Centered */}
-					<div className="mb-8 md:mb-12 text-center">
+				{heroVideoUrl ? (
+					<div className="absolute inset-0">
+						<video
+							className="h-full w-full object-cover"
+							src={heroVideoUrl}
+							poster={heroPosterUrl}
+							autoPlay
+							muted
+							playsInline
+							loop
+						/>
+						<div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
+					</div>
+				) : (
+					<div className="absolute inset-0 bg-gradient-to-br from-black via-black to-[var(--color-purple)]/60" />
+				)}
+
+				<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row">
+					<div className="flex-1">
 						{content?.hero?.logo && getImageUrl(content.hero.logo) ? (
 							<img
-								{...getImageProps(content.hero.logo, 3000)}
+								{...getImageProps(content.hero.logo, 1800)}
 								alt={content.hero.logo.alt || "Sensational League"}
-								className={cn(
-									"mx-auto w-full h-auto",
-									!content.hero.logo.width &&
-										!content.hero.logo.height &&
-										"max-w-full",
-								)}
+								className="mb-10 w-full max-w-[720px]"
+								style={{
+									...getImageProps(content.hero.logo, 1800).style,
+									objectFit: "contain",
+								}}
 							/>
 						) : (
 							<img
 								src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
-								alt="Sensational League - Fast. Rebellious. Female."
-								className="mx-auto w-full h-auto max-w-full"
+								alt="Sensational League — Fast. Rebellious. Female."
+								className="mb-10 w-full max-w-[760px]"
 							/>
 						)}
-					</div>
+						<div
+							className="brand-headline text-4xl uppercase tracking-tight text-white md:text-6xl"
+							data-sanity={heroHeadlineAttribute?.toString()}
+						>
+							{content?.hero?.headline ? (
+								<StyledTextRenderer value={content.hero.headline} />
+							) : (
+								<span>We’re looking for 80 football players</span>
+							)}
+						</div>
+						<p
+							className="brand-body mt-6 max-w-2xl text-lg text-white/80"
+							data-sanity={heroSublineAttribute?.toString()}
+						>
+							{content?.hero?.subline ||
+								"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026."}
+						</p>
 
-					{/* Subline - Centered */}
-					<p
-						className="brand-body text-lg md:text-xl text-gray-700 mb-8 md:mb-12 max-w-2xl mx-auto text-center"
-						data-sanity={heroSublineAttribute?.toString()}
+						<div data-sanity={heroCountdownAttribute?.toString()}>
+							<CountdownTimer countdown={countdownConfig} />
+						</div>
+
+						<HeroStats stats={content?.hero?.stats} />
+
+						<div className="mt-10 flex flex-wrap gap-4">
+							<Link
+								href="/about-the-league-player-draft"
+								className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+							>
+								About the League & Draft
+								<span aria-hidden>→</span>
+							</Link>
+							<Link
+								href="#about"
+								className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+							>
+								About Sensational League
+							</Link>
+						</div>
+					</div>
+					<div
+						id="player-draft"
+						data-sanity={
+							applicationCardAttribute?.toString() ??
+							heroCtaAttribute?.toString()
+						}
+						className="w-full max-w-md"
 					>
-						{content?.hero?.subline ||
-							"Women's 7v7 football league that combines athletic excellence with social impact."}
+						<ApplicationCard
+							badge={heroCardBadge}
+							title={heroCardTitle}
+							description={heroCardDescription}
+							ctaText={heroCardCtaText}
+							ctaLink={heroCardLink}
+							helperText={heroCardHelperText}
+							deadlineLabel={heroCardDeadline}
+							countdown={countdownConfig}
+							resourceEyebrow={heroResourceEyebrow}
+							resourceLinkLabel={heroResourceLinkLabel}
+							resourceLinkHref={heroResourceLinkHref}
+						/>
+					</div>
+				</div>
+
+				{content?.hero?.video?.credit && (
+					<p className="brand-caption absolute bottom-6 right-6 text-xs uppercase tracking-[0.3em] text-white/60">
+						{content.hero.video.credit}
 					</p>
+				)}
+			</section>
 
-					{/* Form - Centered */}
-					<div className="mb-16">
-						<SignupForm />
+			<section className="bg-black px-4 py-12">
+				<div className="mx-auto flex w-full max-w-7xl flex-col gap-6 rounded-3xl border-4 border-white/20 bg-gradient-to-r from-black to-[#1a1a1a] px-6 py-8 text-white md:flex-row md:items-center">
+					<div className="flex-1">
+						<p className="brand-caption text-sm uppercase tracking-[0.4em] text-white/70">
+							Stay in the loop
+						</p>
+						<h3 className="mt-2 text-3xl font-black tracking-tight">
+							Newsletter: captain drops, venues, trial invites
+						</h3>
+						<p className="brand-body mt-2 text-white/80">
+							Weekly updates on player draft milestones, community events, and
+							behind-the-scenes moves from the Sensational captains.
+						</p>
 					</div>
-
-					{/* Image Grid - Bold, Dynamic with Rightward Movement */}
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-						{content?.hero?.images && content.hero.images.length > 0
-							? content.hero.images.slice(0, 8).map((image, index) => {
-									const imageProps = getImageProps(image, 800);
-
-									return (
-										<div
-											key={index}
-											className={cn(
-												"relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
-												index % 2 === 1 && "md:mt-8",
-											)}
-										>
-											<img
-												{...imageProps}
-												alt={image.alt || `Sensational League ${index + 1}`}
-												className={cn(
-													"w-full h-full group-hover:scale-110 transition-all duration-500",
-													!image.objectFit && "object-cover",
-												)}
-												style={{
-													...imageProps.style,
-													objectFit: image.objectFit || "cover",
-												}}
-											/>
-											<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-										</div>
-									);
-								})
-							: // Fallback to default images when no Sanity images are available
-								[
-									"/logos/image_046_page_39.jpeg",
-									"/logos/image_063_page_42.jpeg",
-									"/logos/image_067_page_43.jpeg",
-									"/logos/image_073_page_44.jpeg",
-								].map((src, index) => (
-									<div
-										key={index}
-										className={cn(
-											"relative aspect-[3/4] overflow-hidden border-4 border-black hover:-translate-y-2 hover:translate-x-1 transition-all duration-500 group",
-											index % 2 === 1 && "md:mt-8",
-										)}
-									>
-										<img
-											src={src}
-											alt={`Sensational League ${index + 1}`}
-											className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
-										/>
-										<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-									</div>
-								))}
+					<div className="flex-1">
+						<HeroNewsletterSignup />
 					</div>
+				</div>
+			</section>
+
+			<section className="bg-white px-4 py-14">
+				<div className="mx-auto max-w-7xl">
+					<MediaGrid
+						images={content?.hero?.images}
+						dataAttribute={
+							content?._id
+								? createDataAttribute({
+										id: content._id,
+										type: content._type || "homePage",
+										path: "hero.images",
+									}).toString()
+								: undefined
+						}
+					/>
 				</div>
 			</section>
 
 			{/* Press Link CTA */}
-			<section className="py-12 bg-white">
+			<section
+				className="py-12 bg-white"
+				data-sanity={pressCtaAttribute?.toString()}
+			>
 				<div className="max-w-7xl mx-auto px-4 text-center">
-					<a
-						href="/press"
-						className="inline-block bg-[var(--color-volt)] border-4 border-black px-8 py-4 text-black font-black uppercase tracking-[0.15em] text-lg hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]"
+					<Link
+						href={pressHref}
+						className="inline-flex items-center justify-center gap-2 bg-[var(--color-volt)] border-4 border-black px-8 py-4 text-black font-black uppercase tracking-[0.15em] text-lg hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]"
 					>
-						📰 Press release
-					</a>
+						{pressEmoji && <span aria-hidden="true">{pressEmoji}</span>}
+						<span>{pressButtonText}</span>
+					</Link>
 				</div>
 			</section>
 
+		{embedEnabled && (
+			<ApplicationEmbedSection
+				badge={embedBadge}
+				title={embedTitle}
+				description={embedDescription}
+				bulletPoints={embedBullets}
+				deadlineNote={embedDeadlineNote}
+				formId={applicationEmbedSettings?.formId || applicationFormId}
+				height={embedHeight}
+				enabled={embedEnabled}
+				dataAttribute={applicationEmbedAttribute?.toString()}
+			/>
+		)}
+
 			{/* About Section */}
 			<section
-				className="py-20 md:py-32 bg-white"
+				id="about"
+				className="bg-white py-20 md:py-32"
 				data-sanity={aboutDataAttribute?.toString()}
 			>
 				<div className="max-w-7xl mx-auto px-4">
-					{/* Simple Bold Label */}
 					<div className="mb-12 text-center">
 						<h2 className="text-6xl md:text-7xl font-black uppercase tracking-[0.15em] text-black mb-4">
-							ABOUT US
+							ABOUT THE LEAGUE
 						</h2>
-						<div className="w-24 h-2 bg-black mx-auto"></div>
+						<div className="mx-auto h-2 w-24 bg-black" />
 					</div>
 
-					{/* Primary Description */}
-					<div className="max-w-4xl mx-auto text-center mb-20">
-						<p className="brand-body text-2xl md:text-3xl text-black leading-relaxed font-bold">
-							An international 7v7 professional women&apos;s football league
-							launching April 2026 across the Nordics, expanding to the UK and
-							US. Elite competition meets entertainment and lifestyle.
+					<div className="mx-auto mb-12 max-w-4xl text-center">
+						<div data-sanity={aboutTitleAttribute?.toString()}>
+							{content?.about?.title ? (
+								<StyledTextRenderer
+									value={content.about.title}
+									className="brand-body text-2xl md:text-3xl font-bold text-black"
+								/>
+							) : (
+								<p className="brand-body text-2xl md:text-3xl font-bold text-black">
+									Play Football. Drive Impact. Change the World.
+								</p>
+							)}
+						</div>
+						<p
+							className="brand-body text-lg text-black/80"
+							data-sanity={aboutDataAttribute?.toString()}
+						>
+							{aboutDescription}
 						</p>
 					</div>
 
 					{/* Info Box - Point System */}
-					<div className="max-w-5xl mx-auto mb-20">
+					<div
+						className="max-w-5xl mx-auto mb-20"
+						data-sanity={aboutInfoCardAttribute?.toString()}
+					>
 						<div className="bg-[var(--color-volt)] border-[6px] border-black p-12 md:p-16 transform hover:translate-x-2 hover:-translate-y-2 transition-all duration-200">
 							<h3 className="brand-subhead text-3xl md:text-4xl font-black mb-6 uppercase tracking-[0.15em] text-black">
-								THE SENSATIONAL POINT SYSTEM
+								{infoCardTitle}
 							</h3>
 							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed font-semibold">
-								Champions are crowned for winning matches, growing their
-								following, and amplifying women&apos;s sports through community
-								projects. This built-in growth mechanism makes promotion of the
-								game part of the competition model itself.
+								{infoCardBody}
 							</p>
 						</div>
 					</div>
 
 					{/* Feature Bullets - Flexible Grid Layout */}
-					<div className={cn(
-						"max-w-6xl mx-auto grid gap-6",
-						content?.about?.pillars && content.about.pillars.length === 3
-							? "md:grid-cols-3" // 3 columns for 3 items
-							: content?.about?.pillars && content.about.pillars.length === 2
-								? "md:grid-cols-2 max-w-4xl" // 2 columns for 2 items, narrower
-								: content?.about?.pillars && content.about.pillars.length === 1
-									? "md:grid-cols-1 max-w-2xl" // 1 column for 1 item, narrower
-									: "md:grid-cols-2" // Default 2x2 grid for 4+ items
-					)}>
+					<div
+						className={cn(
+							"max-w-6xl mx-auto grid gap-6",
+							content?.about?.pillars && content.about.pillars.length === 3
+								? "md:grid-cols-3"
+								: content?.about?.pillars && content.about.pillars.length === 2
+									? "md:grid-cols-2 max-w-4xl"
+									: content?.about?.pillars &&
+											content.about.pillars.length === 1
+										? "md:grid-cols-1 max-w-2xl"
+										: "md:grid-cols-2",
+						)}
+					>
 						{content?.about?.pillars && content.about.pillars.length > 0
 							? content.about.pillars.map((pillar, index) => (
 									<div
@@ -438,6 +1169,37 @@ export default function HomePage({ content }: HomePageProps) {
 									</div>
 								))}
 					</div>
+				</div>
+			</section>
+
+			{content?.sections &&
+				content.sections.length > 0 &&
+				content?._id &&
+				content._type && (
+					<section
+						className="bg-white"
+						data-sanity={sectionsAttribute?.toString()}
+					>
+						<SectionsRenderer
+							documentId={content._id}
+							documentType={content._type}
+							sections={content.sections as PageSection[]}
+						/>
+					</section>
+				)}
+
+			<section className="bg-white py-20">
+				<div className="mx-auto max-w-5xl px-4">
+					<div className="mb-8 text-center">
+						<h3 className="text-4xl font-black uppercase tracking-[0.2em] text-black">
+							Stay in the loop
+						</h3>
+						<p className="brand-body mt-4 text-lg text-black/70">
+							Get news, behind-the-scenes drops, and draft updates from
+							Sensational League.
+						</p>
+					</div>
+					<SignupForm />
 				</div>
 			</section>
 		</main>

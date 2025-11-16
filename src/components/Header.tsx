@@ -34,10 +34,11 @@ interface HeaderProps {
 
 export default function Header({ settings }: HeaderProps) {
 	const defaultLinks = [
+		{ href: "/about-the-league-player-draft", label: "About the League & Player Draft" },
 		{ href: "/#about", label: "About" },
 		{ href: "/press", label: "Press" },
 		{ href: "/dashboard", label: "Dashboard" },
-		{ href: "/policies", label: "Policies" }
+		{ href: "/policies", label: "Policies" },
 	];
 
 	const links = settings?.navigation?.links?.length
@@ -67,44 +68,42 @@ export default function Header({ settings }: HeaderProps) {
 						"focus:outline-none focus:ring-2 focus:ring-[var(--color-volt)] focus:ring-offset-2 focus:ring-offset-black rounded"
 					)}
 				>
-					{settings?.navigation?.sparkLogo && getImageUrl(settings.navigation.sparkLogo) ? (
+				{settings?.navigation?.sparkLogo && getImageUrl(settings.navigation.sparkLogo) ? (
+					<img
+						{...getImageProps(settings.navigation.sparkLogo, 200)}
+						alt={settings.navigation.sparkLogo.alt || "Sensational League"}
+						className={cn(
+							!settings.navigation.sparkLogo.width && !settings.navigation.sparkLogo.height && "w-10 h-10"
+						)}
+					/>
+				) : (
+					<img
+						src="/logos/SL-SPARK-LARGE.svg"
+						alt="Sensational League"
+						className="w-10 h-10"
+						style={{ filter: "brightness(0) invert(1)" }}
+					/>
+				)}
+					<div className="hidden sm:block">
+					{settings?.navigation?.wordmarkLogo && getImageUrl(settings.navigation.wordmarkLogo) ? (
 						<img
-							{...getImageProps(settings.navigation.sparkLogo, 200)}
-							alt={settings.navigation.sparkLogo.alt || "Sensational League"}
+							{...getImageProps(settings.navigation.wordmarkLogo, 400)}
+							alt={settings.navigation.wordmarkLogo.alt || "Sensational League"}
 							className={cn(
-								!settings.navigation.sparkLogo.width && !settings.navigation.sparkLogo.height && "w-10 h-10"
+								!settings.navigation.wordmarkLogo.width && !settings.navigation.wordmarkLogo.height && "h-6"
 							)}
+							style={{ filter: "brightness(0) invert(1)" }}
 						/>
 					) : (
 						<img
-							src="/logos/SL-SPARK-LARGE.svg"
+							src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
 							alt="Sensational League"
-							className="w-10 h-10"
+							className="h-6"
+							style={{ filter: "brightness(0) invert(1)" }}
 						/>
 					)}
-					<div className="hidden sm:block">
-						{settings?.navigation?.wordmarkLogo && getImageUrl(settings.navigation.wordmarkLogo) ? (
-							<img
-								{...getImageProps(settings.navigation.wordmarkLogo, 400)}
-								alt={settings.navigation.wordmarkLogo.alt || "Sensational League"}
-								className={cn(
-									!settings.navigation.wordmarkLogo.width && !settings.navigation.wordmarkLogo.height && "h-6"
-								)}
-								style={{
-									...getImageProps(settings.navigation.wordmarkLogo, 400).style,
-									filter: 'brightness(0) invert(1)',
-								}}
-							/>
-						) : (
-							<img
-								src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
-								alt="Sensational League"
-								className="h-6"
-								style={{ filter: 'brightness(0) invert(1)' }}
-							/>
-						)}
 					</div>
-				</Link>
+			</Link>
 
 				<nav
 					aria-label="Primary"

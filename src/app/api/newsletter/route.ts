@@ -1,41 +1,10 @@
-import { ClientSecretCredential } from "@azure/identity";
-import { Client } from "@microsoft/microsoft-graph-client";
 import { type NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
 import { client } from "@/sanity/lib/client";
 import { renderEmailTemplate } from "@/lib/email-renderer";
-import "isomorphic-fetch";
+import { getGraphClient } from "@/lib/sharepoint/graphClient";
+import { resendClient } from "@/lib/email/resendClient";
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Initialize Microsoft Graph client for SharePoint
-function getGraphClient() {
-	const tenantId = process.env.AZURE_TENANT_ID;
-	const clientId = process.env.AZURE_CLIENT_ID;
-	const clientSecret = process.env.AZURE_CLIENT_SECRET;
-
-	if (!tenantId || !clientId || !clientSecret) {
-		throw new Error("Missing Azure credentials");
-	}
-
-	const credential = new ClientSecretCredential(
-		tenantId,
-		clientId,
-		clientSecret,
-	);
-
-	return Client.initWithMiddleware({
-		authProvider: {
-			getAccessToken: async () => {
-				const token = await credential.getToken(
-					"https://graph.microsoft.com/.default",
-				);
-				return token.token;
-			},
-		},
-	});
-}
+// Graph client + Resend helpers are shared across API routes
 
 // Helper: Save to SharePoint (independent operation)
 async function saveToSharePoint(
@@ -190,7 +159,7 @@ async function sendWelcomeEmail(email: string, timestamp: string): Promise<boole
 			console.warn("⚠️ No Sanity template found - using fallback HTML");
 		}
 
-		const { error } = await resend.emails.send({
+	const { error } = await resendClient.emails.send({
 			from: fromEmail,
 			to: [email],
 			subject: emailSubject,
@@ -236,7 +205,7 @@ async function sendAdminNotification(
 			? `Sensational League Newsletter <notifications@${process.env.RESEND_VERIFIED_DOMAIN}>`
 			: "Sensational League Newsletter <onboarding@resend.dev>";
 
-		await resend.emails.send({
+	await resendClient.emails.send({
 			from: fromEmail,
 			to: ["saga@sagasportsgroup.com"],
 			subject: `[SL] Newsletter Signup: ${email}`,
