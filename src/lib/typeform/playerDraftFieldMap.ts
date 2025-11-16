@@ -21,11 +21,16 @@ export interface FieldMapEntry {
 	formatter?: (value: FieldValue, rawValue?: FieldValue) => FieldValue;
 	/** Optional source (defaults to answers array) */
 	source?: "answers" | "hidden";
+	/** Whether the SharePoint field accepts multiple values (preserve arrays) */
+	multiValue?: boolean;
+	/** Optional explicit SharePoint @odata.type (e.g. "#Collection(Edm.String)") */
+	spODataType?: string;
 }
 
 export const PLAYER_DRAFT_NAME_FIELD_REF = "5aa8e9df-1f61-4ec9-aa7c-8c94e4292438"; // First name
 export const PLAYER_DRAFT_LAST_NAME_FIELD_REF = "602744a3-bda7-4f47-831e-223b36fa00ec";
 export const PLAYER_DRAFT_EMAIL_FIELD_REF = "1344d8a0-7a64-4a7b-a5a3-6fb8dbc92392";
+export const PLAYER_DRAFT_POSITION_FIELD_REF = "c32c5729-8ced-41b9-96ca-0062923ce8e8";
 
 /**
 	* Centralized mapping between the Player Draft Typeform (WS. Sensational League Player Draft 2025/2026)
@@ -41,7 +46,13 @@ const basePlayerDraftFieldMap: FieldMapEntry[] = [
 	{ ref: "6c7909fd-43b6-4364-b5d1-1101ffbebbb7", spField: "City", kind: "text" },
 	{ ref: "214f283a-4639-4bc3-8500-30ab884a4107", spField: "Agegroup", kind: "choice" },
 	{ ref: "e800711a-6c8b-4e48-9bfd-0695cde52847", spField: "Highestlevel", kind: "choice" },
-	{ ref: "c32c5729-8ced-41b9-96ca-0062923ce8e8", spField: "Preferredposition", kind: "choice" },
+{
+	ref: PLAYER_DRAFT_POSITION_FIELD_REF,
+	spField: "Preferredposition",
+	kind: "multiChoice",
+	multiValue: true,
+	spODataType: "#Collection(Edm.String)",
+},
 	{
 		ref: "d1b9952e-d449-4b49-8aef-0eb67e2c13d1",
 		spField: "Currentlyactiveclub_x003f_",

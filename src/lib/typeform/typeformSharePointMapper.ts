@@ -3,6 +3,7 @@ import {
 	PLAYER_DRAFT_EMAIL_FIELD_REF,
 	PLAYER_DRAFT_LAST_NAME_FIELD_REF,
 	PLAYER_DRAFT_NAME_FIELD_REF,
+	PLAYER_DRAFT_POSITION_FIELD_REF,
 	playerDraftFieldMap,
 } from "./playerDraftFieldMap";
 
@@ -40,18 +41,9 @@ export interface PlayerDraftMappingResult {
   fields: Record<string, unknown>;
   email?: string;
   fullName?: string;
+	positionPreference?: string[];
   missingRequired: string[];
   unmappedRefs: string[];
-}
-
-function normalizeBoolean(value: unknown): string | null {
-  if (typeof value === "boolean") {
-    return value ? "Yes" : "No";
-  }
-  if (typeof value === "string") {
-    return value;
-  }
-  return null;
 }
 
 function extractAnswerValue(
@@ -126,38 +118,38 @@ export function mapPlayerDraftResponse(
   for (const entry of customMap) {
     const sourceValue = entry.source === "hidden" ? hidden[entry.ref] : extractAnswerValue(answerByRef.get(entry.ref), entry.kind);
 
-    if (
-      sourceValue === null ||
-      sourceValue === undefined ||
-      sourceValue === "" ||
-      (Array.isArray(sourceValue) && sourceValue.length === 0)
-    ) {
-      if (entry.required) {
-        missingRequired.push(entry.ref);
-      }
-      continue;
-    }
+	if (
+		sourceValue === null ||
+		sourceValue === undefined ||
+		sourceValue === "" ||
+		(Array.isArray(sourceValue) && sourceValue.length === 0)
+	) {
+		if (entry.required) {
+			missingRequired.push(entry.ref);
+		}
+		continue;
+	}
 
     if (!entry.spField) {
       continue;
     }
 
-    let processedValue: FieldValue | null = sourceValue as FieldValue;
-    if (entry.kind === "boolean") {
-      processedValue = normalizeBoolean(sourceValue);
-    }
+		let processedValue: FieldValue | null = sourceValue as FieldValue;
 
-    if (entry.kind === "multiChoice" && Array.isArray(sourceValue)) {
-      processedValue = sourceValue.join(", ");
-    }
+		if (entry.kind === "multiChoice" && Array.isArray(sourceValue)) {
+			processedValue = entry.multiValue ? sourceValue : sourceValue.join(", ");
+		}
 
     if (entry.formatter) {
       const safeValue = (processedValue ?? "") as FieldValue;
       processedValue = entry.formatter(safeValue, sourceValue as FieldValue);
     }
 
-    if (processedValue !== null && processedValue !== undefined && processedValue !== "") {
-      fields[entry.spField] = processedValue;
+		if (processedValue !== null && processedValue !== undefined && processedValue !== "") {
+			if (entry.spODataType) {
+				fields[`${entry.spField}@odata.type`] = entry.spODataType;
+			}
+			fields[entry.spField] = processedValue;
     }
   }
 
@@ -171,6 +163,14 @@ export function mapPlayerDraftResponse(
 	const firstName = (extractAnswerValue(firstNameAnswer, "text") as string | null) ?? undefined;
 	const lastName = (extractAnswerValue(lastNameAnswer, "text") as string | null) ?? undefined;
 	const fullName = [firstName, lastName].filter(Boolean).join(" ").trim() || firstName || lastName || undefined;
+
+	const preferredPositionAnswer = answerByRef.get(PLAYER_DRAFT_POSITION_FIELD_REF);
+	const preferredPositionValue = extractAnswerValue(preferredPositionAnswer, "multiChoice");
+	const positionPreference = Array.isArray(preferredPositionValue)
+		? preferredPositionValue
+		: preferredPositionValue
+			? [String(preferredPositionValue)]
+			: undefined;
 
   if (fullName && !fields.Title) {
     fields.Title = fullName;
@@ -201,13 +201,14 @@ export function mapPlayerDraftResponse(
     console.warn("⚠️ Unmapped Typeform refs detected:", unmappedRefs);
   }
 
-  return {
-    fields,
-    email,
-    fullName,
-    missingRequired,
-    unmappedRefs,
-  };
+	return {
+		fields,
+		email,
+		fullName,
+		positionPreference,
+		missingRequired,
+		unmappedRefs,
+	};
 }
 
 export function buildSharePointFields(formResponse: TypeformFormResponse): Record<string, unknown> {

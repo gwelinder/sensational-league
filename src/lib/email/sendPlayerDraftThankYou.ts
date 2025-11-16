@@ -95,8 +95,11 @@ export async function sendPlayerDraftThankYou({
       html = getFallbackHtml(fullName, positionPreference);
     }
 
-    const fromEmail = process.env.RESEND_VERIFIED_DOMAIN
-      ? `Sensational League <draft@${process.env.RESEND_VERIFIED_DOMAIN}>`
+    const verifiedDomain =
+      process.env.RESEND_VERIFIED_DOMAIN || "updates.sensationalleague.com";
+
+    const fromEmail = verifiedDomain
+      ? `Sensational League <draft@${verifiedDomain}>`
       : "Sensational League <onboarding@resend.dev>";
 
     const { error } = await resendClient.emails.send({

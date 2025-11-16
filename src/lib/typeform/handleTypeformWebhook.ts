@@ -158,10 +158,11 @@ export async function handleTypeformWebhook(
 
 		let emailSent = false;
 		if (mappingResult.email) {
+			const positionPreference = mappingResult.positionPreference?.join(", ") || undefined;
 			emailSent = await deps.sendPlayerDraftThankYou({
 				email: mappingResult.email,
 				fullName: mappingResult.fullName,
-				positionPreference: mappingResult.fields.Preferredposition as string | undefined,
+				positionPreference,
 				submittedAt: formResponse.submitted_at,
 			});
 		}
