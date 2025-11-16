@@ -1,8 +1,8 @@
 "use client";
 
+import { Widget } from "@typeform/embed-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Widget } from "@typeform/embed-react";
 import { cn } from "@/lib/utils";
 
 interface TypeformWidgetProps {
@@ -11,7 +11,11 @@ interface TypeformWidgetProps {
 	className?: string;
 }
 
-export function TypeformWidget({ formId, height = 760, className }: TypeformWidgetProps) {
+export function TypeformWidget({
+	formId,
+	height = 760,
+	className,
+}: TypeformWidgetProps) {
 	const [submitted, setSubmitted] = useState(false);
 
 	if (!formId) {
@@ -31,9 +35,9 @@ export function TypeformWidget({ formId, height = 760, className }: TypeformWidg
 						Thanks for applying
 					</p>
 					<p className="brand-body text-base text-black/80">
-						Thanks for applying to become a Sensational player. We’ll be in touch
-						soon by mail. Sign up for our newsletter and share your Sensational
-						dreams with your network of friends and fans.
+						Thanks for applying to become a Sensational player. We’ll be in
+						touch soon by mail. Sign up for our newsletter and share your
+						Sensational dreams with your network of friends and fans.
 					</p>
 					<div className="flex flex-wrap gap-3">
 						<Link
