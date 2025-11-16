@@ -17,28 +17,30 @@ export const apiVersion =
   getEnvValue('NEXT_PUBLIC_SANITY_API_VERSION', 'SANITY_API_VERSION') ||
   '2025-10-31'
 
-export const dataset = assertValue(
-  getEnvValue(
-    ...serverPreferred([
-      'NEXT_PUBLIC_SANITY_DATASET',
-      'SANITY_DATASET',
-      'SANITY_STUDIO_DATASET',
-    ])
-  ),
-  'Missing Sanity dataset. Set NEXT_PUBLIC_SANITY_DATASET (required for client bundles).'
-)
+const fallbackDataset = 'production'
+const fallbackProjectId = 'j2t3xshi'
 
-export const projectId = assertValue(
-  getEnvValue(
-    ...serverPreferred(['NEXT_PUBLIC_SANITY_PROJECT_ID', 'SANITY_PROJECT_ID'])
-  ),
-  'Missing Sanity projectId. Set NEXT_PUBLIC_SANITY_PROJECT_ID (required for client bundles).'
-)
+export const dataset = getEnvValue(
+  ...serverPreferred([
+    'NEXT_PUBLIC_SANITY_DATASET',
+    'SANITY_DATASET',
+    'SANITY_STUDIO_DATASET',
+  ])
+) || fallbackDataset
 
-function assertValue<T>(v: T | undefined, errorMessage: string): T {
-  if (v === undefined) {
-    throw new Error(errorMessage)
+export const projectId = getEnvValue(
+  ...serverPreferred(['NEXT_PUBLIC_SANITY_PROJECT_ID', 'SANITY_PROJECT_ID'])
+) || fallbackProjectId
+
+if (process.env.NODE_ENV !== 'production') {
+  if (!process.env.NEXT_PUBLIC_SANITY_DATASET && dataset === fallbackDataset) {
+    console.warn(
+      'NEXT_PUBLIC_SANITY_DATASET was not set. Falling back to "production". Update your .env.local if this is incorrect.'
+    )
   }
-
-  return v
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && projectId === fallbackProjectId) {
+    console.warn(
+      'NEXT_PUBLIC_SANITY_PROJECT_ID was not set. Falling back to "j2t3xshi". Update your .env.local if this is incorrect.'
+    )
+  }
 }
