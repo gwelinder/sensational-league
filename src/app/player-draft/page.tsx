@@ -1,18 +1,12 @@
+import CountdownTicker from "@/components/CountdownTicker";
+import { Logo } from "@/components/Logo";
 import TypeformApplyButton from "@/components/TypeformApplyButton";
-import { TypeformWidget } from "@/components/TypeformWidget";
 
 const DEFAULT_FORM_ID = "ZmJZ6YB2";
 const PLAYER_DRAFT_FORM_URL =
 	process.env.NEXT_PUBLIC_TYPEFORM_PLAYERDRAFT_URL ||
 	`https://form.typeform.com/to/${DEFAULT_FORM_ID}`;
 const APPLICATION_DEADLINE = "2026-01-01T23:59:59+01:00";
-
-function resolveFormId(url: string) {
-	const match = url.match(/to\/([A-Za-z0-9_-]+)/i);
-	return match?.[1] || DEFAULT_FORM_ID;
-}
-
-const PLAYER_DRAFT_FORM_ID = resolveFormId(PLAYER_DRAFT_FORM_URL);
 
 const leagueIntroParagraphs = [
 	"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026, before expanding to the UK and the US.",
@@ -117,25 +111,85 @@ const contacts = [
 	},
 ];
 
-interface CountdownParts {
-	days: number;
-	hours: number;
-	minutes: number;
-	seconds: number;
-}
+const heroHighlights = [
+	{ label: "Campaign window", value: "Nov 17 2025 – Jan 1 2026" },
+	{ label: "Format", value: "7v7 football + community impact" },
+	{ label: "Location", value: "Copenhagen, Denmark" },
+];
 
-function getCountdownParts(deadline: string): CountdownParts | null {
-	const target = new Date(deadline).getTime();
-	if (Number.isNaN(target)) return null;
-	const now = Date.now();
-	const diff = Math.max(0, target - now);
-	return {
-		days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-		hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-		minutes: Math.floor((diff / (1000 * 60)) % 60),
-		seconds: Math.floor((diff / 1000) % 60),
-	};
-}
+const applicationSnapshot = [
+	{ label: "Player profile", value: "Female players 17+, all positions" },
+	{
+		label: "What captains assess",
+		value: "Football IQ, team spirit, content energy",
+	},
+	{ label: "Timeline", value: "Apps close Jan 1 • Offers out mid-Jan" },
+];
+
+const timelineMilestones = [
+	{
+		period: "Nov–Dec 2025",
+		title: "Applications open",
+		description:
+			"Captains meet weekly to review submissions and flag talent for invites.",
+	},
+	{
+		period: "Jan 2026",
+		title: "Player invitations",
+		description:
+			"Selected players receive offers and attend the Player Placement Day.",
+	},
+	{
+		period: "Feb–Mar 2026",
+		title: "Preseason + media labs",
+		description:
+			"Football sessions plus creator training, story labs, and community planning.",
+	},
+	{
+		period: "Apr 2026",
+		title: "Season One kickoff",
+		description:
+			"Copenhagen festival gamedays launch the Sensational League era.",
+	},
+];
+
+const impactPillars = [
+	{
+		title: "Performance",
+		description:
+			"High-tempo 7v7 football fronted by eight legendary captains and creator-grade coaching.",
+	},
+	{
+		title: "Visibility",
+		description:
+			"Embedded media crew, live storytelling, and partnerships that put players in front of global audiences.",
+	},
+	{
+		title: "Community",
+		description:
+			"Each team drives a Community Challenge that earns points for uplifting women’s sport beyond the pitch.",
+	},
+	{
+		title: "Opportunity",
+		description:
+			"Paid match days, commercial spotlights, and future tours across Europe and the US.",
+	},
+];
+
+const whyStatements = [
+	{
+		title: "Visibility unlocks growth",
+		description: whyParagraphs[0],
+	},
+	{
+		title: "A platform built for players",
+		description: whyParagraphs[1],
+	},
+	{
+		title: "Fast. Rebellious. Female.",
+		description: whyParagraphs[2],
+	},
+];
 
 function SectionHeader({
 	eyebrow,
@@ -161,7 +215,9 @@ function SectionHeader({
 				{title}
 			</h2>
 			{subtitle ? (
-				<p className={`brand-body text-base leading-relaxed ${invert ? "text-white/80" : "text-black/70"}`}>
+				<p
+					className={`brand-body text-base leading-relaxed ${invert ? "text-white/80" : "text-black/70"}`}
+				>
 					{subtitle}
 				</p>
 			) : null}
@@ -170,184 +226,320 @@ function SectionHeader({
 }
 
 export default function PlayerDraftPage() {
-	const countdown = getCountdownParts(APPLICATION_DEADLINE);
-
 	return (
 		<main className="bg-[#F7F7F7] text-black">
-			<section className="relative overflow-hidden bg-black text-white">
-				<div className="absolute inset-0" aria-hidden>
-					<div className="absolute -left-24 top-0 h-[520px] w-[520px] rounded-full bg-[var(--color-volt)] blur-[200px] opacity-60" />
-					<div className="absolute right-0 top-16 h-72 w-72 rotate-12 border border-white/20" />
-				</div>
-				<div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-2">
+			<section className="relative isolate overflow-hidden bg-white px-4 pb-24 pt-20 text-black shadow-[0_35px_120px_rgba(0,0,0,0.08)]">
+				<div
+					className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-black/5 to-transparent"
+					aria-hidden
+				/>
+				<div
+					className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-[#F4F4EF]"
+					aria-hidden
+				/>
+				<div
+					className="absolute -right-20 top-8 hidden h-72 w-72 rounded-full border border-black/10 lg:block"
+					aria-hidden
+				/>
+				<div className="relative mx-auto grid max-w-6xl gap-12 sm:px-6 lg:grid-cols-[1.15fr_0.85fr]">
 					<div className="space-y-6">
-						<p className="brand-caption text-xs uppercase tracking-[0.5em] text-[var(--color-volt)]">
-							Sensational Player Draft
+						<p className="brand-caption text-xs uppercase tracking-[0.45em] text-black/60">
+							Copenhagen • Spring 2026
 						</p>
-						<h1 className="text-4xl font-black uppercase leading-tight tracking-[0.1em] sm:text-6xl">
-							We’re looking for 80 football players
+
+						<h1 className="text-4xl font-black uppercase leading-tight tracking-[0.08em] text-black sm:text-6xl">
+							Join the Sensational 80
 						</h1>
-						<p className="brand-body text-lg text-white/80">
-							Hero film by Foldager Studios sets the tone. Captains, cameras, and culture collide to recruit the
-							first Sensational 80.
+						<p className="brand-body text-lg text-black/75">
+							We’re recruiting 80 footballers to launch Sensational League.
+							Captains are looking for players who can compete, create, and grow
+							women’s football. Submit your application, share your story, and
+							play in front of the world.
 						</p>
-						<div className="flex flex-wrap gap-4">
-							<TypeformApplyButton
-								formUrl={PLAYER_DRAFT_FORM_URL}
-								className="brand-caption flex items-center gap-3 rounded-full border-2 border-black bg-[var(--color-volt)] px-8 py-4 text-xs font-black uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-0.5 hover:translate-x-0.5"
-							>
-								Apply now →
-							</TypeformApplyButton>
+						<div className="mt-8 grid gap-4 sm:grid-cols-3">
+							{heroHighlights.map((item) => (
+								<div
+									key={item.label}
+									className="rounded-2xl border border-black/10 bg-[#F7F7F7] p-4"
+								>
+									<p className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
+										{item.label}
+									</p>
+									<p className="mt-2 text-base font-black uppercase tracking-[0.12em] text-black">
+										{item.value}
+									</p>
+								</div>
+							))}
+						</div>
+						<div className="mt-10 flex flex-wrap gap-4">
 							<a
 								href="#how-it-works"
-								className="rounded-full border border-white/40 px-6 py-3 text-xs font-black uppercase tracking-[0.3em] text-white transition-colors hover:bg-white hover:text-black"
+								className="inline-flex items-center justify-center rounded-full border border-black px-7 py-3 text-xs font-black uppercase tracking-[0.3em] text-black transition-colors hover:bg-black hover:text-white"
 							>
 								How it works
 							</a>
+							<a
+								href="#timeline"
+								className="inline-flex items-center justify-center rounded-full border border-black px-7 py-3 text-xs font-black uppercase tracking-[0.3em] text-black/70 transition-colors hover:bg-black hover:text-white"
+							>
+								Timeline
+							</a>
+							<a
+								href="#why"
+								className="inline-flex items-center justify-center rounded-full border border-black px-7 py-3 text-xs font-black uppercase tracking-[0.3em] text-black/70 transition-colors hover:bg-black hover:text-white"
+							>
+								Why Sensational?
+							</a>
+							<a
+								href="#faq"
+								className="inline-flex items-center justify-center rounded-full border border-black px-7 py-3 text-xs font-black uppercase tracking-[0.3em] text-black/70 transition-colors hover:bg-black hover:text-white"
+							>
+								FAQ
+							</a>
 						</div>
 					</div>
-					<div className="rounded-3xl border-4 border-white/30 bg-white/5 p-8 shadow-[16px_16px_0px_rgba(35,35,36,0.8)]">
-						<p className="brand-caption text-xs uppercase tracking-[0.4em] text-white/70">
-							Applications close
+					<div className="rounded-[32px] border-2 border-black bg-white p-8 shadow-[18px_18px_0px_rgba(35,35,36,0.85)]">
+						<p className="brand-caption text-xs uppercase tracking-[0.4em] text-black/60">
+							Player draft window
 						</p>
-						<h3 className="mt-2 text-3xl font-black uppercase tracking-[0.2em]">
-							January 1, 2026
+						<h3 className="mt-2 text-3xl font-black uppercase tracking-[0.2em] text-black">
+							Applications close Jan 1, 2026
 						</h3>
-						{countdown ? (
-							<div className="mt-6 grid grid-cols-2 gap-4 text-black sm:grid-cols-4">
-								{[
-									{ label: "Days", value: countdown.days },
-									{ label: "Hours", value: countdown.hours },
-									{ label: "Minutes", value: countdown.minutes },
-									{ label: "Seconds", value: countdown.seconds },
-								].map((stat) => (
-									<div key={stat.label} className="rounded-2xl border-2 border-black bg-white/90 p-4 text-center">
-										<p className="text-3xl font-black">{String(stat.value).padStart(2, "0")}</p>
-										<p className="brand-caption mt-1 text-[0.6rem] uppercase tracking-[0.4em] text-black/60">
-											{stat.label}
-										</p>
-									</div>
-								))}
-							</div>
-						) : null}
-						<p className="brand-body mt-6 text-sm text-white/80">
-							All posts link to Typeform and Sensationalleague.com featuring the “Player sign-up now open”
-							banner.
+						<CountdownTicker
+							deadline={APPLICATION_DEADLINE}
+							label="Countdown"
+							timezone="CET"
+							variant="light"
+							className="mt-6"
+						/>
+						<ul className="mt-6 space-y-4">
+							{applicationSnapshot.map((item) => (
+								<li key={item.label} className="flex flex-col gap-1">
+									<span className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
+										{item.label}
+									</span>
+									<span className="text-base font-black uppercase tracking-[0.12em] text-black">
+										{item.value}
+									</span>
+								</li>
+							))}
+						</ul>
+						<TypeformApplyButton
+							formUrl={PLAYER_DRAFT_FORM_URL}
+							className="brand-caption mt-8 w-full rounded-2xl border-2 border-black bg-[var(--color-volt)] px-6 py-4 text-center text-xs font-black uppercase tracking-[0.3em] text-black transition-all hover:-translate-y-0.5 hover:translate-x-0.5"
+						>
+							Start application →
+						</TypeformApplyButton>
+						<p className="brand-body mt-4 text-sm text-black/65">
+							Captains review weekly. Early submissions are encouraged so your
+							profile is in the first batch.
 						</p>
 					</div>
 				</div>
 			</section>
-			<section className="px-4 py-16 sm:px-6">
-				<div className="mx-auto max-w-6xl space-y-10">
-					<SectionHeader eyebrow="About the league & player draft" title="Fast. Rebellious. Female." subtitle="International 7v7 built for storytellers and footballers." />
-					<div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+			<section className="bg-[#F2F2EC] px-4 pb-16 pt-20 sm:px-6" id="timeline">
+				<div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.95fr_1.05fr]">
+					<div className="order-1 space-y-8">
+						<p className="flex items-center gap-3 brand-caption text-sm uppercase tracking-[0.3em] text-black/55">
+							<span aria-hidden="true">
+								<Logo
+									variant="spark-small"
+									color="black"
+									width={120}
+									height={48}
+									className="p-0"
+								/>
+							</span>
+							<span>Launch timeline</span>
+						</p>
+						<div className="relative rounded-[32px] border border-black/10 bg-white p-6">
+							<div className="absolute left-10 top-14 bottom-10 w-px bg-black/10" aria-hidden />
+							<ul className="space-y-10">
+								{timelineMilestones.map((milestone) => (
+									<li key={milestone.period} className="relative pl-16">
+										<span className="absolute left-7 top-[1.05rem] block h-6 w-6 rounded-full border-2 border-black bg-[var(--color-volt)]" />
+										<p className="text-xs font-black uppercase tracking-[0.35em] text-black/45">
+											{milestone.period}
+										</p>
+										<h3 className="mt-1 text-xl font-black uppercase tracking-[0.15em] text-black">
+											{milestone.title}
+										</h3>
+										<p className="brand-body text-sm text-black/70">
+											{milestone.description}
+										</p>
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+					<div className="order-2 space-y-10">
+						<SectionHeader
+							eyebrow="About the league & player draft"
+							title="Fast. Rebellious. Female."
+							subtitle="International 7v7 built for storyteller-athletes."
+						/>
 						<div className="space-y-6 text-lg leading-relaxed text-black/80 brand-body">
 							{leagueIntroParagraphs.map((paragraph) => (
 								<p key={paragraph}>{paragraph}</p>
 							))}
 						</div>
-						<div className="rounded-[32px] border-2 border-black bg-black/95 p-8 text-white shadow-[18px_18px_0px_rgba(35,35,36,1)]">
-							<p className="brand-caption text-sm uppercase tracking-[0.3em] text-[var(--color-volt)]">
-								Launch timeline
-							</p>
-							<div className="mt-4 space-y-4 text-sm uppercase tracking-widest font-black">
-								<p>April 2026 · Copenhagen</p>
-								<p>Expanding → UK · US</p>
-								<p>First cohort · 80 players</p>
-							</div>
-							<p className="mt-6 text-base text-white/80 brand-body">
-								Eight captains. Festival gamedays. Creator-grade content lab. Everything points back to growing
-								women’s football.
-							</p>
+						<div className="grid gap-6 sm:grid-cols-2">
+							{impactPillars.map((pillar) => (
+								<div
+									key={pillar.title}
+									className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.05)]"
+								>
+									<p className="text-sm font-black uppercase tracking-[0.3em] text-black/60">
+										{pillar.title}
+									</p>
+									<p className="brand-body mt-3 text-base">
+										{pillar.description}
+									</p>
+								</div>
+							))}
 						</div>
 					</div>
 				</div>
 			</section>
-			<section className="bg-black px-4 py-16 text-white sm:px-6">
+			<section id="why" className="bg-black px-4 py-16 text-white sm:px-6">
 				<div className="mx-auto max-w-6xl space-y-10">
-					<SectionHeader eyebrow="Why we’re doing this" title="Grow the game. Own the format." subtitle="Women’s sports deserve purpose-built platforms." invert />
-					<div className="space-y-6">
-						{whyParagraphs.map((paragraph) => (
-							<p key={paragraph} className="brand-body text-base text-white/80">
-								{paragraph}
-							</p>
+					<SectionHeader
+						eyebrow="Why Sensational League"
+						title="Grow the game. Own the format."
+						subtitle="Women’s sports deserve purpose-built platforms."
+						invert
+					/>
+					<div className="divide-y divide-white/15 border-t border-white/15">
+						{whyStatements.map((statement) => (
+							<div
+								key={statement.title}
+								className="grid gap-6 py-6 md:grid-cols-[0.4fr_1fr]"
+							>
+								<p className="text-sm font-black uppercase tracking-[0.35em] text-[var(--color-volt)]">
+									{statement.title}
+								</p>
+								<p className="brand-body text-base text-white/80">
+									{statement.description}
+								</p>
+							</div>
 						))}
 					</div>
 				</div>
 			</section>
-			<section className="px-4 py-16 sm:px-6">
+			<section className="bg-[#FDFDF5] px-4 py-16 sm:px-6" id="participate">
 				<div className="mx-auto max-w-6xl space-y-10">
-					<SectionHeader eyebrow="You’re not just playing" title="Participate. Elevate. Reciprocate." subtitle="Players become co-creators of a new women’s football culture." />
-					<div className="grid gap-10 lg:grid-cols-2">
-						<div className="space-y-6 rounded-[36px] border-2 border-black bg-white p-8 shadow-[16px_16px_0px_rgba(35,35,36,0.9)]">
-							{participationParagraphs.slice(0, 2).map((paragraph) => (
-								<p key={paragraph} className="brand-body text-base leading-relaxed text-black/80">
-									{paragraph}
-								</p>
+					<SectionHeader
+						eyebrow="You’re not just playing"
+						title="Participate. Elevate. Reciprocate."
+						subtitle="Players become co-creators of a new women’s football culture."
+					/>
+					<div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+						<div className="space-y-6 text-lg leading-relaxed text-black/80 brand-body">
+							{participationParagraphs.map((paragraph) => (
+								<p key={paragraph}>{paragraph}</p>
 							))}
 						</div>
 						<div className="space-y-6">
-							<div className="rounded-[28px] border border-black/20 bg-black p-8 text-white">
-								<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/70">
+							<div className="rounded-3xl border border-black/10 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.06)]">
+								<p className="brand-caption text-xs uppercase tracking-[0.35em] text-black/55">
 									We know the feeling
 								</p>
-								<p className="mt-4 text-lg font-black uppercase tracking-[0.2em]">
-									“Football is fun, giving, and electric when the stage is yours.”
+								<p className="mt-4 text-lg font-black uppercase tracking-[0.18em]">
+									“Football is electric when the stage is yours.”
 								</p>
-								<p className="brand-body mt-4 text-white/80">
-									Participate, elevate, and reciprocate. This is a creator athlete ecosystem.
+								<p className="brand-body mt-4 text-black/70">
+									Every player gets the tools to perform, tell their story, and
+									move culture forward.
 								</p>
 							</div>
-							<div className="rounded-[28px] border border-black bg-[var(--color-volt)] p-6 shadow-[12px_12px_0px_rgba(35,35,36,1)]">
-								<p className="text-sm font-black uppercase tracking-[0.3em] text-black/70">
-									Tools you get
-								</p>
+							<div className="rounded-3xl border-2 border-black bg-[var(--color-volt)] p-7 shadow-[12px_12px_0px_rgba(35,35,36,0.85)]">
+								<div className="flex items-center justify-between">
+									<p className="text-sm font-black uppercase tracking-[0.3em] text-black/70">
+										Tools you get
+									</p>
+									<span aria-hidden="true" className="-mr-2">
+										<Logo
+											variant="secondary-mark"
+											color="black"
+											width={120}
+											height={40}
+											className="p-0"
+										/>
+									</span>
+								</div>
 								<ul className="mt-4 space-y-2 text-sm font-black uppercase tracking-[0.12em] text-black">
 									<li>Story lab + creator coaching</li>
 									<li>Community platform + CRM access</li>
 									<li>Impact scoring + spotlights</li>
+									<li>Access to gamedays & future tours</li>
 								</ul>
 							</div>
-							<p className="brand-body text-base text-black/80">
-								{participationParagraphs[2]}
-							</p>
 						</div>
 					</div>
 				</div>
 			</section>
-			<section className="bg-[#D4FF00] px-4 py-16 sm:px-6">
+			<section id="format" className="px-4 py-16 sm:px-6">
 				<div className="mx-auto max-w-6xl space-y-12">
-					<SectionHeader eyebrow="Our format" title="Purpose-built 7v7" subtitle="Football + community challenge" />
-					<div className="grid gap-10 md:grid-cols-2">
-						{formatHighlights.slice(0, 2).map((highlight) => (
-							<div key={highlight} className="rounded-[30px] border border-black bg-white/95 p-7 shadow-[10px_10px_0px_rgba(35,35,36,0.9)]">
-								<p className="brand-body text-lg text-black/85">{highlight}</p>
+					<SectionHeader
+						eyebrow="Our format"
+						title="Purpose-built 7v7"
+						subtitle="Football meets a community challenge to score on and off the pitch."
+					/>
+					<div className="grid gap-6 md:grid-cols-3">
+						{formatHighlights.slice(0, 3).map((highlight, index) => (
+							<div
+								key={highlight}
+								className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)]"
+							>
+								<span className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
+									Core concept {index + 1}
+								</span>
+								<p className="brand-body mt-2 text-base text-black/85">
+									{highlight}
+								</p>
 							</div>
 						))}
 					</div>
-					<div className="rounded-[36px] border-2 border-black bg-black p-8 text-white shadow-[18px_18px_0px_rgba(35,35,36,1)]">
-						<div className="grid gap-6 md:grid-cols-2">
-							{formatHighlights.slice(2).map((highlight) => (
-								<p key={highlight} className="brand-body text-base text-white/80">
-									{highlight}
-								</p>
-							))}
-						</div>
+					<div className="rounded-[36px] border border-black/10 bg-black p-8 text-white shadow-[18px_18px_0px_rgba(35,35,36,1)]">
+						<p className="text-sm font-black uppercase tracking-[0.35em] text-white/70">
+							Designed for modern players
+						</p>
+						<p className="brand-body mt-4 text-base text-white/80">
+							{formatHighlights[3]}
+						</p>
+						<ul className="mt-6 grid gap-3 text-sm font-black uppercase tracking-[0.15em] md:grid-cols-2">
+							<li>Six gamedays · broadcast + live crowd</li>
+							<li>Community Challenge scoring</li>
+							<li>Creator lab + content studio</li>
+							<li>Impact storytelling with partners</li>
+						</ul>
 					</div>
 				</div>
 			</section>
 			<section className="px-4 py-16 sm:px-6" id="how-it-works">
 				<div className="mx-auto max-w-6xl space-y-12">
-					<SectionHeader eyebrow="How the player draft works" title="Four moves to join" subtitle="Deadline: January 1, 2026 — early applications reviewed weekly." />
-					<div className="relative border-l-2 border-black/10 pl-6 sm:pl-10">
+					<SectionHeader
+						eyebrow="How the player draft works"
+						title="Four moves to join"
+						subtitle="Deadline: January 1, 2026 — early applications reviewed weekly."
+					/>
+					<div className="relative pl-12">
+						<div
+							className="absolute left-6 top-3 bottom-3 w-px bg-black/10"
+							aria-hidden
+						/>
 						{draftSteps.map((step, index) => (
 							<div key={step.title} className="relative mb-10 last:mb-0">
-								<div className="absolute -left-[34px] top-1 flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-white text-sm font-black">
+								<div className="absolute -left-12 top-0 flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-white text-sm font-black">
 									{index + 1}
 								</div>
-								<div className="rounded-[28px] border border-black/15 bg-white/90 p-6 shadow-[8px_8px_0px_rgba(35,35,36,0.2)]">
-									<h3 className="text-xl font-black uppercase tracking-[0.18em] text-black">{step.title}</h3>
-									<p className="brand-body mt-3 text-sm text-black/70">{step.description}</p>
+								<div className="rounded-3xl border border-black/10 bg-white/95 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.07)]">
+									<h3 className="text-xl font-black uppercase tracking-[0.18em] text-black">
+										{step.title}
+									</h3>
+									<p className="brand-body mt-3 text-sm text-black/70">
+										{step.description}
+									</p>
 								</div>
 							</div>
 						))}
@@ -359,7 +551,8 @@ export default function PlayerDraftPage() {
 									Ready to apply?
 								</p>
 								<h3 className="mt-2 text-3xl font-black uppercase tracking-[0.2em]">
-									If you’re a female footballer ready for a new kind of league, start now.
+									If you’re a female footballer ready for a new kind of league,
+									start now.
 								</h3>
 							</div>
 							<TypeformApplyButton
@@ -372,17 +565,26 @@ export default function PlayerDraftPage() {
 					</div>
 				</div>
 			</section>
-			<section className="bg-black px-4 py-16 text-white sm:px-6">
+			<section id="faq" className="bg-black px-4 py-16 text-white sm:px-6">
 				<div className="mx-auto max-w-6xl space-y-10">
-					<SectionHeader eyebrow="FAQ" title="Player Draft 2025–26" subtitle="Answers before you hit submit." invert />
+					<SectionHeader
+						eyebrow="FAQ"
+						title="Player Draft 2025–26"
+						subtitle="Answers before you hit submit."
+						invert
+					/>
 					<div className="grid gap-5 md:grid-cols-2">
 						{faqItems.map((item, idx) => (
 							<div
 								key={item.question}
 								className={`rounded-[28px] border border-white/15 p-6 ${idx % 2 === 0 ? "bg-white/5" : "bg-white/10"}`}
 							>
-								<h3 className="text-lg font-black uppercase tracking-[0.18em]">{item.question}</h3>
-								<p className="brand-body mt-3 text-sm text-white/80">{item.answer}</p>
+								<h3 className="text-lg font-black uppercase tracking-[0.18em]">
+									{item.question}
+								</h3>
+								<p className="brand-body mt-3 text-sm text-white/80">
+									{item.answer}
+								</p>
 							</div>
 						))}
 					</div>
@@ -390,7 +592,11 @@ export default function PlayerDraftPage() {
 			</section>
 			<section className="px-4 py-16 sm:px-6">
 				<div className="mx-auto max-w-4xl space-y-6">
-					<SectionHeader eyebrow="Contact" title="Need clarity?" subtitle="Reach out to the Sensational communications team." />
+					<SectionHeader
+						eyebrow="Contact"
+						title="Need clarity?"
+						subtitle="Reach out to the Sensational communications team."
+					/>
 					<div className="divide-y divide-black/10 rounded-[32px] border border-black/20 bg-white">
 						{contacts.map((contact) => (
 							<a
@@ -407,12 +613,6 @@ export default function PlayerDraftPage() {
 							</a>
 						))}
 					</div>
-				</div>
-			</section>
-			<section className="bg-[#F7F7F7] px-4 py-20 sm:px-6">
-				<div className="mx-auto max-w-5xl space-y-6">
-					<SectionHeader eyebrow="Apply" title="Typeform" subtitle="Complete the form below. Captains review weekly." />
-					<TypeformWidget formId={PLAYER_DRAFT_FORM_ID} height={660} />
 				</div>
 			</section>
 		</main>

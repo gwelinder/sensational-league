@@ -4,6 +4,7 @@ import type { PortableTextBlock } from "@portabletext/types";
 import { createDataAttribute } from "@sanity/visual-editing";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { AnimatedSpark } from "@/components/Logo";
 import { SectionsRenderer } from "@/components/SectionsRenderer";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
 import TypeformApplyButton from "@/components/TypeformApplyButton";
@@ -118,6 +119,14 @@ const DEFAULT_DEADLINE = "2026-01-01T23:59:59+01:00";
 const DEFAULT_COUNTDOWN_LABEL = "Applications close";
 const DEFAULT_APPLICATION_HELPER_TEXT =
 	"Applications are reviewed weekly by the Sensational captains. Early submissions are encouraged.";
+const HERO_CARD_DEFAULT_DESCRIPTION = [
+	"We are looking for 80 players to join the Sensational League in Copenhagen spring 2026.",
+	"You will join a league built around performance, community, visibility, and opportunity.",
+	"Submit your application and become one of the Sensational 80.",
+].join(" ");
+const HERO_SUBLINE_DEFAULT =
+	"Copenhagen • Spring 2026 — Sensational League is launching a fast 7v7 format that turns performance, community, visibility, and opportunity into the scoring system.";
+const HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_EMBED_DESCRIPTION =
 	"Submit your application below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
 const DEFAULT_EMBED_BULLETS = [
@@ -411,12 +420,26 @@ function useCountdown(deadline?: string) {
 	return parts;
 }
 
-function CountdownTimer({ countdown }: { countdown?: CountdownConfig }) {
+function CountdownTimer({
+	countdown,
+	variant = "dark",
+}: {
+	countdown?: CountdownConfig;
+	variant?: "dark" | "light";
+}) {
 	const isEnabled = countdown?.enabled ?? true;
 	const target = countdown?.deadline || DEFAULT_DEADLINE;
 	const label = countdown?.label || DEFAULT_COUNTDOWN_LABEL;
 	const timezone = countdown?.timezone;
 	const parts = useCountdown(isEnabled ? target : undefined);
+	const labelClasses = variant === "dark" ? "text-white/80" : "text-black/60";
+	const segmentWrapperClasses =
+		variant === "dark"
+			? "border-white/30 bg-white/10"
+			: "border-black/20 bg-black/5";
+	const segmentValueClasses = variant === "dark" ? "text-white" : "text-black";
+	const segmentLabelClasses =
+		variant === "dark" ? "text-white/70" : "text-black/60";
 
 	if (!isEnabled || !parts) {
 		return null;
@@ -424,11 +447,13 @@ function CountdownTimer({ countdown }: { countdown?: CountdownConfig }) {
 
 	return (
 		<div className="mt-8">
-			<p className="brand-caption text-white/80 uppercase tracking-[0.2em]">
+			<p
+				className={cn("brand-caption uppercase tracking-[0.2em]", labelClasses)}
+			>
 				{label}
 				{timezone ? ` • ${timezone}` : ""}
 			</p>
-			<div className="mt-4 flex flex-wrap gap-4 text-white">
+			<div className="mt-4 flex flex-wrap gap-4">
 				{[
 					{ label: "Days", value: parts.days },
 					{ label: "Hours", value: parts.hours },
@@ -437,12 +462,25 @@ function CountdownTimer({ countdown }: { countdown?: CountdownConfig }) {
 				].map((segment) => (
 					<div
 						key={segment.label}
-						className="min-w-[80px] rounded border border-white/30 bg-white/10 px-4 py-3 text-center"
+						className={cn(
+							"min-w-[80px] rounded border px-4 py-3 text-center",
+							segmentWrapperClasses,
+						)}
 					>
-						<div className="text-3xl font-black tracking-wide">
+						<div
+							className={cn(
+								"text-3xl font-black tracking-wide",
+								segmentValueClasses,
+							)}
+						>
 							{String(segment.value).padStart(2, "0")}
 						</div>
-						<p className="brand-caption text-xs uppercase tracking-[0.3em] text-white/70">
+						<p
+							className={cn(
+								"brand-caption text-xs uppercase tracking-[0.3em]",
+								segmentLabelClasses,
+							)}
+						>
 							{segment.label}
 						</p>
 					</div>
@@ -452,18 +490,34 @@ function CountdownTimer({ countdown }: { countdown?: CountdownConfig }) {
 	);
 }
 
-function HeroStats({ stats }: { stats?: Stat[] }) {
+function HeroStats({
+	stats,
+	variant = "dark",
+}: {
+	stats?: Stat[];
+	variant?: "dark" | "light";
+}) {
 	if (!stats?.length) return null;
+	const containerClasses =
+		variant === "dark"
+			? "border-white/30 bg-white/10 text-white"
+			: "border-black/10 bg-black/5 text-black";
+	const labelClasses = variant === "dark" ? "text-white/70" : "text-black/60";
 
 	return (
 		<div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			{stats.map((stat, index) => (
 				<div
 					key={`${stat.label}-${index}`}
-					className="rounded-lg border border-white/30 bg-white/10 px-6 py-5 text-white"
+					className={cn("rounded-lg border px-6 py-5", containerClasses)}
 				>
 					<p className="text-4xl font-black tracking-tight">{stat.value}</p>
-					<p className="brand-caption uppercase tracking-[0.3em] text-white/70">
+					<p
+						className={cn(
+							"brand-caption uppercase tracking-[0.3em]",
+							labelClasses,
+						)}
+					>
 						{stat.label}
 					</p>
 				</div>
@@ -610,11 +664,11 @@ function ApplicationEmbedSection({
 							))}
 						</ul>
 					) : null}
-				<p className="brand-body text-white/70">
-					Optional: if you feel like it you’re welcome to upload a super short
-					motivational video of yourself, where you let us know why you want to be
-					a Sensational player.
-				</p>
+					<p className="brand-body text-white/70">
+						Optional: if you feel like it you’re welcome to upload a super short
+						motivational video of yourself, where you let us know why you want
+						to be a Sensational player.
+					</p>
 					{deadlineNote && (
 						<p className="brand-body text-white/70">{deadlineNote}</p>
 					)}
@@ -640,10 +694,11 @@ function MediaGrid({
 		"/logos/image_073_page_44.jpeg",
 	];
 
-const cards = gallery.length
+	const cards = gallery.length
 		? gallery.map((image, index) => {
 				const imageProps = getImageProps(image, 800);
-				const keyValue = (image as { _key?: string })?._key ?? `gallery-${index}`;
+				const keyValue =
+					(image as { _key?: string })?._key ?? `gallery-${index}`;
 				return (
 					<div
 						key={keyValue}
@@ -810,13 +865,12 @@ export default function HomePage({ content }: HomePageProps) {
 
 	const heroVideoUrl = content?.hero?.video?.url;
 	const heroPosterUrl = content?.hero?.video?.poster
-		? getImageUrl(content.hero.video.poster, 2400) ?? undefined
+		? (getImageUrl(content.hero.video.poster, 2400) ?? undefined)
 		: undefined;
 	const heroCtaText = resolveHeroCtaText(content?.hero?.ctaText);
 	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;
 	const heroCtaDescription =
-		content?.hero?.ctaDescription ||
-	"Submit your application to join the inaugural Sensational League season. All positions, backgrounds, and personalities welcome.";
+		content?.hero?.ctaDescription || HERO_CARD_DEFAULT_DESCRIPTION;
 	const countdownConfig = content?.hero?.countdown;
 
 	const countdownLabel =
@@ -844,16 +898,12 @@ export default function HomePage({ content }: HomePageProps) {
 	const heroResourceEyebrow =
 		applicationCardSettings?.resourceEyebrow || "Need more info?";
 	const heroResourceLinkLabel =
-		applicationCardSettings?.resourceLinkLabel ||
-		"Read about the player draft";
+		applicationCardSettings?.resourceLinkLabel || "Read about the player draft";
 	const heroResourceLinkHref =
-		applicationCardSettings?.resourceLinkHref ||
-	"/player-draft";
+		applicationCardSettings?.resourceLinkHref || "/player-draft";
 
 	const pressButtonText =
-		content?.pressCta?.buttonText ||
-		content?.pressCta?.label ||
-		"News";
+		content?.pressCta?.buttonText || content?.pressCta?.label || "News";
 	const pressEmoji = content?.pressCta?.emoji || "📰";
 	const pressHref = content?.pressCta?.href || "/press";
 
@@ -884,7 +934,7 @@ export default function HomePage({ content }: HomePageProps) {
 		<main className="min-h-screen bg-white">
 			{/* Hero Section */}
 			<section
-				className="relative isolate overflow-hidden bg-black px-4 pt-16 pb-24 text-white"
+				className="relative isolate overflow-hidden bg-white px-4 pt-12 pb-24 text-black"
 				data-sanity={heroDataAttribute?.toString()}
 			>
 				{heroVideoUrl ? (
@@ -898,13 +948,15 @@ export default function HomePage({ content }: HomePageProps) {
 							playsInline
 							loop
 						/>
-						<div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
+						<div className="absolute inset-0 bg-black opacity-70 mix-blend-multiply" />
 					</div>
 				) : (
-					<div className="absolute inset-0 bg-gradient-to-br from-black via-black to-[var(--color-purple)]/60" />
+					<div className="absolute inset-0 bg-gradient-to-b from-white via-black/50 to-white" />
 				)}
 
-			<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row lg:items-end">
+
+
+				<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row lg:items-end">
 					<div className="flex-1">
 						{content?.hero?.logo && getImageUrl(content.hero.logo) ? (
 							<img
@@ -918,59 +970,50 @@ export default function HomePage({ content }: HomePageProps) {
 							/>
 						) : (
 							<img
-								src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
-								alt="Sensational League — Fast. Rebellious. Female."
+								src="/logos/SL-PRIMARY LOCKUP.svg"
+								alt="Sensational League"
 								className="mb-10 w-full max-w-[760px]"
 							/>
 						)}
-						<div
-							className="brand-headline text-4xl uppercase tracking-tight text-white md:text-6xl"
-							data-sanity={heroHeadlineAttribute?.toString()}
-						>
-							{content?.hero?.headline ? (
-								<StyledTextRenderer value={content.hero.headline} />
-							) : (
-								<span>We’re looking for 80 football players</span>
-							)}
-						</div>
-						<p
-							className="brand-body mt-6 max-w-2xl text-lg text-white/80"
-							data-sanity={heroSublineAttribute?.toString()}
-						>
-							{content?.hero?.subline ||
-								"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026."}
+						<p className="brand-caption text-xs uppercase tracking-[0.4em] text-black/50">
+							{HERO_LOCATION_LABEL}
 						</p>
 
-						<div data-sanity={heroCountdownAttribute?.toString()}>
-							<CountdownTimer countdown={countdownConfig} />
+						<p
+							className="brand-body mt-6 max-w-2xl text-lg text-black/70"
+							data-sanity={heroSublineAttribute?.toString()}
+						>
+							{content?.hero?.subline || HERO_SUBLINE_DEFAULT}
+						</p>
+
+
+
+						<HeroStats stats={content?.hero?.stats} variant="light" />
+
+						<div className="mt-10 flex flex-wrap gap-4">
+							<Link
+								href="/player-draft"
+								className="inline-flex items-center gap-2 rounded-full border border-black px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+							>
+								About the Player Draft
+								<span aria-hidden>→</span>
+							</Link>
+							<Link
+								href="#about"
+								className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+							>
+								About the League
+							</Link>
 						</div>
-
-						<HeroStats stats={content?.hero?.stats} />
-
-					<div className="mt-10 flex flex-wrap gap-4">
-					<Link
-						href="/player-draft"
-							className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
-						>
-							About the Player Draft
-							<span aria-hidden>→</span>
-						</Link>
-						<Link
-							href="#about"
-							className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
-						>
-							About the League
-						</Link>
 					</div>
-					</div>
-				<div
-					id="player-draft"
-					data-sanity={
-						applicationCardAttribute?.toString() ??
-						heroCtaAttribute?.toString()
-					}
-					className="w-full max-w-md lg:self-end lg:translate-y-6"
-				>
+					<div
+						id="player-draft"
+						data-sanity={
+							applicationCardAttribute?.toString() ??
+							heroCtaAttribute?.toString()
+						}
+						className="w-full max-w-md lg:self-end lg:translate-y-6"
+					>
 						<ApplicationCard
 							badge={heroCardBadge}
 							title={heroCardTitle}
@@ -994,26 +1037,6 @@ export default function HomePage({ content }: HomePageProps) {
 				)}
 			</section>
 
-		<section id="newsletter" className="bg-black px-4 py-12">
-				<div className="mx-auto flex w-full max-w-7xl flex-col gap-6 rounded-3xl border-4 border-white/20 bg-gradient-to-r from-black to-[#1a1a1a] px-6 py-8 text-white md:flex-row md:items-center">
-					<div className="flex-1">
-						<p className="brand-caption text-sm uppercase tracking-[0.4em] text-white/70">
-							Stay in the loop
-						</p>
-					<h3 className="mt-2 text-3xl font-black tracking-tight">
-						Newsletter: Captain drops, venue intel, trial invites
-					</h3>
-					<p className="brand-body mt-2 text-white/80">
-						Fast hits on draft milestones, venue drops, and behind-the-scenes
-						moves straight from the Sensational captains.
-					</p>
-					</div>
-					<div className="flex-1">
-						<HeroNewsletterSignup />
-					</div>
-				</div>
-			</section>
-
 			<section className="bg-white px-4 py-14">
 				<div className="mx-auto max-w-7xl">
 					<MediaGrid
@@ -1031,9 +1054,30 @@ export default function HomePage({ content }: HomePageProps) {
 				</div>
 			</section>
 
+			<section id="newsletter" className="bg-black px-4 py-12">
+				<div className="mx-auto flex w-full max-w-7xl flex-col gap-6 rounded-3xl border-4 border-white/20 bg-gradient-to-r from-black to-[#1a1a1a] px-6 py-8 text-white md:flex-row md:items-center">
+					<div className="flex-1">
+						<p className="brand-caption text-sm uppercase tracking-[0.4em] text-white/70">
+							Stay in the loop
+						</p>
+						<h3 className="mt-2 text-3xl font-black tracking-tight">
+							Newsletter: Captain drops, venue intel, trial invites
+						</h3>
+						<p className="brand-body mt-2 text-white/80">
+							Fast hits on draft milestones, venue drops, and behind-the-scenes
+							moves straight from the Sensational captains.
+						</p>
+					</div>
+					<div className="flex-1">
+						<HeroNewsletterSignup />
+					</div>
+				</div>
+			</section>
+
+
 			{/* Press Link CTA */}
 			<section
-				className="py-12 bg-white"
+				className="pt-12 bg-white"
 				data-sanity={pressCtaAttribute?.toString()}
 			>
 				<div className="max-w-7xl mx-auto px-4 text-center">
@@ -1047,19 +1091,19 @@ export default function HomePage({ content }: HomePageProps) {
 				</div>
 			</section>
 
-		{embedEnabled && (
-			<ApplicationEmbedSection
-				badge={embedBadge}
-				title={embedTitle}
-				description={embedDescription}
-				bulletPoints={embedBullets}
-				deadlineNote={embedDeadlineNote}
-				formId={applicationEmbedSettings?.formId || applicationFormId}
-				height={embedHeight}
-				enabled={embedEnabled}
-				dataAttribute={applicationEmbedAttribute?.toString()}
-			/>
-		)}
+			{embedEnabled && (
+				<ApplicationEmbedSection
+					badge={embedBadge}
+					title={embedTitle}
+					description={embedDescription}
+					bulletPoints={embedBullets}
+					deadlineNote={embedDeadlineNote}
+					formId={applicationEmbedSettings?.formId || applicationFormId}
+					height={embedHeight}
+					enabled={embedEnabled}
+					dataAttribute={applicationEmbedAttribute?.toString()}
+				/>
+			)}
 
 			{/* About Section */}
 			<section
