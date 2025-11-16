@@ -8,22 +8,31 @@ const getEnvValue = (...keys: string[]): string | undefined => {
   return undefined
 }
 
+const isServer = typeof window === 'undefined'
+
+const serverPreferred = <T extends string>(keys: T[]): T[] =>
+  isServer ? keys : [keys[0]]
+
 export const apiVersion =
   getEnvValue('NEXT_PUBLIC_SANITY_API_VERSION', 'SANITY_API_VERSION') ||
   '2025-10-31'
 
 export const dataset = assertValue(
   getEnvValue(
-    'NEXT_PUBLIC_SANITY_DATASET',
-    'SANITY_DATASET',
-    'SANITY_STUDIO_DATASET'
+    ...serverPreferred([
+      'NEXT_PUBLIC_SANITY_DATASET',
+      'SANITY_DATASET',
+      'SANITY_STUDIO_DATASET',
+    ])
   ),
-  'Missing Sanity dataset. Set NEXT_PUBLIC_SANITY_DATASET or SANITY_DATASET.'
+  'Missing Sanity dataset. Set NEXT_PUBLIC_SANITY_DATASET (required for client bundles).'
 )
 
 export const projectId = assertValue(
-  getEnvValue('NEXT_PUBLIC_SANITY_PROJECT_ID', 'SANITY_PROJECT_ID'),
-  'Missing Sanity projectId. Set NEXT_PUBLIC_SANITY_PROJECT_ID or SANITY_PROJECT_ID.'
+  getEnvValue(
+    ...serverPreferred(['NEXT_PUBLIC_SANITY_PROJECT_ID', 'SANITY_PROJECT_ID'])
+  ),
+  'Missing Sanity projectId. Set NEXT_PUBLIC_SANITY_PROJECT_ID (required for client bundles).'
 )
 
 function assertValue<T>(v: T | undefined, errorMessage: string): T {
