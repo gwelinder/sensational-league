@@ -129,6 +129,9 @@ const HERO_SUBLINE_DEFAULT =
 const HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_EMBED_DESCRIPTION =
 	"Submit your application below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
+const DEFAULT_HERO_VIDEO_URL =
+	"https://www.youtube.com/watch?v=kKF5wGR8Luc";
+const DEFAULT_HERO_VIDEO_POSTER = "/logos/image_046_page_39.jpeg";
 const DEFAULT_EMBED_BULLETS = [
 	"Share your football profile, background, and ambitions",
 	"Attach links or handles that showcase how you play and create",
@@ -136,6 +139,70 @@ const DEFAULT_EMBED_BULLETS = [
 ];
 const DEFAULT_EMBED_DEADLINE_NOTE =
 	"Deadline: January 1, 2026 – but we encourage early applications as spots are limited to 80 players.";
+
+type HeroVideoSource =
+	| { type: "youtube"; src: string }
+	| { type: "video"; src: string };
+
+function normalizeUrl(raw?: string | null): string | null {
+	if (!raw) return null;
+	let value = raw.trim();
+	if (!value) return null;
+	if (value.startsWith("//")) {
+		value = `https:${value}`;
+	}
+	if (!/^https?:/i.test(value)) {
+		value = `https://${value}`;
+	}
+	return value;
+}
+
+function extractYouTubeId(url: string): string | null {
+	try {
+		const parsed = new URL(url);
+		const host = parsed.hostname.replace(/^www\./i, "");
+		if (host === "youtube.com" || host === "m.youtube.com") {
+			const paramId = parsed.searchParams.get("v");
+			if (paramId) {
+				return paramId;
+			}
+			const segments = parsed.pathname.split("/").filter(Boolean);
+			if (segments[0] === "embed" || segments[0] === "shorts") {
+				return segments[1] || null;
+			}
+		}
+		if (host === "youtu.be") {
+			return parsed.pathname.split("/").filter(Boolean)[0] || null;
+		}
+	} catch {
+		return null;
+	}
+	return null;
+}
+
+function getHeroVideoSource(raw?: string | null): HeroVideoSource | null {
+	const normalized = normalizeUrl(raw) || normalizeUrl(DEFAULT_HERO_VIDEO_URL);
+	if (!normalized) return null;
+	const youtubeId = extractYouTubeId(normalized);
+	if (youtubeId) {
+		const params = new URLSearchParams({
+			autoplay: "1",
+			mute: "1",
+			controls: "0",
+			showinfo: "0",
+			rel: "0",
+			loop: "1",
+			playsinline: "1",
+			modestbranding: "1",
+			playlist: youtubeId,
+		});
+		return {
+			type: "youtube",
+			src: `https://www.youtube.com/embed/${youtubeId}?${params.toString()}`,
+		};
+	}
+	return { type: "video", src: normalized };
+}
 
 function resolveHeroCtaText(raw?: string | null): string {
 	if (!raw) {
@@ -863,10 +930,11 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
-	const heroVideoUrl = content?.hero?.video?.url;
-	const heroPosterUrl = content?.hero?.video?.poster
+	const heroVideoSource = getHeroVideoSource(content?.hero?.video?.url);
+	const heroVideoPosterFromSanity = content?.hero?.video?.poster
 		? (getImageUrl(content.hero.video.poster, 2400) ?? undefined)
 		: undefined;
+	const heroPosterUrl = heroVideoPosterFromSanity || DEFAULT_HERO_VIDEO_POSTER;
 	const heroCtaText = resolveHeroCtaText(content?.hero?.ctaText);
 	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;
 	const heroCtaDescription =
@@ -937,17 +1005,38 @@ export default function HomePage({ content }: HomePageProps) {
 				className="relative isolate overflow-hidden bg-gradient-to-b from-[#040404] via-[#0b0b0b] to-[#111111] px-4 pt-12 pb-24 text-white"
 				data-sanity={heroDataAttribute?.toString()}
 			>
-				{heroVideoUrl ? (
-					<div className="absolute inset-0">
-						<video
-							className="h-full w-full object-cover"
-							src={heroVideoUrl}
-							poster={heroPosterUrl}
-							autoPlay
-							muted
-							playsInline
-							loop
-						/>
+				{heroVideoSource ? (
+					<div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+						{heroVideoSource.type === "youtube" ? (
+							<iframe
+								title="Sensational League hero video"
+								src={heroVideoSource.src}
+								className="absolute inset-0"
+								style={{
+									width: "140%",
+									height: "140%",
+									top: "50%",
+									left: "50%",
+									transform: "translate(-50%, -50%)",
+									pointerEvents: "none",
+								}}
+								allow="autoplay; fullscreen; picture-in-picture"
+								allowFullScreen
+								loading="lazy"
+								referrerPolicy="strict-origin-when-cross-origin"
+							/>
+						) : (
+							<video
+								className="absolute inset-0 h-full w-full object-cover"
+								style={{ transform: "scale(1.2)" }}
+								src={heroVideoSource.src}
+								poster={heroPosterUrl}
+								autoPlay
+								muted
+								playsInline
+								loop
+							/>
+						)}
 						<div className="absolute inset-0 bg-black opacity-70 mix-blend-multiply" />
 					</div>
 				) : null}
@@ -997,7 +1086,7 @@ export default function HomePage({ content }: HomePageProps) {
 
 						<HeroStats stats={content?.hero?.stats} variant="dark" />
 
-						<div className="mt-10 flex flex-wrap gap-4">
+					<div className="mt-10 flex flex-wrap gap-4">
 							<Link
 								href="/player-draft"
 								className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
@@ -1007,7 +1096,7 @@ export default function HomePage({ content }: HomePageProps) {
 							</Link>
 							<Link
 								href="#about"
-								className="inline-flex items-center gap-2 rounded-full bg-[var(--color-volt)] px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-black transition-all duration-200 hover:-translate-y-1 hover:translate-x-1"
+							className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
 							>
 								About the League
 							</Link>
