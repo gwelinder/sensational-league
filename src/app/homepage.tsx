@@ -1771,59 +1771,54 @@ export default function HomePage({ content }: HomePageProps) {
 						)}
 					</div>
 					<div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-						{captainsList.map((captain, index) => {
+					{captainsList.map((captain, index) => {
 							const initials = getInitials(captain.name);
 							const videoUrl = normalizeUrl(captain.videoUrl);
 							const posterUrl = captain.photo
 								? (getImageUrl(captain.photo, 1200) ?? undefined)
 								: undefined;
-							return (
-								<article
-									key={`${captain.name ?? "captain"}-${index}`}
-									className="group flex h-full flex-col gap-5 rounded-[32px] border border-white/10 bg-white/[0.07] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.45)] backdrop-blur"
-								>
-									<CaptainVideoPreview
-										videoUrl={videoUrl}
-										posterUrl={posterUrl}
-										fallbackInitials={initials}
-									/>
-									<div className="space-y-4">
-										<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/55">
-											{captain.tagline}
-										</p>
-										<div className="flex flex-wrap items-baseline gap-3">
-											<h3 className="text-2xl font-black uppercase tracking-[0.22em]">
-												{captain.name}
-											</h3>
-											{captain.oneLiner && (
-												<span className="text-xs font-bold uppercase tracking-[0.35em] text-white/40">
-													{captain.oneLiner}
-												</span>
-											)}
-										</div>
-										{captain.summary && (
-											<p className="brand-body text-sm leading-relaxed text-white/80">
-												{captain.summary}
-											</p>
+						return (
+							<article
+								key={`${captain.name ?? "captain"}-${index}`}
+								className="group flex h-full flex-col gap-5 rounded-[32px] border border-white/10 bg-white/[0.07] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.45)] backdrop-blur"
+							>
+								<CaptainVideoPreview
+									videoUrl={videoUrl}
+									posterUrl={posterUrl}
+									fallbackInitials={initials}
+								/>
+					<div className="flex h-full flex-1 flex-col gap-4">
+									<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/55">
+										{captain.tagline}
+									</p>
+									<div className="flex flex-wrap items-baseline gap-3">
+										<h3 className="text-2xl font-black uppercase tracking-[0.22em]">
+											{captain.name}
+										</h3>
+										{captain.oneLiner && (
+											<span className="text-xs font-bold uppercase tracking-[0.35em] text-white/40">
+												{captain.oneLiner}
+											</span>
 										)}
-										<div className="flex flex-wrap gap-3 text-[0.62rem] font-black uppercase tracking-[0.3em]">
-											{captain.superpower && (
-												<span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-volt)]/50 bg-[var(--color-volt)]/10 px-4 py-1 text-[var(--color-volt)]">
-													<span>Superpower</span>
-													<span className="tracking-normal text-white">
-														{captain.superpower}
-													</span>
-												</span>
-											)}
-											{captain.oneLiner && (
-												<span className="inline-flex items-center rounded-full border border-white/25 px-4 py-1 text-white/65">
-													{captain.oneLiner}
-												</span>
-											)}
-										</div>
 									</div>
-								</article>
-							);
+								{captain.summary && (
+									<p className="brand-body text-sm leading-relaxed text-white/80 min-h-[110px]">
+										{captain.summary}
+									</p>
+								)}
+								<div className="mt-auto flex flex-wrap gap-3 text-[0.62rem] font-black uppercase tracking-[0.3em]">
+									{captain.superpower && (
+										<span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-volt)]/50 bg-[var(--color-volt)]/10 px-4 py-1 text-[var(--color-volt)]">
+											<span>Superpower</span>
+											<span className="tracking-normal text-white">
+												{captain.superpower}
+											</span>
+										</span>
+									)}
+								</div>
+								</div>
+							</article>
+						);
 						})}
 					</div>
 				</div>

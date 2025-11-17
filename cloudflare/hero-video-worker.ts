@@ -1,3 +1,15 @@
+type R2ObjectBody = ReadableStream | null;
+
+interface R2Object {
+	size: number;
+	body: R2ObjectBody;
+}
+
+interface R2Bucket {
+	head(key: string): Promise<R2Object | null>;
+	get(key: string, options?: { range?: { offset: number; length?: number } }): Promise<R2Object | null>;
+}
+
 interface Env {
 	HERO_VIDEOS: R2Bucket;
 }
