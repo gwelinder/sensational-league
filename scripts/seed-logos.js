@@ -1,7 +1,8 @@
-require('dotenv').config({ path: '.env.local' })
-const { createClient } = require('next-sanity')
-const { readFileSync } = require('fs')
-const { join } = require('path')
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.local' })
+import { createClient } from 'next-sanity'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,

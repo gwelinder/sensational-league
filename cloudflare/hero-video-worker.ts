@@ -111,7 +111,7 @@ const baseHeaders = {
 	"Content-Type": "video/mp4",
 };
 
-export default {
+const worker = {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		if (request.method !== "GET" && request.method !== "HEAD") {
 			return new Response("Method Not Allowed", {
@@ -165,3 +165,5 @@ export default {
 		});
 	},
 };
+
+export default worker;

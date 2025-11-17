@@ -41,9 +41,20 @@ interface ConditionalLayoutProps {
       additionalText?: string;
     };
   };
+  homePage?: {
+    _id: string;
+    _type: string;
+    captainsSection?: {
+      enabled?: boolean;
+    };
+  };
 }
 
-export default function ConditionalLayout({ children, settings: initialSettings }: ConditionalLayoutProps) {
+export default function ConditionalLayout({
+  children,
+  settings: initialSettings,
+  homePage: initialHomePage,
+}: ConditionalLayoutProps) {
   const pathname = usePathname();
   const isStudioRoute = pathname.startsWith('/studio');
 
@@ -64,13 +75,37 @@ export default function ConditionalLayout({ children, settings: initialSettings 
     }
   );
 
+  const homePage = useOptimistic<ConditionalLayoutProps['homePage'], SanityDocument>(
+    initialHomePage,
+    (currentHomePage, action) => {
+      if (action.document?._type !== 'homePage') {
+        return currentHomePage;
+      }
+
+      if (!currentHomePage) {
+        return action.document as ConditionalLayoutProps['homePage'];
+      }
+
+      if (action.id !== currentHomePage._id) {
+        return currentHomePage;
+      }
+
+      return {
+        ...currentHomePage,
+        ...action.document,
+      } as ConditionalLayoutProps['homePage'];
+    }
+  );
+
+  const captainsEnabled = Boolean(homePage?.captainsSection?.enabled);
+
   if (isStudioRoute) {
     return <div id={SKIP_TO_CONTENT_ID}>{children}</div>;
   }
 
   return (
     <>
-			<Header settings={settings} />
+			<Header settings={settings} captainsEnabled={captainsEnabled} />
 			<div id={SKIP_TO_CONTENT_ID}>{children}</div>
       <Footer settings={settings} />
       <CookieBanner />

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
 	const action = searchParams.get('action') || 'all';
 
-	const results: Record<string, any> = {
+	const results: Record<string, unknown> = {
 		timestamp: new Date().toISOString(),
 		environment: {
 			hasAzureTenantId: !!process.env.AZURE_TENANT_ID,
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
 				if (error) {
 					results.resend = {
 						error: error.message || error,
-						name: (error as any).name,
+						name: typeof error === 'object' && error !== null && 'name' in error ? (error as { name: string }).name : undefined,
 					};
 				} else {
 					results.resend = {

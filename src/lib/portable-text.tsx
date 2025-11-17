@@ -1,6 +1,6 @@
 import type { PortableTextComponents } from "next-sanity";
 import { PortableText } from "next-sanity";
-import type { PortableTextBlock } from "sanity";
+import type { PortableTextBlock } from "@portabletext/types";
 
 const components: PortableTextComponents = {
 	block: {
@@ -55,6 +55,8 @@ const components: PortableTextComponents = {
 	},
 };
 
-export function RenderPortableText({ value }: { value: PortableTextBlock[] }) {
+type PortableTextValue = PortableTextBlock[] | PortableTextBlock;
+
+export function RenderPortableText({ value }: { value: PortableTextValue }) {
 	return <PortableText value={value} components={components} />;
 }

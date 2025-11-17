@@ -5,6 +5,7 @@ export default async function StudioLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isEnabled = (await draftMode()).isEnabled;
 
   return (

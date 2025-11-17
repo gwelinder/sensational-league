@@ -8,7 +8,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { ResponsiveLogo } from "@/components/Logo";
 import Link from "next/link";
 import Image from "next/image";
-import type { PortableTextBlock } from "sanity";
+import type { PortableTextBlock } from "@portabletext/types";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 type BackgroundOverlay = "none" | "dark-50" | "dark-70" | "brand-gradient";
@@ -332,7 +332,8 @@ export function FlexibleSection({ data, documentId, documentType, path }: Flexib
   // Background handling
   const backgroundColor = styling.backgroundColor || "off-white";
   const backgroundType = styling.backgroundType || "solid";
-  const isLight = ["white", "off-white", "volt"].includes(backgroundColor);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _isLight = ["white", "off-white", "volt"].includes(backgroundColor);
 
   const backgroundImageUrl = styling.backgroundImage 
     ? urlFor(styling.backgroundImage).width(1920).height(1080).url()

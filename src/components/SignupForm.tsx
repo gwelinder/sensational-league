@@ -154,7 +154,7 @@ export default function SignupForm({ buttonText, theme = "light", source = "home
               isDark ? "text-[var(--color-gray-light)]" : "text-[var(--color-gray-medium)]"
             )}
           >
-            I want to join Sensational League and receive updates about the world's most innovative women's football league.{" "}
+            I want to join Sensational League and receive updates about the world&apos;s most innovative women&apos;s football league.{" "}
             <Link href="/privacy" className={cn("underline", isDark ? "hover:text-[var(--color-off-white)]" : "hover:text-black")}>
               Privacy Policy
             </Link>

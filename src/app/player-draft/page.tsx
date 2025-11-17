@@ -16,7 +16,7 @@ const DEFAULT_PAGE_DESCRIPTION =
 const DEFAULT_HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_HERO_HEADLINE = "Join the Sensational 80";
 const DEFAULT_HERO_DESCRIPTION =
-	"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football.";
+	"We&apos;re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women&apos;s football.";
 const DEFAULT_APPLICATION_HELPER_TEXT =
 	"Captains review weekly. Early submissions are encouraged so your profile is in the first batch.";
 const DEFAULT_FINAL_CTA_HELPER =

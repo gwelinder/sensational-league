@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { createDataAttribute } from "@sanity/visual-editing";
-import type { PortableTextBlock } from "sanity";
+import type { PortableTextBlock } from "@portabletext/types";
 import { RenderPortableText } from "@/lib/portable-text";
 import { cn } from "@/lib/utils";
 

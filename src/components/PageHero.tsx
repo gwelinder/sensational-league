@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { createDataAttribute } from "@sanity/visual-editing";
 import { getImageUrl } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
@@ -70,10 +71,12 @@ export function PageHero({ hero, documentId, documentType }: PageHeroProps) {
 				</div>
 			) : backgroundImageUrl ? (
 				<div className="absolute inset-0">
-					<img
+					<Image
 						src={backgroundImageUrl}
 						alt={hero.backgroundImage?.alt || ""}
-						className="h-full w-full object-cover"
+						fill
+						className="object-cover"
+						priority
 					/>
 					<div className={cn("absolute inset-0", isSplit ? "bg-white/50" : "bg-black/60")} />
 				</div>

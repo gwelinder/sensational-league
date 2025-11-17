@@ -154,7 +154,7 @@ export default function TeamDetailPage({ params }: TeamDetailPageProps) {
     return (
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold text-gray-900">Team Not Found</h1>
-        <p className="text-gray-600 mt-2">The team you're looking for doesn't exist.</p>
+        <p className="text-gray-600 mt-2">The team you&apos;re looking for doesn&apos;t exist.</p>
         <Link href="/dashboard/teams" className="text-blue-600 hover:text-blue-800 mt-4 inline-block">
           Back to Teams
         </Link>

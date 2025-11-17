@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import type { SanityDocument } from "sanity";
 
 export const player = defineType({
   name: "player",
@@ -22,7 +23,7 @@ export const player = defineType({
       title: "Slug",
       type: "slug",
       options: {
-        source: (doc: any) => `${doc.firstName} ${doc.lastName}`,
+        source: (doc: SanityDocument & { firstName?: string; lastName?: string }) => `${doc.firstName || ""} ${doc.lastName || ""}`,
       },
       validation: (Rule) => Rule.required(),
     }),

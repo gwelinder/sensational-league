@@ -8,7 +8,13 @@ import { cn } from "@/lib/utils";
 interface Partner {
   _key?: string;
   name?: string;
-  logo?: any;
+  logo?: {
+    asset?: {
+      _ref?: string;
+      _type?: string;
+    };
+    alt?: string;
+  };
   url?: string;
 }
 
@@ -32,7 +38,7 @@ const backgroundClasses = {
   volt: "bg-[var(--color-volt)] text-[var(--color-black)]",
 };
 
-function hasLogo(partner: Partner | undefined | null): partner is Partner & { logo: any } {
+function hasLogo(partner: Partner | undefined | null): partner is Partner & { logo: NonNullable<Partner['logo']> } {
   return Boolean(partner?.logo);
 }
 

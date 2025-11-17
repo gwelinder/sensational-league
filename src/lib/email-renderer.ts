@@ -1,5 +1,4 @@
-import type { PortableTextBlock } from 'sanity';
-import { toPlainText } from '@portabletext/react';
+import type { PortableTextBlock } from "@portabletext/types";
 
 interface EmailTemplate {
 	subject: string;
@@ -25,6 +24,21 @@ export interface EmailVariables {
 	[key: string]: string | undefined;
 }
 
+type BlockNode = PortableTextBlock & {
+	style?: string;
+	children?: Array<{
+		_type: string;
+		text?: string;
+		marks?: (string | { _key: string })[];
+	}>;
+	markDefs?: Array<{
+		_key: string;
+		_type: string;
+		href?: string;
+	}>;
+	listItem?: string;
+};
+
 /**
  * Convert Portable Text to HTML email markup
  */
@@ -34,8 +48,9 @@ function portableTextToEmailHTML(blocks: PortableTextBlock[]): string {
 	for (const block of blocks) {
 		if (block._type !== 'block') continue;
 
-		const style = (block as any).style || 'normal';
-		const children = (block as any).children || [];
+		const blockNode = block as BlockNode;
+		const style = blockNode.style || 'normal';
+		const children = blockNode.children || [];
 
 		// Build text with marks
 		let text = '';
@@ -53,9 +68,9 @@ function portableTextToEmailHTML(blocks: PortableTextBlock[]): string {
 				}
 
 				// Handle links
-				const linkMark = marks.find((m: any) => typeof m === 'object');
-				if (linkMark) {
-					const markDef = (block as any).markDefs?.find((def: any) => def._key === linkMark);
+				const linkMark = marks.find((m) => typeof m === 'object');
+				if (linkMark && typeof linkMark === 'object') {
+					const markDef = blockNode.markDefs?.find((def) => def._key === (linkMark as { _key: string })._key);
 					if (markDef && markDef.href) {
 						childText = `<a href="${markDef.href}" style="color: #232324; font-weight: 600; text-decoration: underline;">${childText}</a>`;
 					}
@@ -70,7 +85,7 @@ function portableTextToEmailHTML(blocks: PortableTextBlock[]): string {
 			html += `<h2 style="margin: 30px 0 15px; color: #232324; font-size: 20px; font-weight: 700;">${text}</h2>`;
 		} else if (style === 'normal') {
 			// Check if it's a list item
-			if ((block as any).listItem === 'bullet') {
+			if (blockNode.listItem === 'bullet') {
 				html += `<li style="margin-bottom: 8px; color: #232324; font-size: 16px; line-height: 1.6;">${text}</li>`;
 			} else {
 				html += `<p style="margin: 0 0 20px; color: #232324; font-size: 16px; line-height: 1.6;">${text}</p>`;

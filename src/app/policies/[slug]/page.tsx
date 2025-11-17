@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import type { PortableTextBlock } from "sanity";
+import type { PortableTextBlock } from "@portabletext/types";
 import { RenderPortableText } from "@/lib/portable-text";
 import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";

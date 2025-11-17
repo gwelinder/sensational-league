@@ -2,9 +2,9 @@
 
 import type { PortableTextBlock } from "@portabletext/types";
 import { createDataAttribute } from "@sanity/visual-editing";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { AnimatedSpark } from "@/components/Logo";
 import { SectionsRenderer } from "@/components/SectionsRenderer";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
 import TypeformApplyButton from "@/components/TypeformApplyButton";
@@ -148,6 +148,7 @@ interface HomePageProps {
 			designedFor?: FormatDesignedFor;
 		};
 		captainsSection?: {
+			enabled?: boolean;
 			eyebrow?: string;
 			title?: string;
 			subtitle?: string;
@@ -162,8 +163,6 @@ const DEFAULT_TYPEFORM_URL =
 	process.env.NEXT_PUBLIC_TYPEFORM_PLAYERDRAFT_URL ||
 	`https://form.typeform.com/to/${PLAYER_DRAFT_FORM_ID}`;
 const APPLICATION_CTA_TEXT = "Start application";
-const DEFAULT_DEADLINE = "2026-01-01T23:59:59+01:00";
-const DEFAULT_COUNTDOWN_LABEL = "Applications close";
 const DEFAULT_APPLICATION_HELPER_TEXT =
 	"Applications are reviewed weekly by the Sensational captains. Early submissions are encouraged.";
 const HERO_CARD_DEFAULT_DESCRIPTION = [
@@ -250,12 +249,14 @@ const CAPTAIN_VIDEO_DEFAULTS = {
 };
 
 const DEFAULT_CAPTAINS_SECTION: {
+	enabled: boolean;
 	eyebrow: string;
 	title: string;
 	subtitle: string;
 	intro: string;
 	captains: CaptainCard[];
 } = {
+	enabled: false,
 	eyebrow: "Captains",
 	title: "Meet Our Captains",
 	subtitle: "Legendary leaders turning the Sensational 80 into a movement.",
@@ -516,7 +517,8 @@ function SignupForm() {
 	);
 }
 
-function HeroNewsletterSignup() {
+// Commented out - not currently used but kept for future reference
+/* function HeroNewsletterSignup() {
 	const [email, setEmail] = useState("");
 	const [agreed, setAgreed] = useState(false);
 	const [status, setStatus] = useState<
@@ -623,8 +625,10 @@ function HeroNewsletterSignup() {
 		</form>
 	);
 }
+*/
 
-interface CountdownParts {
+// Commented out - not currently used but kept for future reference
+/* interface CountdownParts {
 	days: number;
 	hours: number;
 	minutes: number;
@@ -649,7 +653,7 @@ function calculateCountdown(deadline?: string): CountdownParts | null {
 		seconds,
 		expired: diff === 0,
 	};
-}
+} */
 
 function getInitials(name?: string): string {
 	if (!name) return "SL";
@@ -804,10 +808,11 @@ function CaptainVideoPreview({
 			>
 				{previewImage ? (
 					<div className="absolute inset-0">
-						<img
+						<Image
 							src={previewImage}
 							alt="Captain preview"
-							className="h-full w-full object-cover"
+							fill
+							className="object-cover"
 						/>
 						<div className="absolute inset-0 bg-black/35" />
 					</div>
@@ -850,7 +855,8 @@ function CaptainVideoPreview({
 	);
 }
 
-function useCountdown(deadline?: string) {
+// Commented out - not currently used but kept for future reference
+/* function useCountdown(deadline?: string) {
 	const [parts, setParts] = useState<CountdownParts | null>(() =>
 		calculateCountdown(deadline),
 	);
@@ -864,9 +870,10 @@ function useCountdown(deadline?: string) {
 	}, [deadline]);
 
 	return parts;
-}
+} */
 
-function CountdownTimer({
+// Commented out - not currently used but kept for future reference
+/* function CountdownTimer({
 	countdown,
 	variant = "dark",
 }: {
@@ -935,6 +942,7 @@ function CountdownTimer({
 		</div>
 	);
 }
+*/
 
 function HeroStats({
 	stats,
@@ -1201,7 +1209,8 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
-	const heroHeadlineAttribute = content?._id
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _heroHeadlineAttribute = content?._id
 		? createDataAttribute({
 				id: content._id,
 				type: content._type || "homePage",
@@ -1217,7 +1226,8 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
-	const heroCountdownAttribute = content?._id
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _heroCountdownAttribute = content?._id
 		? createDataAttribute({
 				id: content._id,
 				type: content._type || "homePage",
@@ -1282,7 +1292,8 @@ export default function HomePage({ content }: HomePageProps) {
 		}),
 	) as PageSection[];
 
-	const pressCtaAttribute = content?._id
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _pressCtaAttribute = content?._id
 		? createDataAttribute({
 				id: content._id,
 				type: content._type || "homePage",
@@ -1354,10 +1365,13 @@ export default function HomePage({ content }: HomePageProps) {
 	const heroResourceLinkHref =
 		applicationCardSettings?.resourceLinkHref || "/player-draft";
 
-	const pressButtonText =
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _pressButtonText =
 		content?.pressCta?.buttonText || content?.pressCta?.label || "News";
-	const pressEmoji = content?.pressCta?.emoji || "📰";
-	const pressHref = content?.pressCta?.href || "/press";
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _pressEmoji = content?.pressCta?.emoji || "📰";
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const _pressHref = content?.pressCta?.href || "/press";
 
 	const infoCardTitle =
 		content?.about?.infoCard?.title || "THE SENSATIONAL POINT SYSTEM";
@@ -1411,7 +1425,7 @@ export default function HomePage({ content }: HomePageProps) {
 			: DEFAULT_FORMAT_SECTION.designedFor?.features,
 	};
 
-	const captainsSection = content?.captainsSection;
+const captainsSection = content?.captainsSection;
 	const captainsEyebrow =
 		captainsSection?.eyebrow || DEFAULT_CAPTAINS_SECTION.eyebrow;
 	const captainsTitle =
@@ -1420,9 +1434,12 @@ export default function HomePage({ content }: HomePageProps) {
 		captainsSection?.subtitle || DEFAULT_CAPTAINS_SECTION.subtitle;
 	const captainsIntro =
 		captainsSection?.intro || DEFAULT_CAPTAINS_SECTION.intro;
-	const captainsList = captainsSection?.captains?.length
-		? captainsSection.captains
-		: DEFAULT_CAPTAINS_SECTION.captains;
+const captainsList = captainsSection?.captains?.length
+	? captainsSection.captains
+	: DEFAULT_CAPTAINS_SECTION.captains;
+const captainsEnabled =
+	(captainsSection?.enabled ?? DEFAULT_CAPTAINS_SECTION.enabled) &&
+	captainsList.length > 0;
 
 	return (
 		<main className="min-h-screen bg-white">
@@ -1445,10 +1462,13 @@ export default function HomePage({ content }: HomePageProps) {
 									<span>Copenhagen</span>
 									<span>Season 01</span>
 								</div>
-								<img
+								<Image
 									src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
 									alt="Sensational League"
+									width={420}
+									height={200}
 									className="w-full max-w-[420px] drop-shadow-[0_18px_60px_rgba(0,0,0,0.65)]"
+									priority
 								/>
 								<p className="brand-caption text-xs uppercase tracking-[0.4em] text-white/70">
 									{HERO_LOCATION_LABEL}
@@ -1752,11 +1772,12 @@ export default function HomePage({ content }: HomePageProps) {
 				</div>
 			</section>
 
-			<section
-				id="captains"
-				className="bg-black px-4 py-24 text-white"
-				data-sanity={captainsDataAttribute?.toString()}
-			>
+		{captainsEnabled && (
+		<section
+			id="captains"
+			className="bg-black px-4 py-24 text-white"
+			data-sanity={captainsDataAttribute?.toString()}
+		>
 				<div className="mx-auto max-w-7xl space-y-12">
 					<div className="text-center space-y-4">
 						<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/60">
@@ -1828,7 +1849,8 @@ export default function HomePage({ content }: HomePageProps) {
 						})}
 					</div>
 				</div>
-			</section>
+		</section>
+		)}
 
 			{content?.sections &&
 				content.sections.length > 0 &&

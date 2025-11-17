@@ -283,7 +283,7 @@ export default function MatchesPage() {
                     {moment.description}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {moment.minute}' • {moment.platform}
+                    {moment.minute}&apos; • {moment.platform}
                   </div>
                 </div>
               ))}

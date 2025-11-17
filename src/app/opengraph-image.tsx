@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { createClient } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
 // Route segment config
 export const runtime = 'edge'
@@ -26,13 +27,18 @@ export default async function Image() {
 
   let ogUrl: string | null = null
   try {
-    const data = await client.fetch<{ social?: { defaultOg?: any } }>(
+	const data = await client.fetch<{ social?: { defaultOg?: SanityImageSource } }>(
       `*[_type == "siteSettings"][0]{ social{ defaultOg } }`
     )
-    if (data?.social?.defaultOg?.asset) {
+	const defaultOg = data?.social?.defaultOg
+	const hasAsset = (
+		value: SanityImageSource | undefined,
+	): value is SanityImageSource & { asset: unknown } =>
+		Boolean(value) && typeof value === 'object' && 'asset' in value
+	if (hasAsset(defaultOg)) {
       const builder = imageUrlBuilder(client)
-      ogUrl = builder
-        .image(data.social.defaultOg)
+		ogUrl = builder
+			.image(defaultOg)
         .width(1200)
         .height(630)
         .fit('crop')

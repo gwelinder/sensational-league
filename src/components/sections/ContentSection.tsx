@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { urlFor } from "@/sanity/lib/image";
 import Link from "next/link";
 import Image from "next/image";
-import type { PortableTextBlock } from "sanity";
+import type { PortableTextBlock } from "@portabletext/types";
 
 interface ContentSectionProps {
   data: {
@@ -26,7 +26,15 @@ interface ContentSectionProps {
     styling?: {
       backgroundColor?: string;
       backgroundType?: string;
-      backgroundImage?: any;
+      backgroundImage?: {
+        asset?: {
+          _ref?: string;
+          _type?: string;
+        };
+        alt?: string;
+        position?: string;
+        overlay?: string;
+      };
       gradientDirection?: string;
       spacing?: {
         top?: string;
@@ -164,7 +172,8 @@ export function ContentSection({ data, documentId, documentType, path }: Content
   
   // Smart contrast detection
   const isLight = ["white", "off-white", "volt"].includes(backgroundColor);
-  const isDark = ["black", "orange", "purple", "cyan"].includes(backgroundColor);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _isDark = ["black", "orange", "purple", "cyan"].includes(backgroundColor);
   
   // Build dynamic classes
   const baseTextColor = typography.textColor === "auto" 

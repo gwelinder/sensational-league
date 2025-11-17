@@ -108,6 +108,7 @@ interface HomePageContent {
 		designedFor?: DesignedForCard;
 	};
 	captainsSection?: {
+		enabled?: boolean;
 		eyebrow?: string;
 		title?: string;
 		subtitle?: string;
@@ -237,6 +238,7 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         }
       },
       captainsSection {
+			enabled,
         eyebrow,
         title,
         subtitle,

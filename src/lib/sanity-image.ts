@@ -40,12 +40,20 @@ export function getImageUrl(source: SanityImageSource | null | undefined, width?
   }
 }
 
+interface SanityImageAsset {
+  asset?: {
+    _ref?: string;
+    _type?: string;
+  };
+  alt?: string;
+}
+
 /**
  * Get dimensions for a Sanity image
  * @param source - Sanity image object
  * @returns Object with width and height, or null
  */
-export function getImageDimensions(source: any): { width: number; height: number } | null {
+export function getImageDimensions(source: SanityImageAsset): { width: number; height: number } | null {
   if (!source?.asset?._ref) return null;
 
   // Parse dimensions from asset reference
@@ -84,14 +92,27 @@ export function getImageStyles(metadata?: ImageMetadata) {
   return style;
 }
 
+interface SanityImageProps {
+  src: string;
+  style: React.CSSProperties;
+  alt: string;
+}
+
 /**
  * Get image props (src, style, alt) from a Sanity image with metadata
  * @param image - Sanity image object with metadata
  * @param defaultWidth - Default width for image URL generation
- * @returns Object with src, style, and alt (src is undefined if URL generation fails)
+ * @returns Object with src, style, and alt or null if URL generation fails
  */
-export function getImageProps(image: any, defaultWidth?: number) {
-  const src = getImageUrl(image, defaultWidth) || undefined;
+export function getImageProps(
+  image: SanityImageAsset & ImageMetadata,
+  defaultWidth?: number,
+): SanityImageProps | null {
+  const src = getImageUrl(image, defaultWidth);
+  if (!src) {
+    return null;
+  }
+
   const style = getImageStyles(image);
   const alt = image?.alt || '';
 

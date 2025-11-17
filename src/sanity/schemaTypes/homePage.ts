@@ -411,6 +411,13 @@ export const homePage = defineType({
       type: 'object',
       title: 'Captains Section',
       fields: [
+        {
+          name: 'enabled',
+          type: 'boolean',
+          title: 'Show captains section',
+          description: 'Toggle to display or hide the captains spotlight on the homepage and navigation.',
+          initialValue: false,
+        },
         { name: 'eyebrow', type: 'string', title: 'Eyebrow', initialValue: 'Captains' },
         { name: 'title', type: 'string', title: 'Title', initialValue: 'Meet Our Captains' },
         { name: 'subtitle', type: 'text', title: 'Subtitle', rows: 3 },

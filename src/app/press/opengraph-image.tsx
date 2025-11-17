@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "next-sanity";
 import imageUrlBuilder from '@sanity/image-url';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 export const runtime = "edge";
 export const alt = "Sensational League - Press Release";
@@ -23,7 +24,7 @@ export default async function Image() {
 	try {
 		const pressRelease = await client.fetch<{
 			ogImageUrl?: string;
-			featuredImage?: any;
+			featuredImage?: SanityImageSource;
 		}>(
 			`*[_type == "pressRelease"] | order(publishDate desc)[0] {
 				ogImageUrl,
@@ -32,11 +33,15 @@ export default async function Image() {
 		);
 
 		// Priority 1: Use explicit ogImageUrl if provided
+		const hasAsset = (
+			value: SanityImageSource | undefined,
+		): value is SanityImageSource & { asset: unknown } =>
+			Boolean(value) && typeof value === "object" && "asset" in value;
 		if (pressRelease?.ogImageUrl) {
 			featuredImageUrl = pressRelease.ogImageUrl;
 		}
 		// Priority 2: Generate URL from Sanity-hosted featuredImage
-		else if (pressRelease?.featuredImage?.asset) {
+		else if (hasAsset(pressRelease?.featuredImage)) {
 			const builder = imageUrlBuilder(client);
 			featuredImageUrl = builder
 				.image(pressRelease.featuredImage)

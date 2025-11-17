@@ -14,7 +14,13 @@ interface HeroSectionProps {
     subheadline?: string;
     ctaText?: string;
     ctaUrl?: string;
-    backgroundImage?: any;
+    backgroundImage?: {
+      asset?: {
+        _ref?: string;
+        _type?: string;
+      };
+      alt?: string;
+    };
   };
   documentId: string;
   documentType: string;

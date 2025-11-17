@@ -2,7 +2,8 @@
 
 import { createDataAttribute } from "@sanity/visual-editing";
 import Link from "next/link";
-import { getImageProps, getImageUrl } from "@/lib/sanity-image";
+import Image from "next/image";
+import { getImageProps } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
 
 interface SanityImage {
@@ -47,6 +48,7 @@ export default function Footer({ settings }: FooterProps) {
 			})
 		: undefined;
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const taglineAttribute = settings?._id
 		? createDataAttribute({
 				id: settings._id,
@@ -54,6 +56,8 @@ export default function Footer({ settings }: FooterProps) {
 				path: "footer.tagline",
 			})
 		: undefined;
+	// Keep tagline attribute available for future Studio edits.
+	void taglineAttribute;
 
 	const descriptionAttribute = settings?._id
 		? createDataAttribute({
@@ -88,6 +92,14 @@ export default function Footer({ settings }: FooterProps) {
 		: undefined;
 
 	// Get social links with fallback to hardcoded values
+	const sparkLogoProps = settings?.footer?.sparkLogo
+		? getImageProps(settings.footer.sparkLogo, 400)
+		: null;
+
+	const wordmarkLogoProps = settings?.footer?.wordmarkLogo
+		? getImageProps(settings.footer.wordmarkLogo, 600)
+		: null;
+
 	const socialLinks = {
 		twitter: settings?.footer?.socialLinks?.twitter || "https://twitter.com/SensationalLG",
 		instagram: settings?.footer?.socialLinks?.instagram || "https://instagram.com/sensational_league",
@@ -105,39 +117,43 @@ export default function Footer({ settings }: FooterProps) {
 				{/* Brand Section */}
 				<div className="mb-16">
 					<div className="flex items-center justify-center gap-6 mb-8">
-						{settings?.footer?.sparkLogo &&
-						getImageUrl(settings.footer.sparkLogo) ? (
-							<img
-								{...getImageProps(settings.footer.sparkLogo, 400)}
-								alt={settings.footer.sparkLogo.alt || ""}
+						{sparkLogoProps ? (
+							<Image
+								src={sparkLogoProps.src}
+								alt={sparkLogoProps.alt}
+								style={sparkLogoProps.style}
 								className={cn(
-									!settings.footer.sparkLogo.width &&
-										!settings.footer.sparkLogo.height &&
-										"w-20 h-20",
+									!settings?.footer?.sparkLogo?.width &&
+									!settings?.footer?.sparkLogo?.height &&
+									"w-20 h-20",
 								)}
 							/>
 						) : (
-							<img
+							<Image
 								src="/SENSATIONAL-LEAGUE-PRIMARY-MARK-WHITE.png"
 								alt=""
+								width={80}
+								height={80}
 								className="w-20 h-20"
 							/>
 						)}
-						{settings?.footer?.wordmarkLogo &&
-						getImageUrl(settings.footer.wordmarkLogo) ? (
-							<img
-								{...getImageProps(settings.footer.wordmarkLogo, 600)}
-								alt={settings.footer.wordmarkLogo.alt || "Sensational League"}
+						{wordmarkLogoProps ? (
+							<Image
+								src={wordmarkLogoProps.src}
+								alt={wordmarkLogoProps.alt || "Sensational League"}
+								style={wordmarkLogoProps.style}
 								className={cn(
-									!settings.footer.wordmarkLogo.width &&
-										!settings.footer.wordmarkLogo.height &&
-										"h-10",
+									!settings?.footer?.wordmarkLogo?.width &&
+									!settings?.footer?.wordmarkLogo?.height &&
+									"h-10",
 								)}
 							/>
 						) : (
-							<img
+							<Image
 								src="/SL-WORDMARK-LEFT ALIGNED-WHITE.png"
 								alt="Sensational League"
+								width={200}
+								height={40}
 								className="h-10"
 							/>
 						)}

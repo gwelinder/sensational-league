@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
-import type { PortableTextBlock } from "sanity";
+import type { PortableTextBlock } from "@portabletext/types";
 import { sanityFetch } from "@/sanity/lib/live";
 import PressReleaseContent from "./PressReleaseContent";
 import { OrganizationSchema, PressReleaseSchema } from "./schema-markup";

@@ -211,7 +211,6 @@ export const faqSection = defineType({
       categoryCount: 'categories.length',
     },
     prepare({ title, layout, categoryCount }) {
-      const totalFaqs = categoryCount || 0;
       return {
         title: title || 'FAQ Section',
         subtitle: `${layout || 'accordion'} • ${categoryCount || 0} categories`,

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { ResponsiveLogo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
@@ -73,7 +74,8 @@ function MessageBubble({
   currentPlayer?: TeamChatProps['currentPlayer'];
   onReaction?: (messageId: string, emoji: string) => void;
 }) {
-  const [showReactions, setShowReactions] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_showReactions, _setShowReactions] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isOwnMessage = message.sender.player?.name === currentPlayer?.name;
@@ -111,9 +113,11 @@ function MessageBubble({
             senderRole === 'player' && "bg-gray-200 text-gray-700"
           )}>
             {message.sender.player?.avatar ? (
-              <img 
-                src={message.sender.player.avatar} 
+              <Image
+                src={message.sender.player.avatar}
                 alt={senderName}
+                width={32}
+                height={32}
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (
@@ -367,13 +371,14 @@ function MessageComposer({
   );
 }
 
-export function TeamChat({ 
-  teamId, 
-  messages = [], 
-  currentPlayer, 
-  onSendMessage, 
-  onReaction, 
-  className 
+export function TeamChat({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  teamId: _teamId,
+  messages = [],
+  currentPlayer,
+  onSendMessage,
+  onReaction,
+  className
 }: TeamChatProps) {
   const [filter, setFilter] = useState('all');
   const messagesEndRef = useRef<HTMLDivElement>(null);

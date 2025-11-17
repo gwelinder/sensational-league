@@ -28,7 +28,13 @@ interface StatsSectionProps {
       text?: string;
       author?: string;
       role?: string;
-      photo?: any;
+      photo?: {
+        asset?: {
+          _ref?: string;
+          _type?: string;
+        };
+        alt?: string;
+      };
     };
     ctaSection?: {
       title?: string;
@@ -122,15 +128,24 @@ function useCountUp(end: number, duration: number = 2000, shouldStart: boolean =
   return count;
 }
 
-function StatItem({ 
-  stat, 
-  index, 
-  isLight, 
-  inView 
-}: { 
-  stat: any; 
-  index: number; 
-  isLight: boolean; 
+interface Stat {
+  number?: string;
+  label?: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  animation?: string;
+}
+
+function StatItem({
+  stat,
+  index,
+  isLight,
+  inView
+}: {
+  stat: Stat;
+  index: number;
+  isLight: boolean;
   inView: boolean;
 }) {
   // Extract number from string for animation
@@ -324,7 +339,7 @@ export function StatsSection({ data, documentId, documentType, path }: StatsSect
               "brand-subhead-light italic",
               isLight ? "text-[var(--color-black)]" : "text-[var(--color-off-white)]"
             )}>
-              "{data.testimonialQuote.text}"
+              &quot;{data.testimonialQuote.text}&quot;
             </blockquote>
             <div className="flex items-center justify-center gap-4">
               {data.testimonialQuote.photo && (

@@ -1,10 +1,11 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { SKIP_TO_CONTENT_ID } from "@/constants/accessibility";
 import { cn } from "@/lib/utils";
 import { createDataAttribute } from "@sanity/visual-editing";
-import { getImageUrl, getImageProps } from "@/lib/sanity-image";
+import { getImageProps } from "@/lib/sanity-image";
 
 interface SanityImage {
 	asset?: {
@@ -16,6 +17,7 @@ interface SanityImage {
 	height?: number;
 	objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
+
 
 interface HeaderProps {
 	settings?: {
@@ -30,25 +32,48 @@ interface HeaderProps {
 			}>;
 		};
 	};
+	captainsEnabled?: boolean;
 }
 
-export default function Header({ settings }: HeaderProps) {
+
+export default function Header({ settings, captainsEnabled = false }: HeaderProps) {
+	const showCaptainsLink = Boolean(captainsEnabled);
 	const defaultLinks = [
 		{ href: "/#about", label: "About" },
 		{ href: "/player-draft", label: "Draft" },
-		{ href: "/#captains", label: "Captains" },
+		...(showCaptainsLink ? [{ href: "/#captains", label: "Captains" }] : []),
 		{ href: "/press", label: "News" },
 	];
 
-	const links = settings?.navigation?.links?.length
+	const rawLinks = settings?.navigation?.links?.length
 		? settings.navigation.links
 		: defaultLinks;
+
+	const links = showCaptainsLink
+		? rawLinks
+		: rawLinks.filter(({ href, label }) => {
+			const normalizedHref = (href ?? "").toLowerCase();
+			const normalizedLabel = (label ?? "").toLowerCase();
+			return !(
+				normalizedHref.includes("#captains") ||
+				normalizedHref.replace(/\/?$/, "") === "/captains" ||
+				normalizedLabel === "captains"
+			);
+		});
 
 	const navAttribute = settings?._id ? createDataAttribute({
 		id: settings._id,
 		type: settings._type,
 		path: 'navigation',
 	}) : undefined;
+
+	const sparkLogoProps = settings?.navigation?.sparkLogo
+		? getImageProps(settings.navigation.sparkLogo, 200)
+		: null;
+
+	const wordmarkLogoProps = settings?.navigation?.wordmarkLogo
+		? getImageProps(settings.navigation.wordmarkLogo, 400)
+		: null;
 
 	return (
 		<header className="brand-bg">
@@ -67,36 +92,45 @@ export default function Header({ settings }: HeaderProps) {
 						"focus:outline-none focus:ring-2 focus:ring-[var(--color-volt)] focus:ring-offset-2 focus:ring-offset-black rounded"
 					)}
 				>
-				{settings?.navigation?.sparkLogo && getImageUrl(settings.navigation.sparkLogo) ? (
-					<img
-						{...getImageProps(settings.navigation.sparkLogo, 200)}
-						alt={settings.navigation.sparkLogo.alt || "Sensational League"}
+				{sparkLogoProps ? (
+					<Image
+						src={sparkLogoProps.src}
+						alt={sparkLogoProps.alt || "Sensational League"}
+						style={sparkLogoProps.style}
 						className={cn(
-							!settings.navigation.sparkLogo.width && !settings.navigation.sparkLogo.height && "w-10 h-10"
+							!settings?.navigation?.sparkLogo?.width &&
+							!settings?.navigation?.sparkLogo?.height &&
+							"w-10 h-10"
 						)}
 					/>
 				) : (
-					<img
+					<Image
 						src="/logos/SL-SPARK-LARGE.svg"
 						alt="Sensational League"
+						width={40}
+						height={40}
 						className="w-10 h-10"
 						style={{ filter: "brightness(0) invert(1)" }}
 					/>
 				)}
 					<div className="hidden sm:block">
-					{settings?.navigation?.wordmarkLogo && getImageUrl(settings.navigation.wordmarkLogo) ? (
-						<img
-							{...getImageProps(settings.navigation.wordmarkLogo, 400)}
-							alt={settings.navigation.wordmarkLogo.alt || "Sensational League"}
+					{wordmarkLogoProps ? (
+						<Image
+							src={wordmarkLogoProps.src}
+							alt={wordmarkLogoProps.alt || "Sensational League"}
+							style={{ ...wordmarkLogoProps.style, filter: "brightness(0) invert(1)" }}
 							className={cn(
-								!settings.navigation.wordmarkLogo.width && !settings.navigation.wordmarkLogo.height && "h-6"
+								!settings?.navigation?.wordmarkLogo?.width &&
+								!settings?.navigation?.wordmarkLogo?.height &&
+								"h-6"
 							)}
-							style={{ filter: "brightness(0) invert(1)" }}
 						/>
 					) : (
-						<img
+						<Image
 							src="/logos/SL-WORDMARK-LEFT ALIGNED.svg"
 							alt="Sensational League"
+							width={150}
+							height={24}
 							className="h-6"
 							style={{ filter: "brightness(0) invert(1)" }}
 						/>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ResponsiveLogo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 

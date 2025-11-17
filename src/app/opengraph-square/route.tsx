@@ -1,9 +1,14 @@
 import { ImageResponse } from 'next/og'
 import { createClient } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
 // Route segment config
 export const runtime = 'edge'
+
+/* eslint-disable @next/next/no-img-element */
+// Note: Using <img> tags in OG image generation is required by @vercel/og
+// These are not rendered in browsers but used for image generation
 
 export async function GET() {
   const client = createClient({
@@ -15,11 +20,21 @@ export async function GET() {
 
   let ogUrl: string | null = null
   try {
-    const data = await client.fetch<{ social?: { squareOg?: any; defaultOg?: any } }>(
+	const data = await client.fetch<{ social?: { squareOg?: SanityImageSource; defaultOg?: SanityImageSource } }>(
       `*[_type == "siteSettings"][0]{ social{ squareOg, defaultOg } }`
     )
-    const pick = data?.social?.squareOg?.asset ? data.social.squareOg : data?.social?.defaultOg
-    if (pick?.asset) {
+	const hasAsset = (
+		value: SanityImageSource | undefined,
+	): value is SanityImageSource & { asset: unknown } =>
+		Boolean(value) && typeof value === 'object' && 'asset' in value
+	const squareCandidate = data?.social?.squareOg
+	const defaultCandidate = data?.social?.defaultOg
+	const pick = hasAsset(squareCandidate)
+		? squareCandidate
+		: hasAsset(defaultCandidate)
+			? defaultCandidate
+			: undefined
+	if (pick) {
       const builder = imageUrlBuilder(client)
       ogUrl = builder.image(pick).width(1200).height(1200).fit('crop').quality(85).format('jpg').url()
     }

@@ -3,7 +3,8 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { createDataAttribute } from "@sanity/visual-editing";
-import { ResponsiveLogo } from "@/components/Logo";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import type { PortableTextBlock } from "@portabletext/types";
 import { RenderPortableText } from "@/lib/portable-text";
 import { urlFor } from "@/sanity/lib/image";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ interface MediaSectionProps {
     subtitle?: string;
     gallery?: {
       images?: Array<{
-        asset?: any;
+        asset?: SanityImageSource;
         alt?: string;
         caption?: string;
         credit?: string;
@@ -28,14 +29,14 @@ interface MediaSectionProps {
     video?: {
       type?: string;
       url?: string;
-      thumbnail?: any;
+      thumbnail?: SanityImageSource;
       autoplay?: boolean;
       controls?: boolean;
     };
     splitContent?: {
       mediaPosition?: string;
-      media?: any;
-      content?: any[];
+      media?: SanityImageSource;
+      content?: PortableTextBlock[];
       cta?: {
         text?: string;
         url?: string;
@@ -46,14 +47,14 @@ interface MediaSectionProps {
       author?: {
         name?: string;
         title?: string;
-        photo?: any;
-        logo?: any;
+        photo?: SanityImageSource;
+        logo?: SanityImageSource;
       };
-      media?: any;
+      media?: SanityImageSource;
     };
     logoWall?: {
       logos?: Array<{
-        logo?: any;
+        logo?: SanityImageSource;
         name?: string;
         url?: string;
         tier?: string;
@@ -266,33 +267,35 @@ export function MediaSection({ data, documentId, documentType, path }: MediaSect
         )}
 
         {/* Split Content Layout */}
-        {data.layout === 'split' && data.splitContent && (
+		{data.layout === 'split' && data.splitContent && (
           <div className={cn(
             "grid lg:grid-cols-2 gap-12 items-center",
             data.splitContent.mediaPosition === 'right' && "lg:grid-flow-col-dense"
           )}>
-            <div className={cn(
-              data.splitContent.mediaPosition === 'right' && "lg:col-start-2"
-            )}>
-              <div className="aspect-[4/3] relative rounded-lg overflow-hidden">
-                <Image
-                  src={urlFor(data.splitContent.media).width(600).height(450).url()}
-                  alt=""
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-            <div className={cn(
-              data.splitContent.mediaPosition === 'right' && "lg:col-start-1"
-            )}>
+			{data.splitContent.media && (
+			<div className={cn(
+			  data.splitContent.mediaPosition === 'right' && "lg:col-start-2"
+			)}>
+			  <div className="aspect-[4/3] relative rounded-lg overflow-hidden">
+				<Image
+				  src={urlFor(data.splitContent.media).width(600).height(450).url()}
+				  alt=""
+				  fill
+				  className="object-cover"
+				/>
+			  </div>
+			</div>
+			)}
+			<div className={cn(
+			  data.splitContent.mediaPosition === 'right' && "lg:col-start-1"
+			)}>
               <div className={cn(
                 "prose prose-lg max-w-none",
                 isLight ? "prose-zinc" : "prose-invert",
                 "[&>h1]:brand-headline [&>h2]:brand-subhead [&>h3]:brand-subhead-light",
                 "[&>p]:brand-body [&>li]:brand-body"
               )}>
-                <RenderPortableText value={data.splitContent.content || []} />
+				<RenderPortableText value={(data.splitContent.content || []) as unknown as PortableTextBlock[]} />
               </div>
               {data.splitContent.cta?.text && data.splitContent.cta?.url && (
                 <div className="mt-8">
@@ -326,7 +329,7 @@ export function MediaSection({ data, documentId, documentType, path }: MediaSect
                   "brand-subhead-light",
                   isLight ? "text-[var(--color-black)]" : "text-[var(--color-off-white)]"
                 )}>
-                  "{data.testimonial.quote}"
+                  &quot;{data.testimonial.quote}&quot;
                 </blockquote>
                 <div className="flex items-center gap-4">
                   {data.testimonial.author?.photo && (
@@ -440,35 +443,48 @@ export function MediaSection({ data, documentId, documentType, path }: MediaSect
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setLightboxOpen(false)}
         >
-          <div className="relative max-w-4xl max-h-full">
+          {(() => {
+          const galleryImages = data.gallery?.images ?? [];
+          const lightboxImage = galleryImages[currentImage];
+          if (!lightboxImage?.asset) {
+            return null;
+          }
+
+          const lightboxSrc = urlFor(lightboxImage.asset).width(1200).height(800).url();
+
+          return (
+            <div className="relative max-w-4xl max-h-full">
             <Image
-              src={urlFor(data.gallery.images[currentImage]?.asset).width(1200).height(800).url()}
-              alt={data.gallery.images[currentImage]?.alt || ''}
+              src={lightboxSrc}
+              alt={lightboxImage.alt || ''}
               width={1200}
               height={800}
               className="object-contain max-w-full max-h-full"
             />
-            <button
-              onClick={() => setLightboxOpen(false)}
-              className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-            >
-              ✕
-            </button>
-            {data.gallery.images.length > 1 && (
-              <>
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+          >
+            ✕
+          </button>
+          {galleryImages.length > 1 && (
+            <>
                 <button
+              type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setCurrentImage((prev) => prev > 0 ? prev - 1 : data.gallery!.images!.length - 1);
+              setCurrentImage((prev) => (prev > 0 ? prev - 1 : galleryImages.length - 1));
                   }}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
                 >
                   ←
                 </button>
                 <button
+              type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setCurrentImage((prev) => prev < data.gallery!.images!.length - 1 ? prev + 1 : 0);
+              setCurrentImage((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0));
                   }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
                 >
@@ -476,7 +492,9 @@ export function MediaSection({ data, documentId, documentType, path }: MediaSect
                 </button>
               </>
             )}
-          </div>
+            </div>
+            );
+            })()}
         </div>
       )}
 

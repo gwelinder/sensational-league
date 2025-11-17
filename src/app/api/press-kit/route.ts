@@ -19,7 +19,19 @@ interface SharePointFile {
 	lastModified: string;
 }
 
-export async function GET(request: NextRequest) {
+interface SharePointItem {
+	id: string;
+	name: string;
+	size: number;
+	webUrl: string;
+	lastModifiedDateTime: string;
+	file?: {
+		mimeType?: string;
+	};
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_request: NextRequest) {
 	try {
 		const siteId = process.env.SHAREPOINT_SITE_ID;
 		const libraryId = process.env.SHAREPOINT_MEDIA_LIBRARY_ID;
@@ -56,8 +68,8 @@ export async function GET(request: NextRequest) {
 		// Process logos (include thumbnails for display)
 		const logos: SharePointFile[] = await Promise.all(
 			logosItems.value
-				.filter((item: any) => item.file) // Only files, not folders
-				.map(async (item: any) => {
+				.filter((item: SharePointItem) => item.file) // Only files, not folders
+				.map(async (item: SharePointItem) => {
 					// Get download URL
 					const downloadInfo = await graphClient
 						.api(`/sites/${siteId}/drives/${libraryId}/items/${item.id}`)
@@ -65,8 +77,8 @@ export async function GET(request: NextRequest) {
 						.get();
 
 					// Try to get thumbnails in multiple sizes for images
-					let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
-					if (item.file.mimeType?.startsWith("image/")) {
+				let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
+				if (item.file?.mimeType?.startsWith("image/")) {
 						try {
 							const thumbResponse = await graphClient
 								.api(`/sites/${siteId}/drives/${libraryId}/items/${item.id}/thumbnails`)
@@ -79,7 +91,8 @@ export async function GET(request: NextRequest) {
 									large: thumb.large?.url,
 								};
 							}
-						} catch (e) {
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+						} catch (_e) {
 							// Thumbnails not available, that's okay
 						}
 					}
@@ -99,8 +112,8 @@ export async function GET(request: NextRequest) {
 		// Process photos (include thumbnails for preview)
 		const photos: SharePointFile[] = await Promise.all(
 			photosItems.value
-				.filter((item: any) => item.file) // Only files, not folders
-				.map(async (item: any) => {
+				.filter((item: SharePointItem) => item.file) // Only files, not folders
+				.map(async (item: SharePointItem) => {
 					// Get download URL
 					const downloadInfo = await graphClient
 						.api(`/sites/${siteId}/drives/${libraryId}/items/${item.id}`)
@@ -108,8 +121,8 @@ export async function GET(request: NextRequest) {
 						.get();
 
 					// Try to get thumbnails in multiple sizes for preview
-					let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
-					if (item.file.mimeType?.startsWith("image/")) {
+				let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
+				if (item.file?.mimeType?.startsWith("image/")) {
 						try {
 							const thumbResponse = await graphClient
 								.api(`/sites/${siteId}/drives/${libraryId}/items/${item.id}/thumbnails`)
@@ -122,7 +135,8 @@ export async function GET(request: NextRequest) {
 									large: thumb.large?.url,
 								};
 							}
-						} catch (e) {
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+						} catch (_e) {
 							// Thumbnails not available, that's okay
 						}
 					}
@@ -144,12 +158,12 @@ export async function GET(request: NextRequest) {
 			logos,
 			photos,
 		});
-	} catch (error: any) {
+	} catch (error) {
 		console.error("Press kit API error:", error);
 		return NextResponse.json(
 			{
 				error: "Failed to fetch press kit files",
-				details: error.message,
+				details: error instanceof Error ? error.message : "Unknown error",
 			},
 			{ status: 500 },
 		);

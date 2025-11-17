@@ -2,8 +2,10 @@
 
 import { PortableText } from "@portabletext/react";
 import { createDataAttribute } from "@sanity/visual-editing";
+import type { PortableTextBlock } from "@portabletext/types";
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { PortableTextBlock } from "sanity";
 
 interface PressPhoto {
 	id: string;
@@ -201,9 +203,11 @@ export default function PressReleaseContent({
 				{/* Header with Spark Logo */}
 				<div className="flex items-center justify-between mb-12 pb-8 border-b-2 border-black print:mb-6 print:pb-4">
 					<div>
-						<img
+						<Image
 							src="/logos/SL-SPARK-LARGE.svg"
 							alt="Sensational League"
+							width={64}
+							height={64}
 							className="w-16 h-16 mb-4"
 						/>
 						<p
@@ -222,7 +226,7 @@ export default function PressReleaseContent({
 							{formatDate(pressRelease.publishDate)}
 						</p>
 					</div>
-					<a
+					<Link
 						href="/"
 						className="text-sm text-gray-600 hover:text-black transition-colors print:hidden"
 						style={{
@@ -231,7 +235,7 @@ export default function PressReleaseContent({
 						}}
 					>
 						← {language === "en" ? "Back" : "Tilbage"}
-					</a>
+					</Link>
 				</div>
 
 				{/* Main Headline - GT Standard L Expanded Light, 18pt */}
@@ -262,11 +266,12 @@ export default function PressReleaseContent({
 
 				{/* Featured Image - displayed below subtitle */}
 				{!loadingPhotos && featuredImage && (
-					<div className="mb-12 border-4 border-black">
-						<img
+					<div className="mb-12 border-4 border-black relative w-full aspect-video">
+						<Image
 							src={featuredImage.thumbnails?.large || featuredImage.downloadUrl}
 							alt={featuredImage.name.replace('.jpg', '').replace('.jpeg', '').replace('.png', '')}
-							className="w-full aspect-video object-cover"
+							fill
+							className="object-cover"
 							crossOrigin="anonymous"
 						/>
 					</div>
@@ -361,12 +366,15 @@ export default function PressReleaseContent({
 					<div className="grid md:grid-cols-2 gap-6 my-12 print:page-break-inside-avoid print:break-inside-avoid">
 						{majkenPhoto && (
 							<div className="border-4 border-black">
-								<img
-									src={majkenPhoto.thumbnails?.large || majkenPhoto.downloadUrl}
-									alt="Majken Gilmartin"
-									className="w-full aspect-[4/5] object-cover"
-									crossOrigin="anonymous"
-								/>
+								<div className="relative w-full aspect-[4/5]">
+									<Image
+										src={majkenPhoto.thumbnails?.large || majkenPhoto.downloadUrl}
+										alt="Majken Gilmartin"
+										fill
+										className="object-cover"
+										crossOrigin="anonymous"
+									/>
+								</div>
 								<div className="p-4 bg-black text-white">
 									<p
 										className="text-sm font-bold uppercase"
@@ -391,14 +399,17 @@ export default function PressReleaseContent({
 						)}
 						{bettinaPhoto && (
 							<div className="border-4 border-black">
-								<img
-									src={
-										bettinaPhoto.thumbnails?.large || bettinaPhoto.downloadUrl
-									}
-									alt="Bettina Kuperman"
-									className="w-full aspect-[4/5] object-cover"
-									crossOrigin="anonymous"
-								/>
+								<div className="relative w-full aspect-[4/5]">
+									<Image
+										src={
+											bettinaPhoto.thumbnails?.large || bettinaPhoto.downloadUrl
+										}
+										alt="Bettina Kuperman"
+										fill
+										className="object-cover"
+										crossOrigin="anonymous"
+									/>
+								</div>
 								<div className="p-4 bg-black text-white">
 									<p
 										className="text-sm font-bold uppercase"
@@ -538,14 +549,15 @@ export default function PressReleaseContent({
 								download
 								className="group relative aspect-square border-2 border-black overflow-hidden hover:border-[var(--color-volt)] transition-all duration-200 print:border print:hover:border-black"
 							>
-								<img
+								<Image
 									src={
 										photo.thumbnails?.medium ||
 										photo.thumbnails?.large ||
 										photo.downloadUrl
 									}
 									alt={photo.name}
-									className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 print:group-hover:scale-100"
+									fill
+									className="object-cover group-hover:scale-110 transition-transform duration-300 print:group-hover:scale-100"
 									crossOrigin="anonymous"
 								/>
 								<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center print:hidden">

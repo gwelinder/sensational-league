@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { createDataAttribute } from "@sanity/visual-editing";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { ResponsiveLogo } from "@/components/Logo";
 import { urlFor } from "@/sanity/lib/image";
 import { cn } from "@/lib/utils";
@@ -37,10 +38,13 @@ interface AdvancedHeroSectionProps {
     background?: {
       type?: string;
       color?: string;
-      image?: any;
+      image?: SanityImageSource & {
+        position?: string;
+        overlay?: string;
+      };
       video?: {
         url?: string;
-        poster?: any;
+        poster?: SanityImageSource;
         muted?: boolean;
       };
     };
@@ -101,12 +105,10 @@ const backgroundColors = {
 };
 
 export function AdvancedHeroSection({ data, documentId, documentType, path }: AdvancedHeroSectionProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded] = useState(true);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   useEffect(() => {
-    setIsLoaded(true);
-    
     // Typewriter effect for headlines
     if (data.headline?.style === 'typewriter' && data.headline?.text) {
       const words = data.headline.text.split(' ');
