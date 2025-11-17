@@ -457,6 +457,45 @@ export const homePage = defineType({
       ],
     }),
     defineField({
+      name: 'impact',
+      type: 'object',
+      title: 'Impact Section',
+      fields: [
+        {
+          name: 'headline',
+          type: 'array',
+          title: 'Headline',
+          of: [{ type: 'block' }],
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          title: 'Stats',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'value', type: 'string', title: 'Value' },
+                { name: 'label', type: 'string', title: 'Label' },
+              ],
+            },
+          ],
+        },
+        { name: 'quoteText', type: 'text', title: 'Quote Text', rows: 4 },
+        { name: 'quoteAttribution', type: 'string', title: 'Quote Attribution' },
+      ],
+    }),
+    defineField({
+      name: 'cta',
+      type: 'object',
+      title: 'Call To Action',
+      fields: [
+        { name: 'headline', type: 'string', title: 'Headline' },
+        { name: 'description', type: 'text', title: 'Description', rows: 3 },
+        { name: 'buttonText', type: 'string', title: 'Button Text' },
+      ],
+    }),
+    defineField({
       name: 'sections',
       type: 'array',
       title: 'Additional Homepage Sections',

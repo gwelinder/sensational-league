@@ -164,16 +164,19 @@ const homePageContent = {
 		subtitle: "Women’s sports deserve purpose-built platforms.",
 		statements: [
 			{
+				_key: "why-visibility",
 				title: "Visibility unlocks growth",
 				description:
 					"Women’s sports are exploding globally with record audiences, investments, and players. To unlock the full potential, we need more visibility, more media, more storytelling, and professional platforms.",
 			},
 			{
+				_key: "why-platform",
 				title: "A platform built for players",
 				description:
 					"Our vision is simple: grow women’s football by giving players the stage, tools, and platform they deserve while bringing fans, media, and brands with us.",
 			},
 			{
+				_key: "why-rebellious",
 				title: "Fast. Rebellious. Female.",
 				description:
 					"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven, community-first, and powered by visibility.",
@@ -202,12 +205,14 @@ const homePageContent = {
 		},
 	},
 	captainsSection: {
+		enabled: true,
 		eyebrow: "Captains",
 		title: "Meet Our Captains",
 		subtitle: "Legendary leaders shaping the Sensational 80.",
 		intro: "Six icons of Danish football bring elite experience, cultural impact, and unstoppable energy to the league.",
 		captains: [
 			{
+				_key: "captain-bettina",
 				name: "Bettina Falk",
 				tagline: "Defender • 5x Danish Champion • Brøndby Legend",
 				summary: "Led club and country with grit before reshaping how cities move and play. 56 caps for Denmark plus five titles with Brøndby.",
@@ -216,6 +221,7 @@ const homePageContent = {
 				videoUrl: CAPTAIN_VIDEO_DEFAULTS.bettina,
 			},
 			{
+				_key: "captain-line",
 				name: "Line Røddik Hansen",
 				tagline: "Defender • Lyon, FC Barcelona & Denmark",
 				summary: "From Birkerød to conquering Europe. 132 caps, EURO silver, and a career across Lyon, Barça, Ajax, and more.",
@@ -224,6 +230,7 @@ const homePageContent = {
 				videoUrl: CAPTAIN_VIDEO_DEFAULTS.line,
 			},
 			{
+				_key: "captain-theresa",
 				name: "Theresa Eslund",
 				tagline: "Right Back • 133 Caps • UEFA EURO 2017 Best XI",
 				summary: "Starred across Norway, USA, Australia, and Denmark—selected for the UEFA EURO 2017 Best XI.",
@@ -232,6 +239,7 @@ const homePageContent = {
 				videoUrl: CAPTAIN_VIDEO_DEFAULTS.theresa,
 			},
 			{
+				_key: "captain-nina",
 				name: "Nina Frausing Pedersen",
 				tagline: "Defender • Liverpool & Fortuna Hjørring",
 				summary: "International across Denmark, Sweden, Germany, England, and Australia—while earning a PhD.",
@@ -240,6 +248,7 @@ const homePageContent = {
 				videoUrl: CAPTAIN_VIDEO_DEFAULTS.nina,
 			},
 			{
+				_key: "captain-nicoline",
 				name: "Nicoline Sørensen",
 				tagline: "Forward • Everton & Brøndby • Denmark International",
 				summary: "One of Denmark’s most electric attackers with 100+ club games and national TV commentary chops.",
@@ -248,6 +257,7 @@ const homePageContent = {
 				videoUrl: CAPTAIN_VIDEO_DEFAULTS.nicoline,
 			},
 			{
+				_key: "captain-rikke",
 				name: "Rikke Sevecke",
 				tagline: "Defender • Everton & Portland Thorns",
 				summary: "Modern centre-back dominating in Denmark, France, England, and the NWSL—now advocating athlete heart health.",
@@ -296,22 +306,23 @@ const homePageContent = {
 	},
 };
 
+const draftHomePageContent = {
+	...homePageContent,
+	_id: `drafts.${homePageContent._id}`,
+};
+
 async function seed() {
 	console.log("🌱 Seeding home page...");
 
 	try {
-		// Create/update the published version
-		await client.createOrReplace(homePageContent);
-		console.log("✅ Created/updated: Published Home Page");
+		await client
+			.transaction()
+			.createOrReplace(homePageContent)
+			.createOrReplace(draftHomePageContent)
+			.commit();
 
-		// Delete any existing draft to ensure it uses published version
-		try {
-			await client.delete(`drafts.${homePageContent._id}`);
-			console.log("✅ Deleted draft (will use published version)");
-		} catch {
-			// Draft doesn't exist, which is fine
-			console.log("ℹ️  No draft to delete");
-		}
+		console.log("✅ Created/updated: Published Home Page");
+		console.log("✅ Created/updated: Draft Home Page");
 	} catch (error) {
 		console.error("❌ Failed to create home page:", error);
 	}
