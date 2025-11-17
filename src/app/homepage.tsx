@@ -1432,10 +1432,9 @@ export default function HomePage({ content }: HomePageProps) {
 						"radial-gradient(circle at 15% 10%, rgba(212,255,0,0.08), transparent 55%), radial-gradient(circle at 80% 6%, rgba(255,255,255,0.12), transparent 40%)",
 				}}
 			/>
-				<div className="relative mx-auto max-w-6xl">
-				<div className="rounded-[48px] border border-white/5 bg-[#040404] p-10 shadow-[0_30px_120px_rgba(0,0,0,0.55)]">
-						<div className="grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_380px]">
-							<div className="space-y-8">
+			<div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-10">
+				<div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.25fr)_380px]">
+					<div className="space-y-8">
 								<div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/60 px-5 py-2 text-[0.65rem] font-black uppercase tracking-[0.35em]">
 									<span>Copenhagen</span>
 									<span>Season 01</span>
@@ -1471,41 +1470,29 @@ export default function HomePage({ content }: HomePageProps) {
 									</Link>
 								</div>
 							</div>
-							<div
-								id="player-draft"
-								data-sanity={
-									applicationCardAttribute?.toString() ??
-									heroCtaAttribute?.toString()
-								}
-								className="relative"
-							>
-								<div
-									className="pointer-events-none absolute -inset-3 rounded-[30px] bg-white/20 blur-3xl"
-									aria-hidden="true"
-								/>
-								<div className="relative">
-									<ApplicationCard
-										badge={heroCardBadge}
-										title={heroCardTitle}
-										description={heroCardDescription}
-										ctaText={heroCardCtaText}
-										ctaLink={heroCardLink}
-										helperText={heroCardHelperText}
-										deadlineLabel={heroCardDeadline}
-										countdown={countdownConfig}
-										resourceEyebrow={heroResourceEyebrow}
-										resourceLinkLabel={heroResourceLinkLabel}
-										resourceLinkHref={heroResourceLinkHref}
-									/>
-								</div>
-							</div>
-						</div>
+					<div
+						id="player-draft"
+						data-sanity={
+							applicationCardAttribute?.toString() ??
+							heroCtaAttribute?.toString()
+						}
+					>
+						<ApplicationCard
+							badge={heroCardBadge}
+							title={heroCardTitle}
+							description={heroCardDescription}
+							ctaText={heroCardCtaText}
+							ctaLink={heroCardLink}
+							helperText={heroCardHelperText}
+							deadlineLabel={heroCardDeadline}
+							countdown={countdownConfig}
+							resourceEyebrow={heroResourceEyebrow}
+							resourceLinkLabel={heroResourceLinkLabel}
+							resourceLinkHref={heroResourceLinkHref}
+						/>
+					</div>
 					</div>
 				</div>
-			<div
-				className="pointer-events-none absolute inset-x-0 bottom-0 h-32 translate-y-1/2 bg-gradient-to-b from-transparent via-[#030303] to-[#090909]"
-				aria-hidden="true"
-			/>
 		</section>
 
 		{heroVideoSource && (
