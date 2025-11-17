@@ -249,7 +249,13 @@ const CAPTAIN_VIDEO_DEFAULTS = {
 	rikke: `${HERO_VIDEO_CDN_BASE}/captains/rikke`,
 };
 
-const DEFAULT_CAPTAINS_SECTION = {
+const DEFAULT_CAPTAINS_SECTION: {
+	eyebrow: string;
+	title: string;
+	subtitle: string;
+	intro: string;
+	captains: CaptainCard[];
+} = {
 	eyebrow: "Captains",
 	title: "Meet Our Captains",
 	subtitle: "Legendary leaders turning the Sensational 80 into a movement.",
