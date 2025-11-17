@@ -50,6 +50,18 @@ pnpm seed:home
 
 See [SEEDING.md](./SEEDING.md) for detailed instructions.
 
+## Captain Video Uploads (Cloudflare R2)
+
+Use the `upload:captain-video` script whenever a new intro film for a captain needs to go live.
+
+1. Add the Cloudflare R2 credentials to `.env.local` (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, optionally override `R2_CAPTAIN_BUCKET` or `R2_CAPTAIN_PUBLIC_BASE`).
+2. Export the final video as MP4 (preferred), WebM, or MOV and note the captain slug you plan to use in Sanity.
+3. Run `pnpm upload:captain-video --file path/to/video.mp4 --slug captain-name`.
+4. The script uploads the file to the `sensational-hero-videos` bucket, prints both the Worker URL (without the extension) and the direct file URL, and lets you know the R2 object key. Paste the Worker URL (e.g. `https://sensational-hero-video.generaite.workers.dev/captains/bettina`) into the `videoUrl` field for the captain inside Sanity.
+5. Re-run with `--force` if you intentionally want to overwrite an existing asset; otherwise the script prevents accidental replacements.
+
+The Worker already maps `/captains/{slug}` paths to the correct video key, so once the upload completes and Sanity is updated the homepage will render the new clip automatically.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
