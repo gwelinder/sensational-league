@@ -1661,7 +1661,7 @@ const captainsEnabled =
 						</div>
 					</div>
 
-					<div className="grid gap-12 xl:grid-cols-2">
+					<div className="grid gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
 						<div
 							className="rounded-[36px] border border-black/5 bg-white p-10 shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
 							data-sanity={formatDataAttribute?.toString()}
@@ -1669,33 +1669,41 @@ const captainsEnabled =
 							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-black/50">
 								{formatEyebrow}
 							</p>
-							<h3 className="mt-4 text-3xl font-black uppercase tracking-[0.16em]">
-								{formatTitle}
-							</h3>
-							<p className="brand-body mt-3 text-black/70">{formatSubtitle}</p>
-							<div className="mt-8 space-y-4">
+							<div className="mt-4 space-y-4">
+								<h3 className="text-3xl font-black uppercase tracking-[0.16em]">
+									{formatTitle}
+								</h3>
+								<p className="brand-body text-black/70">{formatSubtitle}</p>
+							</div>
+							<div className="mt-10 grid gap-4 md:grid-cols-2">
 								{formatConcepts.map((concept, index) => (
 									<div
 										key={`${concept}-${index}`}
-										className="rounded-2xl border border-black/10 bg-[#fdfdf9] p-4 text-sm text-black/80"
+										className="min-h-[120px] rounded-3xl border border-black/10 bg-[#fdfdf9] px-5 py-4 text-sm text-black/80 shadow-[0_14px_40px_rgba(0,0,0,0.08)]"
 									>
 										{concept}
 									</div>
 								))}
 							</div>
-							<div className="mt-8 rounded-[28px] border border-black/80 bg-black p-6 text-white">
-								<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/65">
-									{designedFor.eyebrow}
-								</p>
-								<p className="brand-body mt-3 text-sm text-white/80">
-									{designedFor.description}
-								</p>
-								<ul className="mt-5 grid gap-2 text-xs font-black uppercase tracking-[0.22em] text-white/85 md:grid-cols-2">
-									{designedFor.features?.map((feature, index) => (
-										<li key={`${feature}-${index}`}>{feature}</li>
-									))}
-								</ul>
-							</div>
+						</div>
+						<div className="rounded-[36px] border-4 border-black bg-black p-8 text-white shadow-[14px_14px_0_rgba(0,0,0,0.85)]">
+							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/65">
+								{designedFor.eyebrow}
+							</p>
+							<p className="brand-body mt-4 text-sm text-white/80">
+								{designedFor.description}
+							</p>
+							<ul className="mt-6 space-y-3 text-xs font-black uppercase tracking-[0.22em] text-white/85">
+								{designedFor.features?.map((feature, index) => (
+									<li
+										key={`${feature}-${index}`}
+										className="flex items-center gap-3 rounded-3xl border border-white/15 bg-white/5 px-4 py-3"
+									>
+										<span className="inline-block h-2 w-2 rounded-full bg-[var(--color-volt)]" />
+										<span>{feature}</span>
+									</li>
+								))}
+							</ul>
 						</div>
 					</div>
 				</div>
