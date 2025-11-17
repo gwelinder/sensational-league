@@ -1497,60 +1497,54 @@ export default function HomePage({ content }: HomePageProps) {
 
 		{heroVideoSource && (
 			<>
-				<section className="relative -mt-16 bg-[#050505] px-4 pb-28 pt-20 text-white">
+				<section className="relative -mt-12 bg-[#050505] px-4 pb-24 pt-16 text-white">
 					<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,255,0,0.06),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_40%)] opacity-60" />
-					<div className="mx-auto max-w-6xl px-4 sm:px-8 lg:px-12">
-						<div className="relative overflow-hidden rounded-[40px] border border-white/5 bg-[#080808] shadow-[0_60px_160px_rgba(0,0,0,0.55)]">
-							<div className="space-y-6 p-6 sm:p-8 lg:p-10">
-								<div className="flex flex-wrap items-center justify-between gap-4">
-									<div>
-										<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/60">
-											Season film
-										</p>
-										<h3 className="mt-2 text-3xl font-black uppercase tracking-[0.18em]">
-											Fast. Rebellious. Female.
-										</h3>
-									</div>
-									{content?.hero?.video?.credit && (
-										<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/60">
-											{content.hero.video.credit}
-										</p>
-									)}
-								</div>
-								<div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-black/50 shadow-[0_50px_140px_rgba(0,0,0,0.6)]">
-									<div className="relative aspect-[9/13] w-full sm:aspect-video">
-										{heroVideoSource.type === "youtube" ? (
-											<iframe
-												title="Sensational League hero video"
-												src={`${heroVideoSource.src}&controls=1`}
-												className="absolute inset-0 h-full w-full"
-												allow="autoplay; fullscreen; picture-in-picture"
-												allowFullScreen
-												loading="lazy"
-												referrerPolicy="strict-origin-when-cross-origin"
-												style={{ border: "none" }}
-											/>
-										) : (
-											<video
-												className="absolute inset-0 h-full w-full object-cover"
-												style={{ objectFit: heroVideoObjectFit }}
-												src={heroVideoSource.src}
-												poster={heroPosterUrl}
-												playsInline
-												loop
-												muted
-												autoPlay
-												controls
-												preload="metadata"
-											/>
-										)}
-									</div>
-								</div>
+					<div className="relative mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-10">
+						<div className="flex flex-wrap items-center justify-between gap-4">
+							<div>
+								<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/60">
+									Season film
+								</p>
+								<h3 className="mt-2 text-3xl font-black uppercase tracking-[0.18em]">
+									Fast. Rebellious. Female.
+								</h3>
 							</div>
+							{content?.hero?.video?.credit && (
+								<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/60">
+									{content.hero.video.credit}
+								</p>
+							)}
+						</div>
+						<div className="relative aspect-[9/13] w-full overflow-hidden rounded-[32px] border border-white/10 bg-black/40 shadow-[0_50px_140px_rgba(0,0,0,0.55)] sm:aspect-video">
+							{heroVideoSource.type === "youtube" ? (
+								<iframe
+									title="Sensational League hero video"
+									src={`${heroVideoSource.src}&controls=1`}
+									className="absolute inset-0 h-full w-full"
+									allow="autoplay; fullscreen; picture-in-picture"
+									allowFullScreen
+									loading="lazy"
+									referrerPolicy="strict-origin-when-cross-origin"
+									style={{ border: "none" }}
+								/>
+							) : (
+								<video
+									className="absolute inset-0 h-full w-full object-cover"
+									style={{ objectFit: heroVideoObjectFit }}
+									src={heroVideoSource.src}
+									poster={heroPosterUrl}
+									playsInline
+									loop
+									muted
+									autoPlay
+									controls
+									preload="metadata"
+								/>
+							)}
 						</div>
 					</div>
 				</section>
-				<div className="relative z-0 -mt-20 h-32 bg-gradient-to-b from-[#050505] via-[#0d0d0d] to-[#f8f8f0]" />
+				<div className="relative z-0 -mt-16 h-28 bg-gradient-to-b from-[#050505] via-[#0d0d0d] to-[#f8f8f0]" />
 			</>
 		)}
 		{!heroVideoSource && (

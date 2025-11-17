@@ -690,7 +690,7 @@ function PlayerDraftPageContent({ content }: { content?: PlayerDraftContent }) {
 			>
 				<div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.95fr_1.05fr]">
 					<div className="order-1 space-y-8">
-						<p className="flex items-center gap-3 brand-caption text-sm uppercase tracking-[0.3em] text-black/55">
+						<div className="flex items-center gap-3 brand-caption text-sm uppercase tracking-[0.3em] text-black/55">
 							<span aria-hidden="true">
 								<Logo
 									variant="spark-small"
@@ -701,7 +701,7 @@ function PlayerDraftPageContent({ content }: { content?: PlayerDraftContent }) {
 								/>
 							</span>
 							<span>{timelineEyebrow}</span>
-						</p>
+						</div>
 						<h3 className="text-2xl font-black uppercase tracking-[0.18em] text-black">
 							{timelineTitle}
 						</h3>
