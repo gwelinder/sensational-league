@@ -22,11 +22,6 @@ interface Pillar {
 	description: string;
 }
 
-interface Statement {
-	title?: string;
-	description?: string;
-}
-
 interface FormatDesignedFor {
 	eyebrow?: string;
 	description?: string;
@@ -134,12 +129,6 @@ interface HomePageProps {
 			};
 		};
 		sections?: PageSection[];
-		whySection?: {
-			eyebrow?: string;
-			title?: string;
-			subtitle?: string;
-			statements?: Statement[];
-		};
 		formatSection?: {
 			eyebrow?: string;
 			title?: string;
@@ -192,29 +181,6 @@ const DEFAULT_EMBED_BULLETS = [
 const DEFAULT_EMBED_DEADLINE_NOTE =
 	"Deadline: January 1, 2026 – but we encourage early applications as spots are limited to 80 players.";
 
-const DEFAULT_WHY_SECTION = {
-	eyebrow: "Why Sensational League",
-	title: "Grow the game. Own the format.",
-	subtitle: "Women’s sports deserve purpose-built platforms.",
-	statements: [
-		{
-			title: "Visibility unlocks growth",
-			description:
-				"Women’s sports are exploding globally with record audiences, investments, and players. To unlock the full potential, we need more visibility, media, storytelling, and professional platforms.",
-		},
-		{
-			title: "A platform built for players",
-			description:
-				"The Sensational vision is simple: grow women’s football by giving players the stage, tools, and platform they deserve while bringing fans, media, and brands with us.",
-		},
-		{
-			title: "Fast. Rebellious. Female.",
-			description:
-				"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven and community-first. Powered by content and visibility.",
-		},
-	],
-};
-
 const DEFAULT_FORMAT_SECTION = {
 	eyebrow: "Our format",
 	title: "Purpose-built 7v7",
@@ -261,7 +227,7 @@ const DEFAULT_CAPTAINS_SECTION: {
 	title: "Meet Our Captains",
 	subtitle: "Legendary leaders turning the Sensational 80 into a movement.",
 	intro:
-		"Six icons of Danish football bring elite experience, cultural impact, and unstoppable energy to the league. Photos arrive soon—bios are ready now.",
+		"Six icons of Danish football bring elite experience, cultural impact, and unstoppable energy to the league.",
 	captains: [
 		{
 			name: "Bettina Falk",
@@ -1260,13 +1226,6 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
-	const whyDataAttribute = content?._id
-		? createDataAttribute({
-				id: content._id,
-				type: content._type || "homePage",
-				path: "whySection",
-			})
-		: undefined;
 
 	const formatDataAttribute = content?._id
 		? createDataAttribute({
@@ -1395,14 +1354,6 @@ export default function HomePage({ content }: HomePageProps) {
 	const aboutDescription =
 		content?.about?.description ||
 		"Sensational League is an international 7v7 professional women’s football league launching April 2026 in Copenhagen before expanding across Europe and the US.";
-
-	const whySection = content?.whySection;
-	const whyEyebrow = whySection?.eyebrow || DEFAULT_WHY_SECTION.eyebrow;
-	const whyTitle = whySection?.title || DEFAULT_WHY_SECTION.title;
-	const whySubtitle = whySection?.subtitle || DEFAULT_WHY_SECTION.subtitle;
-	const whyStatements = whySection?.statements?.length
-		? whySection.statements
-		: DEFAULT_WHY_SECTION.statements;
 
 	const formatSection = content?.formatSection;
 	const formatEyebrow =
@@ -1535,11 +1486,16 @@ const captainsEnabled =
 									Fast. Rebellious. Female.
 								</h3>
 							</div>
-							{content?.hero?.video?.credit && (
-								<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/60">
-									{content.hero.video.credit}
-								</p>
-							)}
+							<div className="flex items-center gap-3">
+								<span className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white">
+									Sound on
+								</span>
+								{content?.hero?.video?.credit && (
+									<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/60">
+										{content.hero.video.credit}
+									</p>
+								)}
+							</div>
 						</div>
 						<div className="relative aspect-[9/13] w-full overflow-hidden rounded-[32px] border border-white/10 bg-black/40 shadow-[0_50px_140px_rgba(0,0,0,0.55)] sm:aspect-video">
 							{heroVideoSource.type === "youtube" ? (
@@ -1706,33 +1662,6 @@ const captainsEnabled =
 					</div>
 
 					<div className="grid gap-12 xl:grid-cols-2">
-						<div
-							className="rounded-[36px] border border-black/5 bg-white p-10 shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
-							data-sanity={whyDataAttribute?.toString()}
-						>
-							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-[var(--color-volt)]">
-								{whyEyebrow}
-							</p>
-							<h3 className="mt-4 text-3xl font-black uppercase tracking-[0.18em] text-black">
-								{whyTitle}
-							</h3>
-							<p className="brand-body mt-3 text-black/70">{whySubtitle}</p>
-							<div className="mt-10 space-y-7">
-								{whyStatements?.map((statement, index) => (
-									<div
-										key={`${statement?.title ?? "statement"}-${index}`}
-										className="rounded-2xl border border-black/5 bg-[#fdfdf9] p-5"
-									>
-										<p className="text-sm font-black uppercase tracking-[0.32em] text-black/55">
-											{statement?.title}
-										</p>
-										<p className="brand-body mt-2 text-black/75">
-											{statement?.description}
-										</p>
-									</div>
-								))}
-							</div>
-						</div>
 						<div
 							className="rounded-[36px] border border-black/5 bg-white p-10 shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
 							data-sanity={formatDataAttribute?.toString()}

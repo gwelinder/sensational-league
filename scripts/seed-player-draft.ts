@@ -53,18 +53,50 @@ const heroSnapshotItems = [
 	{ label: "Timeline", value: "Apps close Jan 1 • Offers out mid-Jan" },
 ];
 
-const timelineMilestones = [
+const leagueIntroParagraphs = [
+	"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026, before expanding to the UK and the US.",
+	"Eight teams. Legendary captains. High-tempo matches. Festival-style game days. A sports entertainment format built for modern players and modern audiences.",
+];
+
+const impactPillars = [
+	{
+		title: "Performance",
+		description: "High-tempo 7v7 football fronted by legendary captains and powered by creator-grade coaching.",
+	},
 	{
 		title: "Visibility",
 		description: "Embedded media crew, live storytelling, and partnerships that put players in front of global audiences.",
 	},
 	{
 		title: "Community",
-		description: "Each team drives a Community Challenge that earns points for uplifting women’s sport beyond the pitch.",
+		description: "Each team drives a Community Challenge that earns points for amplifying women’s sport beyond the pitch.",
 	},
 	{
 		title: "Opportunity",
-		description: "Paid match days, commercial spotlights, and future tours across Europe and the US.",
+		description: "Paid match days and commercial spotlights.",
+	},
+];
+
+const timelineMilestones = [
+	{
+		period: "Nov–Dec 2025",
+		title: "Applications open",
+		description: "Captains meet weekly to review submissions and flag talent for invites.",
+	},
+	{
+		period: "Jan 2026",
+		title: "Player invitations",
+		description: "Selected players receive offers and attend the Player Placement Day.",
+	},
+	{
+		period: "Feb–Mar 2026",
+		title: "Preseason + media labs",
+		description: "Football sessions plus creator training, story labs, and community planning.",
+	},
+	{
+		period: "Apr 2026",
+		title: "Season One kickoff",
+		description: "Copenhagen festival gamedays launch the Sensational League era.",
 	},
 ];
 
@@ -135,16 +167,6 @@ const contacts = [
 		label: "Communications team",
 		value: "comms@sagasportsgroup.com",
 		link: "mailto:comms@sagasportsgroup.com",
-	},
-	{
-		label: "Mette Bom, Head of Communications",
-		value: "mbom@sagasportsgroup.com",
-		link: "mailto:mbom@sagasportsgroup.com",
-	},
-	{
-		label: "Elvira Meyer, Communications Manager",
-		value: "emeyer@sagasportsgroup.com",
-		link: "mailto:emeyer@sagasportsgroup.com",
 	},
 ];
 

@@ -134,7 +134,8 @@ const homePageContent = {
 				markDefs: [],
 			},
 		],
-		description: "We're building a community where female athletes can showcase their skills while making a difference. Our mission is simple: Fast. Rebellious. Female.",
+		description:
+			"We're building a community where female athletes can showcase their skills while making a difference.",
 		pillars: [
 			{
 				_key: 'pillar-1',
@@ -158,31 +159,7 @@ const homePageContent = {
 			}
 		],
 	},
-	whySection: {
-		eyebrow: "Why Sensational League",
-		title: "Grow the game. Own the format.",
-		subtitle: "Women’s sports deserve purpose-built platforms.",
-		statements: [
-			{
-				_key: "why-visibility",
-				title: "Visibility unlocks growth",
-				description:
-					"Women’s sports are exploding globally with record audiences, investments, and players. To unlock the full potential, we need more visibility, more media, more storytelling, and professional platforms.",
-			},
-			{
-				_key: "why-platform",
-				title: "A platform built for players",
-				description:
-					"Our vision is simple: grow women’s football by giving players the stage, tools, and platform they deserve while bringing fans, media, and brands with us.",
-			},
-			{
-				_key: "why-rebellious",
-				title: "Fast. Rebellious. Female.",
-				description:
-					"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven, community-first, and powered by visibility.",
-			},
-		],
-	},
+	// whySection intentionally omitted to remove the "Grow the game" block
 	formatSection: {
 		eyebrow: "Our format",
 		title: "Purpose-built 7v7",

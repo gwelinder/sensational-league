@@ -59,19 +59,6 @@ const homePage = {
             },
           ],
         },
-        {
-          _type: 'block',
-          _key: 'about-block-2',
-          style: 'normal',
-          children: [
-            {
-              _type: 'span',
-              _key: 'about-span-2',
-              text: 'Our mission is simple: Fast. Rebellious. Female. We\'re changing the game by creating opportunities for women in football while giving back to our communities.',
-              marks: [],
-            },
-          ],
-        },
       ],
     },
     {

@@ -124,16 +124,6 @@ const DEFAULT_CONTACTS = [
 		value: "comms@sagasportsgroup.com",
 		link: "mailto:comms@sagasportsgroup.com",
 	},
-	{
-		label: "Mette Bom, Head of Communications",
-		value: "mbom@sagasportsgroup.com",
-		link: "mailto:mbom@sagasportsgroup.com",
-	},
-	{
-		label: "Elvira Meyer, Communications Manager",
-		value: "emeyer@sagasportsgroup.com",
-		link: "mailto:emeyer@sagasportsgroup.com",
-	},
 ];
 
 const DEFAULT_TIMELINE_MILESTONES = [
@@ -714,20 +704,24 @@ function PlayerDraftPageContent({ content }: { content?: PlayerDraftContent }) {
 								aria-hidden
 							/>
 							<ul className="space-y-10">
-								{timelineMilestones.map((milestone) => (
-									<li key={milestone.period} className="relative pl-16">
-										<span className="absolute left-7 top-[1.05rem] block h-6 w-6 rounded-full border-2 border-black bg-[var(--color-volt)]" />
-										<p className="text-xs font-black uppercase tracking-[0.35em] text-black/45">
-											{milestone.period}
-										</p>
-										<h3 className="mt-1 text-xl font-black uppercase tracking-[0.15em] text-black">
-											{milestone.title}
-										</h3>
-										<p className="brand-body text-sm text-black/70">
-											{milestone.description}
-										</p>
-									</li>
-								))}
+								{timelineMilestones.map((milestone, index) => {
+									const key = `${milestone.period ?? milestone.title ?? index}`;
+									const periodLabel = milestone.period || milestone.title || "Timeline";
+									return (
+										<li key={key} className="relative pl-16">
+											<span className="absolute left-7 top-[1.05rem] block h-6 w-6 rounded-full border-2 border-black bg-[var(--color-volt)]" />
+											<p className="text-xs font-black uppercase tracking-[0.35em] text-black/45">
+												{periodLabel}
+											</p>
+											<h3 className="mt-1 text-xl font-black uppercase tracking-[0.15em] text-black">
+												{milestone.title}
+											</h3>
+											<p className="brand-body text-sm text-black/70">
+												{milestone.description}
+											</p>
+										</li>
+									);
+								})}
 							</ul>
 						</div>
 					</div>
