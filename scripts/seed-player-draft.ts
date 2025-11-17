@@ -55,38 +55,6 @@ const heroSnapshotItems = [
 
 const timelineMilestones = [
 	{
-		period: "Nov–Dec 2025",
-		title: "Applications open",
-		description: "Captains meet weekly to review submissions and flag talent for invites.",
-	},
-	{
-		period: "Jan 2026",
-		title: "Player invitations",
-		description: "Selected players receive offers and attend the Player Placement Day.",
-	},
-	{
-		period: "Feb–Mar 2026",
-		title: "Preseason + media labs",
-		description: "Football sessions plus creator training, story labs, and community planning.",
-	},
-	{
-		period: "Apr 2026",
-		title: "Season One kickoff",
-		description: "Copenhagen festival gamedays launch the Sensational League era.",
-	},
-];
-
-const leagueIntroParagraphs = [
-	"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026, before expanding to the UK and the US.",
-	"Eight teams. Eight captains. High-tempo matches. Festival-style game days. A sports entertainment format built for modern players and modern audiences.",
-];
-
-const impactPillars = [
-	{
-		title: "Performance",
-		description: "High-tempo 7v7 football fronted by eight legendary captains and creator-grade coaching.",
-	},
-	{
 		title: "Visibility",
 		description: "Embedded media crew, live storytelling, and partnerships that put players in front of global audiences.",
 	},
@@ -100,42 +68,10 @@ const impactPillars = [
 	},
 ];
 
-const whyStatements = [
-	{
-		title: "Visibility unlocks growth",
-		description:
-			"Women’s sports are exploding globally: record audiences, record investments, world-class players, and a cultural shift we’ve never seen before. To unlock the full potential, we need more visibility, more media, more storytelling, and more professional platforms.",
-	},
-	{
-		title: "A platform built for players",
-		description:
-			"The Sensational vision is simple: Grow women’s football by giving players the stage, the tools, and the platform they deserve while bringing fans, media, and brands with us.",
-	},
-	{
-		title: "Fast. Rebellious. Female.",
-		description:
-			"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven and community-first. Powered by content and visibility.",
-	},
-];
-
 const participationParagraphs = [
 	"When you join the Sensational League, you become part of the first-ever group of players in a new international format. You help define how women’s football is seen, covered, talked about, and celebrated.",
 	"We train players to become powerful storytellers and digital creators, because media visibility on and off the pitch is how we grow the game. Your voice, your personality, and your story will inspire more girls to play and more fans and brands to care.",
 	"How do we know this? Because we know how fun and giving playing, leading, and watching football is. Participate, elevate, and reciprocate.",
-];
-
-const formatHighlights = [
-	"The League features eight teams, each led by a Sensational captain, competing in a fast, entertainment-driven 7v7 format.",
-	"Each team also competes in a Community Challenge—our impact element where players earn points by amplifying women’s sport. This is where sport and purpose meet.",
-	"We’ve opened the draft to select 80 female footballers (17+) for our inaugural season. All positions are welcome—we’re building teams with skill, creativity, balance, and personality.",
-	"You don’t need to play at the highest level; commitment, love for the game, team spirit, and the will to grow are what matter most.",
-];
-
-const formatFeatures = [
-	"Six gamedays · broadcast + live crowd",
-	"Community Challenge scoring",
-	"Creator lab + content studio",
-	"Impact storytelling with partners",
 ];
 
 const draftSteps = [
@@ -225,7 +161,7 @@ const playerDraftPageDoc = {
 		locationLabel: "Copenhagen • Spring 2026",
 		headline: "Join the Sensational 80",
 		description:
-			"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football. Submit your application, share your story, and play in front of the world.",
+			"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football.",
 		highlights: heroHighlights,
 		navButtons: heroNavButtons,
 		application: {
@@ -257,12 +193,6 @@ const playerDraftPageDoc = {
 		paragraphs: leagueIntroParagraphs,
 		pillars: impactPillars,
 	},
-	whySection: {
-		eyebrow: "Why Sensational League",
-		title: "Grow the game. Own the format.",
-		subtitle: "Women’s sports deserve purpose-built platforms.",
-		statements: whyStatements,
-	},
 	participationSection: {
 		eyebrow: "You’re not just playing",
 		title: "Participate. Elevate. Reciprocate.",
@@ -283,17 +213,6 @@ const playerDraftPageDoc = {
 			],
 		},
 	},
-	formatSection: {
-		eyebrow: "Our format",
-		title: "Purpose-built 7v7",
-		subtitle: "Football meets a community challenge to score on and off the pitch.",
-		coreConcepts: formatHighlights,
-		designedFor: {
-			eyebrow: "Designed for modern players",
-			description: formatHighlights[3],
-			features: formatFeatures,
-		},
-	},
 	draftStepsSection: {
 		eyebrow: "How the player draft works",
 		title: "Four moves to join",
@@ -309,7 +228,7 @@ const playerDraftPageDoc = {
 	},
 	faqSection: {
 		eyebrow: "FAQ",
-		title: "Player Draft 2025–26",
+		title: "FAQ",
 		subtitle: "Answers before you hit submit.",
 		items: faqItems,
 	},

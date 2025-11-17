@@ -35,6 +35,22 @@ const client = createClient({
 	useCdn: false,
 });
 
+const HERO_VIDEO_CDN_BASE = "https://sensational-hero-video.generaite.workers.dev";
+const HERO_VIDEO_VARIANTS = {
+	wide: `${HERO_VIDEO_CDN_BASE}/hero-wide.mp4`,
+	square: `${HERO_VIDEO_CDN_BASE}/hero-square.mp4`,
+	vertical: `${HERO_VIDEO_CDN_BASE}/hero-vertical.mp4`,
+};
+
+const CAPTAIN_VIDEO_DEFAULTS = {
+	bettina: `${HERO_VIDEO_CDN_BASE}/captains/bettina`,
+	line: `${HERO_VIDEO_CDN_BASE}/captains/line`,
+	theresa: `${HERO_VIDEO_CDN_BASE}/captains/theresa`,
+	nina: `${HERO_VIDEO_CDN_BASE}/captains/nina`,
+	nicoline: `${HERO_VIDEO_CDN_BASE}/captains/nicoline`,
+	rikke: `${HERO_VIDEO_CDN_BASE}/captains/rikke`,
+};
+
 const homePageContent = {
 	_type: "homePage",
 	_id: "homePage",
@@ -73,6 +89,15 @@ const homePageContent = {
 			},
 		],
 		subline: "Women's 7v7 football league that combines athletic excellence with social impact.",
+		video: {
+			url: HERO_VIDEO_VARIANTS.wide,
+			credit: "Sensational League",
+			variants: {
+				wide: HERO_VIDEO_VARIANTS.wide,
+				square: HERO_VIDEO_VARIANTS.square,
+				vertical: HERO_VIDEO_VARIANTS.vertical,
+			},
+		},
 		ctaText: "JOIN →",
 		stats: [
 			{ _key: 'stat-1', value: "300+", label: "Athletes" },
@@ -131,6 +156,105 @@ const homePageContent = {
 				title: "PROFESSIONAL PAY",
 				description: "Athletes with creative control and shared value."
 			}
+		],
+	},
+	whySection: {
+		eyebrow: "Why Sensational League",
+		title: "Grow the game. Own the format.",
+		subtitle: "Women’s sports deserve purpose-built platforms.",
+		statements: [
+			{
+				title: "Visibility unlocks growth",
+				description:
+					"Women’s sports are exploding globally with record audiences, investments, and players. To unlock the full potential, we need more visibility, more media, more storytelling, and professional platforms.",
+			},
+			{
+				title: "A platform built for players",
+				description:
+					"Our vision is simple: grow women’s football by giving players the stage, tools, and platform they deserve while bringing fans, media, and brands with us.",
+			},
+			{
+				title: "Fast. Rebellious. Female.",
+				description:
+					"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven, community-first, and powered by visibility.",
+			},
+		],
+	},
+	formatSection: {
+		eyebrow: "Our format",
+		title: "Purpose-built 7v7",
+		subtitle: "Football meets a community challenge to score on and off the pitch.",
+		coreConcepts: [
+			"Eight teams led by Sensational captains compete in a fast, entertainment-driven 7v7 format.",
+			"Each team also tackles a Community Challenge—our impact scoring that rewards amplifying women’s sport.",
+			"Drafting 80 female footballers (17+) for Copenhagen 2026 with equal focus on skill, personality, and creativity.",
+			"You don’t need to play at the highest level; commitment, team spirit, and the will to grow matter most.",
+		],
+		designedFor: {
+			eyebrow: "Designed for modern players",
+			description: "Football that fits real lives: fewer but bigger gamedays, broadcast visibility, and a creator lab that backs every player.",
+			features: [
+				"Six gamedays · broadcast + live crowd",
+				"Community Challenge scoring",
+				"Creator lab + content studio",
+				"Impact storytelling with partners",
+			],
+		},
+	},
+	captainsSection: {
+		eyebrow: "Captains",
+		title: "Meet Our Captains",
+		subtitle: "Legendary leaders shaping the Sensational 80.",
+		intro: "Six icons of Danish football bring elite experience, cultural impact, and unstoppable energy to the league.",
+		captains: [
+			{
+				name: "Bettina Falk",
+				tagline: "Defender • 5x Danish Champion • Brøndby Legend",
+				summary: "Led club and country with grit before reshaping how cities move and play. 56 caps for Denmark plus five titles with Brøndby.",
+				superpower: "Reading the game and speed",
+				oneLiner: "Brøndby Legend x 56 Caps",
+				videoUrl: CAPTAIN_VIDEO_DEFAULTS.bettina,
+			},
+			{
+				name: "Line Røddik Hansen",
+				tagline: "Defender • Lyon, FC Barcelona & Denmark",
+				summary: "From Birkerød to conquering Europe. 132 caps, EURO silver, and a career across Lyon, Barça, Ajax, and more.",
+				superpower: "Calm under chaos",
+				oneLiner: "132 Caps x Lyon, Barca",
+				videoUrl: CAPTAIN_VIDEO_DEFAULTS.line,
+			},
+			{
+				name: "Theresa Eslund",
+				tagline: "Right Back • 133 Caps • UEFA EURO 2017 Best XI",
+				summary: "Starred across Norway, USA, Australia, and Denmark—selected for the UEFA EURO 2017 Best XI.",
+				superpower: "Relentless drive",
+				oneLiner: "133 Caps · UEFA EURO 2017 BEST XI",
+				videoUrl: CAPTAIN_VIDEO_DEFAULTS.theresa,
+			},
+			{
+				name: "Nina Frausing Pedersen",
+				tagline: "Defender • Liverpool & Fortuna Hjørring",
+				summary: "International across Denmark, Sweden, Germany, England, and Australia—while earning a PhD.",
+				superpower: "Perseverance",
+				oneLiner: "National Caps x Liverpool, Fortuna Hjørring, Brøndby",
+				videoUrl: CAPTAIN_VIDEO_DEFAULTS.nina,
+			},
+			{
+				name: "Nicoline Sørensen",
+				tagline: "Forward • Everton & Brøndby • Denmark International",
+				summary: "One of Denmark’s most electric attackers with 100+ club games and national TV commentary chops.",
+				superpower: "Instant change of pace",
+				oneLiner: "54 Caps x Everton striker",
+				videoUrl: CAPTAIN_VIDEO_DEFAULTS.nicoline,
+			},
+			{
+				name: "Rikke Sevecke",
+				tagline: "Defender • Everton & Portland Thorns",
+				summary: "Modern centre-back dominating in Denmark, France, England, and the NWSL—now advocating athlete heart health.",
+				superpower: "Strength with purpose",
+				oneLiner: "54 Caps x Everton, Portland Thorns",
+				videoUrl: CAPTAIN_VIDEO_DEFAULTS.rikke,
+			},
 		],
 	},
 	impact: {

@@ -162,30 +162,6 @@ export const playerDraftPage = defineType({
 			],
 		}),
 		defineField({
-			name: "whySection",
-			type: "object",
-			title: "Why Sensational",
-			fields: [
-				{ name: "eyebrow", type: "string", title: "Eyebrow" },
-				{ name: "title", type: "string", title: "Title" },
-				{ name: "subtitle", type: "text", title: "Subtitle", rows: 3 },
-				defineField({
-					name: "statements",
-					type: "array",
-					title: "Statements",
-					of: [
-						{
-							type: "object",
-							fields: [
-								{ name: "title", type: "string", title: "Title" },
-								{ name: "description", type: "text", title: "Description", rows: 3 },
-							],
-						},
-					],
-				}),
-			],
-		}),
-		defineField({
 			name: "participationSection",
 			type: "object",
 			title: "Participation",
@@ -216,36 +192,6 @@ export const playerDraftPage = defineType({
 						{ name: "title", type: "string", title: "Title", initialValue: "Tools you get" },
 						defineField({
 							name: "items",
-							type: "array",
-							of: [{ type: "string" }],
-						}),
-					],
-				}),
-			],
-		}),
-		defineField({
-			name: "formatSection",
-			type: "object",
-			title: "Format",
-			fields: [
-				{ name: "eyebrow", type: "string", title: "Eyebrow" },
-				{ name: "title", type: "string", title: "Title" },
-				{ name: "subtitle", type: "text", title: "Subtitle", rows: 3 },
-				defineField({
-					name: "coreConcepts",
-					type: "array",
-					title: "Core concepts",
-					of: [{ type: "text" }],
-				}),
-				defineField({
-					name: "designedFor",
-					type: "object",
-					title: "Designed for card",
-					fields: [
-						{ name: "eyebrow", type: "string", title: "Eyebrow", initialValue: "Designed for modern players" },
-						{ name: "description", type: "text", title: "Description", rows: 3 },
-						defineField({
-							name: "features",
 							type: "array",
 							of: [{ type: "string" }],
 						}),

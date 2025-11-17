@@ -36,6 +36,7 @@ export default function Header({ settings }: HeaderProps) {
 	const defaultLinks = [
 		{ href: "/#about", label: "About" },
 		{ href: "/player-draft", label: "Draft" },
+		{ href: "/#captains", label: "Captains" },
 		{ href: "/press", label: "News" },
 	];
 

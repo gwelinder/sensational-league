@@ -115,16 +115,20 @@ export async function generateStaticParams() {
 	);
 }
 
+
+type SlugParams = { slug: string };
+
 export async function generateMetadata({
 	params,
 }: {
-	params: { slug: string };
+	params: Promise<SlugParams> | SlugParams;
 }): Promise<Metadata> {
-	if (!params.slug || RESERVED_SLUGS.has(params.slug)) {
+	const resolvedParams = await params;
+	if (!resolvedParams.slug || RESERVED_SLUGS.has(resolvedParams.slug)) {
 		return {};
 	}
 
-	const page = await getPageBySlug(params.slug);
+	const page = await getPageBySlug(resolvedParams.slug);
 	if (!page) {
 		return {};
 	}
@@ -142,9 +146,10 @@ export async function generateMetadata({
 export default async function MarketingPage({
 	params,
 }: {
-	params: { slug: string };
+	params: Promise<SlugParams> | SlugParams;
 }) {
-	const slug = params.slug;
+	const resolvedParams = await params;
+	const slug = resolvedParams.slug;
 	if (!slug || RESERVED_SLUGS.has(slug)) {
 		notFound();
 	}

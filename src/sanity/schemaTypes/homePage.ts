@@ -119,6 +119,17 @@ export const homePage = defineType({
               title: 'Video Credit',
               description: 'Optional credit line (e.g., "Film by Foldager")',
             },
+            {
+              name: 'variants',
+              type: 'object',
+              title: 'Video Variants',
+              description: 'Optional device-specific URLs (desktop/tablet/mobile) for MP4/WebM sources',
+              fields: [
+                { name: 'wide', type: 'url', title: 'Desktop / Wide URL' },
+                { name: 'square', type: 'url', title: 'Tablet / Square URL' },
+                { name: 'vertical', type: 'url', title: 'Mobile / Vertical URL' },
+              ],
+            },
           ],
         },
         {
@@ -339,6 +350,103 @@ export const homePage = defineType({
             { name: 'body', type: 'text', rows: 3, title: 'Body' },
           ],
         },
+      ],
+    }),
+    defineField({
+      name: 'whySection',
+      type: 'object',
+      title: 'Why Sensational Section',
+      fields: [
+        { name: 'eyebrow', type: 'string', title: 'Eyebrow' },
+        { name: 'title', type: 'string', title: 'Title' },
+        { name: 'subtitle', type: 'text', title: 'Subtitle', rows: 3 },
+        defineField({
+          name: 'statements',
+          type: 'array',
+          title: 'Statements',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'title', type: 'string', title: 'Title' },
+                { name: 'description', type: 'text', title: 'Description', rows: 3 },
+              ],
+            },
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: 'formatSection',
+      type: 'object',
+      title: 'Format Section',
+      fields: [
+        { name: 'eyebrow', type: 'string', title: 'Eyebrow' },
+        { name: 'title', type: 'string', title: 'Title' },
+        { name: 'subtitle', type: 'text', title: 'Subtitle', rows: 3 },
+        defineField({
+          name: 'coreConcepts',
+          type: 'array',
+          title: 'Core Concepts',
+          of: [{ type: 'text' }],
+        }),
+        defineField({
+          name: 'designedFor',
+          type: 'object',
+          title: 'Designed For Card',
+          fields: [
+            { name: 'eyebrow', type: 'string', title: 'Eyebrow', initialValue: 'Designed for modern players' },
+            { name: 'description', type: 'text', title: 'Description', rows: 3 },
+            defineField({
+              name: 'features',
+              type: 'array',
+              of: [{ type: 'string' }],
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: 'captainsSection',
+      type: 'object',
+      title: 'Captains Section',
+      fields: [
+        { name: 'eyebrow', type: 'string', title: 'Eyebrow', initialValue: 'Captains' },
+        { name: 'title', type: 'string', title: 'Title', initialValue: 'Meet Our Captains' },
+        { name: 'subtitle', type: 'text', title: 'Subtitle', rows: 3 },
+        { name: 'intro', type: 'text', title: 'Intro text', rows: 3 },
+        defineField({
+          name: 'captains',
+          type: 'array',
+          title: 'Captains',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'name', type: 'string', title: 'Name' },
+                { name: 'tagline', type: 'string', title: 'Tagline' },
+                { name: 'summary', type: 'text', title: 'Summary', rows: 3 },
+                { name: 'superpower', type: 'string', title: 'Superpower' },
+                { name: 'oneLiner', type: 'string', title: 'One-sentence highlight' },
+                { name: 'bio', type: 'text', title: 'Longer bio', rows: 4 },
+                {
+                  name: 'photo',
+                  type: 'image',
+                  title: 'Photo',
+                  options: { hotspot: true },
+                  fields: [{ name: 'alt', type: 'string', title: 'Alt text' }],
+                },
+                {
+                  name: 'videoUrl',
+                  type: 'url',
+                  title: 'Intro Video URL',
+                  description: 'MP4 or CDN URL served via Cloudflare R2/Worker',
+                },
+              ],
+            },
+          ],
+          validation: (Rule) => Rule.min(1),
+        }),
       ],
     }),
     defineField({

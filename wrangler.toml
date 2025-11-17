@@ -1,0 +1,9 @@
+name = "sensational-hero-video"
+main = "cloudflare/hero-video-worker.ts"
+compatibility_date = "2024-11-17"
+account_id = "b8f2c66f1848dff476faa874282d781e"
+
+[[r2_buckets]]
+binding = "HERO_VIDEOS"
+bucket_name = "sensational-hero-videos"
+preview_bucket_name = "sensational-hero-videos"

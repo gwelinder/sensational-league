@@ -13,6 +13,27 @@ interface Pillar {
 	description: string;
 }
 
+interface Statement {
+	title?: string;
+	description?: string;
+}
+
+interface DesignedForCard {
+	eyebrow?: string;
+	description?: string;
+	features?: string[];
+}
+
+interface CaptainCard {
+	name?: string;
+	tagline?: string;
+	summary?: string;
+	superpower?: string;
+	oneLiner?: string;
+	photo?: SanityImage;
+	videoUrl?: string;
+}
+
 interface SanityImage {
 	asset?: {
 		_ref?: string;
@@ -45,6 +66,11 @@ interface HomePageContent {
 			url?: string;
 			poster?: SanityImage;
 			credit?: string;
+			variants?: {
+				wide?: string;
+				square?: string;
+				vertical?: string;
+			};
 		};
 		subline?: string;
 		ctaText?: string;
@@ -67,6 +93,26 @@ interface HomePageContent {
 			title?: string;
 			body?: string;
 		};
+	};
+	whySection?: {
+		eyebrow?: string;
+		title?: string;
+		subtitle?: string;
+		statements?: Statement[];
+	};
+	formatSection?: {
+		eyebrow?: string;
+		title?: string;
+		subtitle?: string;
+		coreConcepts?: string[];
+		designedFor?: DesignedForCard;
+	};
+	captainsSection?: {
+		eyebrow?: string;
+		title?: string;
+		subtitle?: string;
+		intro?: string;
+		captains?: CaptainCard[];
 	};
 	pressCta?: {
 		label?: string;
@@ -129,7 +175,12 @@ async function getHomePageData(): Promise<HomePageContent | null> {
             height,
             objectFit
           },
-          credit
+          credit,
+          variants {
+            wide,
+            square,
+            vertical
+          }
         },
         subline,
         ctaText,
@@ -163,6 +214,47 @@ async function getHomePageData(): Promise<HomePageContent | null> {
         infoCard {
           title,
           body
+        }
+      },
+      whySection {
+        eyebrow,
+        title,
+        subtitle,
+        statements[] {
+          title,
+          description
+        }
+      },
+      formatSection {
+        eyebrow,
+        title,
+        subtitle,
+        coreConcepts,
+        designedFor {
+          eyebrow,
+          description,
+          features
+        }
+      },
+      captainsSection {
+        eyebrow,
+        title,
+        subtitle,
+        intro,
+        captains[] {
+          name,
+          tagline,
+          summary,
+          superpower,
+          oneLiner,
+          videoUrl,
+          photo {
+            asset,
+            alt,
+            width,
+            height,
+            objectFit
+          }
         }
       },
       pressCta {

@@ -1,8 +1,8 @@
+import { createDataAttribute } from "@sanity/visual-editing";
+import { draftMode } from "next/headers";
 import CountdownTicker from "@/components/CountdownTicker";
 import { Logo } from "@/components/Logo";
 import TypeformApplyButton from "@/components/TypeformApplyButton";
-import { createDataAttribute } from "@sanity/visual-editing";
-import { draftMode } from "next/headers";
 import { sanityFetch } from "@/sanity/lib/live";
 
 const DEFAULT_FORM_ID = "ZmJZ6YB2";
@@ -16,7 +16,7 @@ const DEFAULT_PAGE_DESCRIPTION =
 const DEFAULT_HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_HERO_HEADLINE = "Join the Sensational 80";
 const DEFAULT_HERO_DESCRIPTION =
-	"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football. Submit your application.";
+	"We’re recruiting 80 footballers to launch Sensational League. Captains are looking for players who can compete, create, and grow women’s football.";
 const DEFAULT_APPLICATION_HELPER_TEXT =
 	"Captains review weekly. Early submissions are encouraged so your profile is in the first batch.";
 const DEFAULT_FINAL_CTA_HELPER =
@@ -25,7 +25,6 @@ const DEFAULT_FINAL_CTA_HELPER =
 const DEFAULT_HERO_NAV_BUTTONS = [
 	{ label: "How it works", href: "#how-it-works" },
 	{ label: "Timeline", href: "#timeline" },
-	{ label: "Why Sensational?", href: "#why" },
 	{ label: "FAQ", href: "#faq" },
 ];
 
@@ -47,38 +46,6 @@ const DEFAULT_APPLICATION_SNAPSHOT = [
 const DEFAULT_LEAGUE_INTRO_PARAGRAPHS = [
 	"Sensational League is an international 7v7 professional women’s football league launching its first season in Copenhagen in April 2026, before expanding to the UK and the US.",
 	"Eight teams. Legendary captains. High-tempo matches. Festival-style game days. A sports entertainment format built for modern players and modern audiences.",
-];
-
-const DEFAULT_WHY_STATEMENTS = [
-	{
-		title: "Visibility unlocks growth",
-		description:
-			"Women’s sports are exploding globally: record audiences, record investments, world-class players, and a cultural shift we’ve never seen before. To unlock the full potential, we need more visibility, more media, more storytelling, and more professional platforms.",
-	},
-	{
-		title: "A platform built for players",
-		description:
-			"The Sensational vision is simple: Grow women’s football by giving players the stage, the tools, and the platform they deserve while bringing fans, media, and brands with us.",
-	},
-	{
-		title: "Fast. Rebellious. Female.",
-		description:
-			"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven and community-first. Powered by content and visibility.",
-	},
-];
-
-const DEFAULT_FORMAT_HIGHLIGHTS = [
-	"The League features eight teams, each led by a Sensational captain, competing in a fast, entertainment-driven 7v7 format.",
-	"Each team also competes in a Community Challenge—our impact element where players earn points by amplifying women’s sport. This is where sport and purpose meet.",
-	"We’ve opened the draft to select 80 female footballers (17+) for our inaugural season. All positions are welcome—we’re building teams with skill, creativity, balance, and personality.",
-	"You don’t need to play at the highest level; commitment, love for the game, team spirit, and the will to grow are what matter most.",
-];
-
-const DEFAULT_FORMAT_FEATURES = [
-	"Six gamedays · broadcast + live crowd",
-	"Community Challenge scoring",
-	"Creator lab + content studio",
-	"Impact storytelling with partners",
 ];
 
 const DEFAULT_DRAFT_STEPS = [
@@ -106,7 +73,8 @@ const DEFAULT_DRAFT_STEPS = [
 
 const DEFAULT_DRAFT_CTA = {
 	eyebrow: "Ready to apply?",
-	title: "If you’re a female footballer ready for a new kind of league, start now.",
+	title:
+		"If you’re a female footballer ready for a new kind of league, start now.",
 	helper: DEFAULT_FINAL_CTA_HELPER,
 	ctaText: "Apply here",
 	ctaLink: DEFAULT_TYPEFORM_URL,
@@ -199,7 +167,7 @@ const DEFAULT_IMPACT_PILLARS = [
 	{
 		title: "Performance",
 		description:
-			"High-tempo 7v7 football fronted by legendary captains and creator-grade coaching.",
+			"High-tempo 7v7 football fronted by legendary captains and powered by creator-grade coaching.",
 	},
 	{
 		title: "Visibility",
@@ -213,32 +181,29 @@ const DEFAULT_IMPACT_PILLARS = [
 	},
 	{
 		title: "Opportunity",
-		description:
-			"Paid match days and commercial spotlights.",
+		description: "Paid match days and commercial spotlights.",
 	},
 ];
 
 const DEFAULT_TIMELINE_EYEBROW = "Launch timeline";
 const DEFAULT_TIMELINE_TITLE = "Season roadmap";
-const DEFAULT_TIMELINE_SUBTITLE = "Everything between the application window and kickoff.";
+const DEFAULT_TIMELINE_SUBTITLE =
+	"Everything between the application window and kickoff.";
 const DEFAULT_ABOUT_EYEBROW = "About the league & player draft";
 const DEFAULT_ABOUT_TITLE = "Fast. Rebellious. Female.";
-const DEFAULT_ABOUT_SUBTITLE = "International 7v7 built for storyteller-athletes.";
-const DEFAULT_WHY_EYEBROW = "Why Sensational League";
-const DEFAULT_WHY_TITLE = "Grow the game. Own the format.";
-const DEFAULT_WHY_SUBTITLE = "Women’s sports deserve purpose-built platforms.";
-const DEFAULT_FORMAT_EYEBROW = "Our format";
-const DEFAULT_FORMAT_TITLE = "Purpose-built 7v7";
-const DEFAULT_FORMAT_SUBTITLE = "Football meets a community challenge to score on and off the pitch.";
+const DEFAULT_ABOUT_SUBTITLE =
+	"International 7v7 built for storyteller-athletes.";
 const DEFAULT_DRAFT_EYEBROW = "How the player draft works";
 const DEFAULT_DRAFT_TITLE = "Four moves to join";
-const DEFAULT_DRAFT_SUBTITLE = "Deadline: January 1, 2026 — early applications reviewed weekly.";
+const DEFAULT_DRAFT_SUBTITLE =
+	"Deadline: January 1, 2026 — early applications reviewed weekly.";
 const DEFAULT_FAQ_EYEBROW = "FAQ";
-const DEFAULT_FAQ_TITLE = "Player Draft 2025–26";
-const DEFAULT_FAQ_SUBTITLE = "Answers before you hit submit.";
+const DEFAULT_FAQ_TITLE = "Frequently asked questions";
+const DEFAULT_FAQ_SUBTITLE = "The essentials you need to know, contact us for more.";
 const DEFAULT_CONTACT_EYEBROW = "Contact";
 const DEFAULT_CONTACT_TITLE = "Need clarity?";
-const DEFAULT_CONTACT_SUBTITLE = "Reach out to the Sensational communications team.";
+const DEFAULT_CONTACT_SUBTITLE =
+	"Reach out to the Sensational communications team.";
 
 interface Highlight {
 	label?: string;
@@ -266,11 +231,6 @@ interface Pillar {
 	description?: string;
 }
 
-interface Statement {
-	title?: string;
-	description?: string;
-}
-
 interface CountdownConfig {
 	enabled?: boolean;
 	label?: string;
@@ -292,12 +252,6 @@ interface ContactItem {
 	label?: string;
 	value?: string;
 	link?: string;
-}
-
-interface DesignedForCard {
-	eyebrow?: string;
-	description?: string;
-	features?: string[];
 }
 
 interface PlayerDraftContent {
@@ -337,19 +291,6 @@ interface PlayerDraftContent {
 		subtitle?: string;
 		paragraphs?: string[];
 		pillars?: Pillar[];
-	};
-	whySection?: {
-		eyebrow?: string;
-		title?: string;
-		subtitle?: string;
-		statements?: Statement[];
-	};
-	formatSection?: {
-		eyebrow?: string;
-		title?: string;
-		subtitle?: string;
-		coreConcepts?: string[];
-		designedFor?: DesignedForCard;
 	};
 	draftStepsSection?: {
 		eyebrow?: string;
@@ -435,26 +376,6 @@ const PLAYER_DRAFT_QUERY = `*[_type == "playerDraftPage"][0] {
 		pillars[] {
 			title,
 			description
-		}
-	},
-	whySection {
-		eyebrow,
-		title,
-		subtitle,
-		statements[] {
-			title,
-			description
-		}
-	},
-	formatSection {
-		eyebrow,
-		title,
-		subtitle,
-		coreConcepts,
-		designedFor {
-			eyebrow,
-			description,
-			features
 		}
 	},
 	draftStepsSection {
@@ -547,11 +468,7 @@ function SectionHeader({
 	);
 }
 
-function PlayerDraftPageContent({
-	content,
-}: {
-	content?: PlayerDraftContent;
-}) {
+function PlayerDraftPageContent({ content }: { content?: PlayerDraftContent }) {
 	const heroNavButtons = content?.hero?.navButtons?.length
 		? content.hero.navButtons
 		: DEFAULT_HERO_NAV_BUTTONS;
@@ -564,13 +481,15 @@ function PlayerDraftPageContent({
 	const heroDescription =
 		content?.hero?.description || DEFAULT_HERO_DESCRIPTION;
 	const heroApplication = content?.hero?.application;
-	const heroApplicationEyebrow = heroApplication?.eyebrow || "Player draft window";
+	const heroApplicationEyebrow =
+		heroApplication?.eyebrow || "Player draft window";
 	const heroApplicationTitle =
 		heroApplication?.title || "Applications close Jan 1, 2026";
 	const heroApplicationHelperText =
 		heroApplication?.helperText || DEFAULT_APPLICATION_HELPER_TEXT;
 	const heroApplicationDeadlineLabel = heroApplication?.deadlineLabel;
-	const heroApplicationCtaText = heroApplication?.ctaText || "Start application";
+	const heroApplicationCtaText =
+		heroApplication?.ctaText || "Start application";
 	const heroApplicationCtaLink =
 		heroApplication?.ctaLink || DEFAULT_TYPEFORM_URL;
 	const heroSnapshotItems = heroApplication?.snapshotItems?.length
@@ -588,8 +507,7 @@ function PlayerDraftPageContent({
 	const timelineMilestones = timelineSection?.milestones?.length
 		? timelineSection.milestones
 		: DEFAULT_TIMELINE_MILESTONES;
-	const timelineEyebrow =
-		timelineSection?.eyebrow || DEFAULT_TIMELINE_EYEBROW;
+	const timelineEyebrow = timelineSection?.eyebrow || DEFAULT_TIMELINE_EYEBROW;
 	const timelineTitle = timelineSection?.title || DEFAULT_TIMELINE_TITLE;
 	const timelineSubtitle =
 		timelineSection?.subtitle || DEFAULT_TIMELINE_SUBTITLE;
@@ -604,37 +522,6 @@ function PlayerDraftPageContent({
 	const impactPillars = aboutSection?.pillars?.length
 		? aboutSection.pillars
 		: DEFAULT_IMPACT_PILLARS;
-
-	const whySection = content?.whySection;
-	const whyEyebrow = whySection?.eyebrow || DEFAULT_WHY_EYEBROW;
-	const whyTitle = whySection?.title || DEFAULT_WHY_TITLE;
-	const whySubtitle = whySection?.subtitle || DEFAULT_WHY_SUBTITLE;
-	const whyStatements = whySection?.statements?.length
-		? whySection.statements
-		: DEFAULT_WHY_STATEMENTS;
-
-
-	const formatSection = content?.formatSection;
-	const formatEyebrow = formatSection?.eyebrow || DEFAULT_FORMAT_EYEBROW;
-	const formatTitle = formatSection?.title || DEFAULT_FORMAT_TITLE;
-	const formatSubtitle =
-		formatSection?.subtitle || DEFAULT_FORMAT_SUBTITLE;
-	const formatHighlights = formatSection?.coreConcepts?.length
-		? formatSection.coreConcepts
-		: DEFAULT_FORMAT_HIGHLIGHTS;
-	const formatGridHighlights = formatHighlights.slice(0, 3);
-	const designedFor = {
-		eyebrow:
-			formatSection?.designedFor?.eyebrow || "Designed for modern players",
-		description:
-			formatSection?.designedFor?.description ||
-			formatHighlights[3] ||
-			DEFAULT_FORMAT_HIGHLIGHTS[3],
-		features:
-			formatSection?.designedFor?.features?.length
-				? formatSection.designedFor.features
-				: DEFAULT_FORMAT_FEATURES,
-	};
 
 	const draftSection = content?.draftStepsSection;
 	const draftEyebrow = draftSection?.eyebrow || DEFAULT_DRAFT_EYEBROW;
@@ -661,11 +548,9 @@ function PlayerDraftPageContent({
 		: DEFAULT_FAQ_ITEMS;
 
 	const contactSection = content?.contactSection;
-	const contactEyebrow =
-		contactSection?.eyebrow || DEFAULT_CONTACT_EYEBROW;
+	const contactEyebrow = contactSection?.eyebrow || DEFAULT_CONTACT_EYEBROW;
 	const contactTitle = contactSection?.title || DEFAULT_CONTACT_TITLE;
-	const contactSubtitle =
-		contactSection?.subtitle || DEFAULT_CONTACT_SUBTITLE;
+	const contactSubtitle = contactSection?.subtitle || DEFAULT_CONTACT_SUBTITLE;
 	const contacts = contactSection?.contacts?.length
 		? contactSection.contacts
 		: DEFAULT_CONTACTS;
@@ -677,12 +562,7 @@ function PlayerDraftPageContent({
 	);
 	const timelineDataAttribute = getDataAttribute(content, "timeline");
 	const aboutDataAttribute = getDataAttribute(content, "about");
-	const whyDataAttribute = getDataAttribute(content, "whySection");
-	const formatDataAttribute = getDataAttribute(content, "formatSection");
-	const draftDataAttribute = getDataAttribute(
-		content,
-		"draftStepsSection",
-	);
+	const draftDataAttribute = getDataAttribute(content, "draftStepsSection");
 	const faqDataAttribute = getDataAttribute(content, "faqSection");
 	const contactDataAttribute = getDataAttribute(content, "contactSection");
 
@@ -770,7 +650,10 @@ function PlayerDraftPageContent({
 						) : null}
 						<ul className="mt-6 space-y-4">
 							{heroSnapshotItems.map((item, index) => (
-								<li key={`${item.label ?? item.value ?? index}`} className="flex flex-col gap-1">
+								<li
+									key={`${item.label ?? item.value ?? index}`}
+									className="flex flex-col gap-1"
+								>
 									<span className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
 										{item.label}
 									</span>
@@ -826,7 +709,10 @@ function PlayerDraftPageContent({
 							{timelineSubtitle}
 						</p>
 						<div className="relative rounded-[32px] border border-black/10 bg-white p-6">
-							<div className="absolute left-10 top-14 bottom-10 w-px bg-black/10" aria-hidden />
+							<div
+								className="absolute left-10 top-14 bottom-10 w-px bg-black/10"
+								aria-hidden
+							/>
 							<ul className="space-y-10">
 								{timelineMilestones.map((milestone) => (
 									<li key={milestone.period} className="relative pl-16">
@@ -875,72 +761,10 @@ function PlayerDraftPageContent({
 				</div>
 			</section>
 			<section
-				id="why"
-				className="bg-black px-4 py-16 text-white sm:px-6"
-				data-sanity={whyDataAttribute}
+				className="px-4 py-16 sm:px-6"
+				id="how-it-works"
+				data-sanity={draftDataAttribute}
 			>
-				<div className="mx-auto max-w-6xl space-y-10">
-					<SectionHeader
-						eyebrow={whyEyebrow}
-						title={whyTitle}
-						subtitle={whySubtitle}
-						invert
-					/>
-					<div className="divide-y divide-white/15 border-t border-white/15">
-						{whyStatements.map((statement) => (
-							<div
-								key={statement.title}
-								className="grid gap-6 py-6 md:grid-cols-[0.4fr_1fr]"
-							>
-								<p className="text-sm font-black uppercase tracking-[0.35em] text-[var(--color-volt)]">
-									{statement.title}
-								</p>
-								<p className="brand-body text-base text-white/80">
-									{statement.description}
-								</p>
-							</div>
-						))}
-					</div>
-				</div>
-			</section>
-			<section id="format" className="px-4 py-16 sm:px-6" data-sanity={formatDataAttribute}>
-				<div className="mx-auto max-w-6xl space-y-12">
-					<SectionHeader
-						eyebrow={formatEyebrow}
-						title={formatTitle}
-						subtitle={formatSubtitle}
-					/>
-					<div className="grid gap-6 md:grid-cols-3">
-						{formatGridHighlights.map((highlight, index) => (
-							<div
-								key={highlight}
-								className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)]"
-							>
-								<span className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
-									Core concept {index + 1}
-								</span>
-								<p className="brand-body mt-2 text-base text-black/85">
-									{highlight}
-								</p>
-							</div>
-						))}
-					</div>
-					<div className="rounded-[36px] border border-black/10 bg-black p-8 text-white shadow-[18px_18px_0px_rgba(35,35,36,1)]">
-						<p className="text-sm font-black uppercase tracking-[0.35em] text-white/70">
-							{designedFor.eyebrow}
-						</p>
-						<p className="brand-body mt-4 text-base text-white/80">
-							{designedFor.description}
-						</p>
-						<ul className="mt-6 grid gap-3 text-sm font-black uppercase tracking-[0.15em] md:grid-cols-2">
-							{designedFor.features?.map((feature, index) => (
-								<li key={`${feature}-${index}`}>{feature}</li>
-							))}
-						</ul>
-					</div>
-				</div>
-			</section>
-			<section className="px-4 py-16 sm:px-6" id="how-it-works" data-sanity={draftDataAttribute}>
 				<div className="mx-auto max-w-6xl space-y-12">
 					<SectionHeader
 						eyebrow={draftEyebrow}
@@ -993,12 +817,18 @@ function PlayerDraftPageContent({
 							</TypeformApplyButton>
 						</div>
 						{finalCtaHelper && (
-							<p className="brand-body mt-4 text-sm text-white/70">{finalCtaHelper}</p>
+							<p className="brand-body mt-4 text-sm text-white/70">
+								{finalCtaHelper}
+							</p>
 						)}
 					</div>
 				</div>
 			</section>
-			<section id="faq" className="bg-black px-4 py-16 text-white sm:px-6" data-sanity={faqDataAttribute}>
+			<section
+				id="faq"
+				className="bg-black px-4 py-16 text-white sm:px-6"
+				data-sanity={faqDataAttribute}
+			>
 				<div className="mx-auto max-w-6xl space-y-10">
 					<SectionHeader
 						eyebrow={faqEyebrow}
@@ -1023,7 +853,10 @@ function PlayerDraftPageContent({
 					</div>
 				</div>
 			</section>
-			<section className="px-4 py-16 sm:px-6" data-sanity={contactDataAttribute}>
+			<section
+				className="px-4 py-16 sm:px-6"
+				data-sanity={contactDataAttribute}
+			>
 				<div className="mx-auto max-w-4xl space-y-6">
 					<SectionHeader
 						eyebrow={contactEyebrow}
@@ -1074,8 +907,7 @@ export async function generateMetadata() {
 	const content = await getPlayerDraftPageData();
 	return {
 		title: content?.seo?.metaTitle || DEFAULT_PAGE_TITLE,
-		description:
-			content?.seo?.metaDescription || DEFAULT_PAGE_DESCRIPTION,
+		description: content?.seo?.metaDescription || DEFAULT_PAGE_DESCRIPTION,
 	};
 }
 

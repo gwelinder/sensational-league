@@ -3,13 +3,13 @@
 import type { PortableTextBlock } from "@portabletext/types";
 import { createDataAttribute } from "@sanity/visual-editing";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatedSpark } from "@/components/Logo";
 import { SectionsRenderer } from "@/components/SectionsRenderer";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
 import TypeformApplyButton from "@/components/TypeformApplyButton";
 import TypeformWidget from "@/components/TypeformWidget";
-import { getImageProps, getImageUrl } from "@/lib/sanity-image";
+import { getImageUrl } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
 
 interface Stat {
@@ -20,6 +20,28 @@ interface Stat {
 interface Pillar {
 	title: string;
 	description: string;
+}
+
+interface Statement {
+	title?: string;
+	description?: string;
+}
+
+interface FormatDesignedFor {
+	eyebrow?: string;
+	description?: string;
+	features?: string[];
+}
+
+interface CaptainCard {
+	name?: string;
+	tagline?: string;
+	summary?: string;
+	superpower?: string;
+	oneLiner?: string;
+	bio?: string;
+	photo?: SanityImage;
+	videoUrl?: string;
 }
 
 interface SanityImage {
@@ -57,6 +79,11 @@ interface HomePageProps {
 				url?: string;
 				poster?: SanityImage;
 				credit?: string;
+				variants?: {
+					wide?: string;
+					square?: string;
+					vertical?: string;
+				};
 			};
 			subline?: string;
 			ctaText?: string;
@@ -107,6 +134,26 @@ interface HomePageProps {
 			};
 		};
 		sections?: PageSection[];
+		whySection?: {
+			eyebrow?: string;
+			title?: string;
+			subtitle?: string;
+			statements?: Statement[];
+		};
+		formatSection?: {
+			eyebrow?: string;
+			title?: string;
+			subtitle?: string;
+			coreConcepts?: string[];
+			designedFor?: FormatDesignedFor;
+		};
+		captainsSection?: {
+			eyebrow?: string;
+			title?: string;
+			subtitle?: string;
+			intro?: string;
+			captains?: CaptainCard[];
+		};
 	};
 }
 
@@ -129,8 +176,14 @@ const HERO_SUBLINE_DEFAULT =
 const HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_EMBED_DESCRIPTION =
 	"Submit your application below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
-const DEFAULT_HERO_VIDEO_URL =
-	"https://www.youtube.com/watch?v=kKF5wGR8Luc";
+const HERO_VIDEO_CDN_BASE =
+	"https://sensational-hero-video.generaite.workers.dev";
+const HERO_VIDEO_VARIANTS_DEFAULT = {
+	wide: `${HERO_VIDEO_CDN_BASE}/hero-wide.mp4`,
+	square: `${HERO_VIDEO_CDN_BASE}/hero-square.mp4`,
+	vertical: `${HERO_VIDEO_CDN_BASE}/hero-vertical.mp4`,
+};
+const DEFAULT_HERO_VIDEO_URL = HERO_VIDEO_VARIANTS_DEFAULT.wide;
 const DEFAULT_HERO_VIDEO_POSTER = "/logos/image_046_page_39.jpeg";
 const DEFAULT_EMBED_BULLETS = [
 	"Share your football profile, background, and ambitions",
@@ -140,9 +193,132 @@ const DEFAULT_EMBED_BULLETS = [
 const DEFAULT_EMBED_DEADLINE_NOTE =
 	"Deadline: January 1, 2026 – but we encourage early applications as spots are limited to 80 players.";
 
+const DEFAULT_WHY_SECTION = {
+	eyebrow: "Why Sensational League",
+	title: "Grow the game. Own the format.",
+	subtitle: "Women’s sports deserve purpose-built platforms.",
+	statements: [
+		{
+			title: "Visibility unlocks growth",
+			description:
+				"Women’s sports are exploding globally with record audiences, investments, and players. To unlock the full potential, we need more visibility, media, storytelling, and professional platforms.",
+		},
+		{
+			title: "A platform built for players",
+			description:
+				"The Sensational vision is simple: grow women’s football by giving players the stage, tools, and platform they deserve while bringing fans, media, and brands with us.",
+		},
+		{
+			title: "Fast. Rebellious. Female.",
+			description:
+				"This league is designed for the future—on our own terms. Fast. Rebellious. Female. Purpose-driven and community-first. Powered by content and visibility.",
+		},
+	],
+};
+
+const DEFAULT_FORMAT_SECTION = {
+	eyebrow: "Our format",
+	title: "Purpose-built 7v7",
+	subtitle:
+		"Football meets a community challenge to score on and off the pitch.",
+	coreConcepts: [
+		"Eight teams led by Sensational captains compete in a fast, entertainment-driven 7v7 format.",
+		"Each team also takes on a Community Challenge—our impact element where players earn points by amplifying women’s sport.",
+		"We’re drafting 80 female footballers (17+) for Copenhagen 2026. All positions welcome—we value skill, personality, and creativity.",
+		"You don’t need to play at the highest level; commitment, team spirit, and the will to grow matter most.",
+	],
+	designedFor: {
+		eyebrow: "Designed for modern players",
+		description:
+			"Football that fits real lives: fewer but bigger gamedays, broadcast visibility, and a creator lab that backs every player.",
+		features: [
+			"Six gamedays · broadcast + live crowd",
+			"Community Challenge scoring",
+			"Creator lab + content studio",
+			"Impact storytelling with partners",
+		],
+	},
+};
+
+const CAPTAIN_VIDEO_DEFAULTS = {
+	bettina: `${HERO_VIDEO_CDN_BASE}/captains/bettina`,
+	line: `${HERO_VIDEO_CDN_BASE}/captains/line`,
+	theresa: `${HERO_VIDEO_CDN_BASE}/captains/theresa`,
+	nina: `${HERO_VIDEO_CDN_BASE}/captains/nina`,
+	nicoline: `${HERO_VIDEO_CDN_BASE}/captains/nicoline`,
+	rikke: `${HERO_VIDEO_CDN_BASE}/captains/rikke`,
+};
+
+const DEFAULT_CAPTAINS_SECTION = {
+	eyebrow: "Captains",
+	title: "Meet Our Captains",
+	subtitle: "Legendary leaders turning the Sensational 80 into a movement.",
+	intro:
+		"Six icons of Danish football bring elite experience, cultural impact, and unstoppable energy to the league. Photos arrive soon—bios are ready now.",
+	captains: [
+		{
+			name: "Bettina Falk",
+			tagline: "Defender • 5x Danish Champion • Brøndby Legend",
+			summary:
+				"Led club and country with grit before reshaping how cities move and play. 56 caps for Denmark, World Cup + Euro appearances, and five titles in six seasons with Brøndby.",
+			superpower: "Reading the game and speed",
+			oneLiner: "Brøndby Legend x 56 Caps",
+			videoUrl: CAPTAIN_VIDEO_DEFAULTS.bettina,
+		},
+		{
+			name: "Line Røddik Hansen",
+			tagline: "Defender • Lyon, FC Barcelona & Denmark",
+			summary:
+				"From the boys’ team in Birkerød to conquering Europe. 132 caps, EURO silver medalist, and one of the few Danes to wear Lyon, Barça, and Ajax shirts.",
+			superpower:
+				"Calm under chaos—the cooler the crowd, the sharper the tackle.",
+			oneLiner: "132 Caps x Lyon, Barca",
+			videoUrl: CAPTAIN_VIDEO_DEFAULTS.line,
+		},
+		{
+			name: "Theresa Eslund",
+			tagline: "Right Back • 133 Caps • UEFA EURO 2017 Best XI",
+			summary:
+				"Starred across Norway, USA, Australia, and Denmark. Selected for the UEFA EURO 2017 Best XI and still runs the right side like a highway.",
+			superpower: "Relentless drive",
+			oneLiner: "133 Caps · UEFA EURO 2017 BEST XI",
+			videoUrl: CAPTAIN_VIDEO_DEFAULTS.theresa,
+		},
+		{
+			name: "Nina Frausing Pedersen",
+			tagline: "Defender • Liverpool & Fortuna Hjørring",
+			summary:
+				"International across Denmark, Sweden, Germany, England, and Australia. Played for Liverpool, Turbine Potsdam, Fortuna Hjørring, and Brøndby while earning a PhD.",
+			superpower: "Perseverance that wins both matches and PhDs",
+			oneLiner: "National Caps x Liverpool, Fortuna Hjørring, Brøndby",
+			videoUrl: CAPTAIN_VIDEO_DEFAULTS.nina,
+		},
+		{
+			name: "Nicoline Sørensen",
+			tagline: "Forward • Everton & Brøndby • Denmark International",
+			summary:
+				"One of Denmark’s most electric attackers. 100+ club games across Sweden, Denmark, and England, including 49 for Everton, plus national TV expert commentator.",
+			superpower: "Instant change of pace that flips games",
+			oneLiner: "54 Caps x Everton striker",
+			videoUrl: CAPTAIN_VIDEO_DEFAULTS.nicoline,
+		},
+		{
+			name: "Rikke Sevecke",
+			tagline: "Defender • Everton & Portland Thorns",
+			summary:
+				"Modern centre-back who dominated in Denmark, France, England, and the NWSL before advocating for athlete heart health after retirement.",
+			superpower: "Strength with purpose",
+			oneLiner: "54 Caps x Everton, Portland Thorns",
+			videoUrl: CAPTAIN_VIDEO_DEFAULTS.rikke,
+		},
+	],
+};
+
 type HeroVideoSource =
 	| { type: "youtube"; src: string }
 	| { type: "video"; src: string };
+
+type HeroVideoVariant = "wide" | "square" | "vertical";
 
 function normalizeUrl(raw?: string | null): string | null {
 	if (!raw) return null;
@@ -390,7 +566,7 @@ function HeroNewsletterSignup() {
 				<label className="sr-only" htmlFor="hero-newsletter-email">
 					Email address
 				</label>
-		<input
+				<input
 					id="hero-newsletter-email"
 					type="email"
 					value={email}
@@ -399,17 +575,17 @@ function HeroNewsletterSignup() {
 					required
 					disabled={status === "loading"}
 					className={cn(
-				"flex-1 rounded-none border-2 border-black/15 bg-white px-4 py-3 text-sm text-black",
-				"placeholder:text-black/40 focus:border-black focus:outline-none",
-				"disabled:cursor-not-allowed disabled:opacity-60",
+						"flex-1 rounded-none border-2 border-black/15 bg-white px-4 py-3 text-sm text-black",
+						"placeholder:text-black/40 focus:border-black focus:outline-none",
+						"disabled:cursor-not-allowed disabled:opacity-60",
 					)}
 				/>
-		<button
+				<button
 					type="submit"
 					disabled={status === "loading"}
 					className={cn(
-				"w-full rounded-none border-2 border-black bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white",
-				"transition-all duration-200 hover:-translate-y-0.5 hover:translate-x-0.5",
+						"w-full rounded-none border-2 border-black bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white",
+						"transition-all duration-200 hover:-translate-y-0.5 hover:translate-x-0.5",
 						"sm:w-auto",
 						status === "loading" && "opacity-70",
 					)}
@@ -417,28 +593,26 @@ function HeroNewsletterSignup() {
 					{status === "loading" ? "Sending…" : "Join newsletter"}
 				</button>
 			</div>
-	<label className="flex items-start gap-2 text-[11px] text-black/70">
+			<label className="flex items-start gap-2 text-[11px] text-black/70">
 				<input
 					type="checkbox"
 					checked={agreed}
 					onChange={(event) => setAgreed(event.target.checked)}
-			className="mt-1 h-3.5 w-3.5 cursor-pointer border border-black/40 bg-transparent text-black accent-[var(--color-volt)]"
+					className="mt-1 h-3.5 w-3.5 cursor-pointer border border-black/40 bg-transparent text-black accent-[var(--color-volt)]"
 				/>
 				<span>
 					I agree to the{" "}
-			<Link href="/privacy" className="underline text-black">
+					<Link href="/privacy" className="underline text-black">
 						privacy policy
 					</Link>
 					.
 				</span>
 			</label>
-	{status === "error" && (
-		<p className="text-xs text-red-500">{errorMessage}</p>
-	)}
-	{status === "success" && (
-		<p className="text-xs text-black">
-					Thanks! You&apos;re on the list.
-				</p>
+			{status === "error" && (
+				<p className="text-xs text-red-500">{errorMessage}</p>
+			)}
+			{status === "success" && (
+				<p className="text-xs text-black">Thanks! You&apos;re on the list.</p>
 			)}
 		</form>
 	);
@@ -469,6 +643,205 @@ function calculateCountdown(deadline?: string): CountdownParts | null {
 		seconds,
 		expired: diff === 0,
 	};
+}
+
+function getInitials(name?: string): string {
+	if (!name) return "SL";
+	return (
+		name
+			.split(" ")
+			.filter(Boolean)
+			.slice(0, 2)
+			.map((part) => part[0]?.toUpperCase() ?? "")
+			.join("") || "SL"
+	);
+}
+
+function getCaptainGradient(name?: string) {
+	const base = (name || "Sensational").split("").reduce((acc, char, index) => {
+		return acc + char.charCodeAt(0) * (index + 1);
+	}, 0);
+	const hue = base % 360;
+	const secondary = (hue + 32) % 360;
+	return `linear-gradient(135deg, hsl(${hue}, 65%, 22%), hsl(${secondary}, 70%, 12%))`;
+}
+
+function useVideoThumbnail(videoUrl?: string | null) {
+	const [thumbnail, setThumbnail] = useState<string | null>(null);
+
+	useEffect(() => {
+		const scheduleReset = () => {
+			if (typeof queueMicrotask === "function") {
+				queueMicrotask(() => setThumbnail(null));
+			} else {
+				setTimeout(() => setThumbnail(null), 0);
+			}
+		};
+
+		if (!videoUrl || typeof window === "undefined") {
+			scheduleReset();
+			return;
+		}
+
+		let cancelled = false;
+		const video = document.createElement("video");
+		video.crossOrigin = "anonymous";
+		video.muted = true;
+		video.preload = "auto";
+		video.playsInline = true;
+		video.src = videoUrl;
+
+		const cleanup = () => {
+			video.pause();
+			video.removeAttribute("src");
+			video.load();
+		};
+
+		const drawFrame = () => {
+			if (!video.videoWidth || !video.videoHeight) return;
+			const canvas = document.createElement("canvas");
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			const ctx = canvas.getContext("2d");
+			if (!ctx) return;
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			if (!cancelled) {
+				setThumbnail(canvas.toDataURL("image/jpeg", 0.85));
+			}
+		};
+
+		const handleSeeked = () => {
+			drawFrame();
+			video.removeEventListener("seeked", handleSeeked);
+			cleanup();
+		};
+
+		const handleLoaded = () => {
+			const preferredTime = 6;
+			const padding = 0.25;
+			const fallbackTime = 0.2;
+			const duration = Number.isFinite(video.duration) ? video.duration : 0;
+			if (duration && duration > preferredTime + padding) {
+				video.currentTime = Math.min(preferredTime, duration - padding);
+				return;
+			}
+			const effectiveDuration = duration > 0 ? duration : fallbackTime * 4;
+			const midpoint = effectiveDuration * 0.55;
+			const targetTime = Math.min(
+				Math.max(midpoint, fallbackTime),
+				effectiveDuration - fallbackTime,
+			);
+			video.currentTime = Number.isFinite(targetTime)
+				? targetTime
+				: fallbackTime;
+		};
+
+		const handleError = () => {
+			video.removeEventListener("seeked", handleSeeked);
+			cleanup();
+		};
+
+		video.addEventListener("loadedmetadata", handleLoaded, { once: true });
+		video.addEventListener("loadeddata", handleLoaded, { once: true });
+		video.addEventListener("seeked", handleSeeked);
+		video.addEventListener("error", handleError, { once: true });
+
+		return () => {
+			cancelled = true;
+			video.removeEventListener("seeked", handleSeeked);
+			cleanup();
+			scheduleReset();
+		};
+	}, [videoUrl]);
+
+	return thumbnail;
+}
+
+function CaptainVideoPreview({
+	videoUrl,
+	posterUrl,
+	fallbackInitials,
+}: {
+	videoUrl?: string | null;
+	posterUrl?: string;
+	fallbackInitials: string;
+}) {
+	const [isActive, setIsActive] = useState(false);
+	const videoRef = useRef<HTMLVideoElement>(null);
+	const generatedThumbnail = useVideoThumbnail(videoUrl);
+	const previewImage = posterUrl || generatedThumbnail || undefined;
+
+	const startPlayback = () => {
+		if (!videoUrl) return;
+		const instance = videoRef.current;
+		if (!instance) return;
+		instance.play().catch(() => {
+			/* no-op */
+		});
+	};
+
+	const handlePause = () => setIsActive(false);
+	const handlePlay = () => setIsActive(true);
+
+	return (
+		<div className="relative aspect-[4/3] w-full overflow-hidden rounded-[26px] border border-white/10 bg-black/60">
+			<div
+				className={cn(
+					"absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center transition-opacity duration-300",
+					isActive ? "opacity-0 pointer-events-none" : "opacity-100",
+				)}
+				style={{
+					backgroundImage: previewImage
+						? undefined
+						: getCaptainGradient(fallbackInitials),
+				}}
+			>
+				{previewImage ? (
+					<div className="absolute inset-0">
+						<img
+							src={previewImage}
+							alt="Captain preview"
+							className="h-full w-full object-cover"
+						/>
+						<div className="absolute inset-0 bg-black/35" />
+					</div>
+				) : (
+					<div className="text-5xl font-black tracking-[0.3em] text-white/70">
+						{fallbackInitials}
+					</div>
+				)}
+				{videoUrl ? (
+					<button
+						type="button"
+						onClick={startPlayback}
+						className="relative z-10 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-2 text-xs font-black uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black"
+					>
+						<span>Play film</span>
+						<span aria-hidden>▶</span>
+					</button>
+				) : null}
+			</div>
+			{videoUrl ? (
+				<video
+					ref={videoRef}
+					className={cn(
+						"absolute inset-0 h-full w-full object-cover transition-opacity duration-300",
+						isActive
+							? "opacity-100 pointer-events-auto"
+							: "opacity-0 pointer-events-none",
+					)}
+					controls
+					playsInline
+					preload="none"
+					poster={previewImage}
+					src={videoUrl}
+					onPause={handlePause}
+					onEnded={handlePause}
+					onPlay={handlePlay}
+				/>
+			) : null}
+		</div>
+	);
 }
 
 function useCountdown(deadline?: string) {
@@ -746,83 +1119,64 @@ function ApplicationEmbedSection({
 	);
 }
 
-function MediaGrid({
-	images,
-	dataAttribute,
-}: {
-	images?: SanityImage[];
-	dataAttribute?: string;
-}) {
-	const gallery = images?.slice(0, 8) ?? [];
-	const fallback = [
-		"/logos/image_046_page_39.jpeg",
-		"/logos/image_063_page_42.jpeg",
-		"/logos/image_067_page_43.jpeg",
-		"/logos/image_073_page_44.jpeg",
-	];
-
-	const cards = gallery.length
-		? gallery.map((image, index) => {
-				const imageProps = getImageProps(image, 800);
-				const keyValue =
-					(image as { _key?: string })?._key ?? `gallery-${index}`;
-				return (
-					<div
-						key={keyValue}
-						className={cn(
-							"group relative aspect-[3/4] overflow-hidden border-4 border-black",
-							"bg-white transition-all duration-500 hover:-translate-y-2 hover:translate-x-1",
-							index % 2 === 1 && "md:mt-8",
-						)}
-					>
-						<img
-							{...imageProps}
-							alt={image.alt || `Sensational League ${index + 1}`}
-							className={cn(
-								"h-full w-full transition-all duration-500",
-								"group-hover:scale-110",
-								!image.objectFit && "object-cover",
-							)}
-							style={{
-								...imageProps.style,
-								objectFit: image.objectFit || "cover",
-							}}
-						/>
-						<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-					</div>
-				);
-			})
-		: fallback.map((src, index) => (
-				<div
-					key={src}
-					className={cn(
-						"relative aspect-[3/4] overflow-hidden border-4 border-black",
-						"bg-white transition-all duration-500 hover:-translate-y-2 hover:translate-x-1",
-						index % 2 === 1 && "md:mt-8",
-					)}
-				>
-					<img
-						src={src}
-						alt={`Sensational League ${index + 1}`}
-						className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
-					/>
-					<div className="absolute inset-0 bg-gradient-to-r from-transparent to-[var(--color-volt)]/20" />
-				</div>
-			));
-
-	return (
-		<div
-			className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
-			data-sanity={dataAttribute}
-		>
-			{cards}
-		</div>
-	);
-}
-
 export default function HomePage({ content }: HomePageProps) {
 	// SanityLive component in layout.tsx handles live updates automatically
 	// No need for manual useOptimistic - it's only needed for drag and drop
+
+	const [heroVideoVariant, setHeroVideoVariant] =
+		useState<HeroVideoVariant>("wide");
+	const heroVideoSingleUrl = normalizeUrl(content?.hero?.video?.url);
+	const heroVariantOverrides = {
+		wide: normalizeUrl(content?.hero?.video?.variants?.wide ?? null),
+		square: normalizeUrl(content?.hero?.video?.variants?.square ?? null),
+		vertical: normalizeUrl(content?.hero?.video?.variants?.vertical ?? null),
+	};
+	const heroVideoUrls = {
+		wide:
+			heroVariantOverrides.wide ||
+			heroVideoSingleUrl ||
+			HERO_VIDEO_VARIANTS_DEFAULT.wide,
+		square:
+			heroVariantOverrides.square ||
+			(heroVideoSingleUrl
+				? heroVideoSingleUrl
+				: HERO_VIDEO_VARIANTS_DEFAULT.square),
+		vertical:
+			heroVariantOverrides.vertical ||
+			(heroVideoSingleUrl
+				? heroVideoSingleUrl
+				: HERO_VIDEO_VARIANTS_DEFAULT.vertical),
+	};
+	const heroVideoSourcesByVariant: Record<
+		HeroVideoVariant,
+		HeroVideoSource | null
+	> = {
+		wide: getHeroVideoSource(heroVideoUrls.wide),
+		square: getHeroVideoSource(heroVideoUrls.square),
+		vertical: getHeroVideoSource(heroVideoUrls.vertical),
+	};
+	const heroVideoSource =
+		heroVideoSourcesByVariant[heroVideoVariant] ||
+		heroVideoSourcesByVariant.wide;
+
+	useEffect(() => {
+		const determineVariant = (): HeroVideoVariant => {
+			if (typeof window === "undefined") return "wide";
+			if (window.innerWidth < 640) return "vertical";
+			if (window.innerWidth < 1100) return "square";
+			return "wide";
+		};
+
+		const handleResize = () => {
+			setHeroVideoVariant(determineVariant());
+		};
+
+		handleResize();
+		window.addEventListener("resize", handleResize);
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
 
 	// Hero section attributes
 	const heroDataAttribute = content?._id
@@ -890,6 +1244,30 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
+	const whyDataAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "whySection",
+			})
+		: undefined;
+
+	const formatDataAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "formatSection",
+			})
+		: undefined;
+
+	const captainsDataAttribute = content?._id
+		? createDataAttribute({
+				id: content._id,
+				type: content._type || "homePage",
+				path: "captainsSection",
+			})
+		: undefined;
+
 	const normalizedSections: PageSection[] = (content?.sections ?? []).map(
 		(section, index) => ({
 			...section,
@@ -930,11 +1308,11 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
-	const heroVideoSource = getHeroVideoSource(content?.hero?.video?.url);
 	const heroVideoPosterFromSanity = content?.hero?.video?.poster
 		? (getImageUrl(content.hero.video.poster, 2400) ?? undefined)
 		: undefined;
 	const heroPosterUrl = heroVideoPosterFromSanity || DEFAULT_HERO_VIDEO_POSTER;
+	const heroVideoObjectFit = heroVideoVariant === "wide" ? "contain" : "cover";
 	const heroCtaText = resolveHeroCtaText(content?.hero?.ctaText);
 	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;
 	const heroCtaDescription =
@@ -998,177 +1376,209 @@ export default function HomePage({ content }: HomePageProps) {
 		content?.about?.description ||
 		"Sensational League is an international 7v7 professional women’s football league launching April 2026 in Copenhagen before expanding across Europe and the US.";
 
+	const whySection = content?.whySection;
+	const whyEyebrow = whySection?.eyebrow || DEFAULT_WHY_SECTION.eyebrow;
+	const whyTitle = whySection?.title || DEFAULT_WHY_SECTION.title;
+	const whySubtitle = whySection?.subtitle || DEFAULT_WHY_SECTION.subtitle;
+	const whyStatements = whySection?.statements?.length
+		? whySection.statements
+		: DEFAULT_WHY_SECTION.statements;
+
+	const formatSection = content?.formatSection;
+	const formatEyebrow =
+		formatSection?.eyebrow || DEFAULT_FORMAT_SECTION.eyebrow;
+	const formatTitle = formatSection?.title || DEFAULT_FORMAT_SECTION.title;
+	const formatSubtitle =
+		formatSection?.subtitle || DEFAULT_FORMAT_SECTION.subtitle;
+	const formatConcepts = formatSection?.coreConcepts?.length
+		? formatSection.coreConcepts
+		: DEFAULT_FORMAT_SECTION.coreConcepts;
+	const designedFor = {
+		eyebrow:
+			formatSection?.designedFor?.eyebrow ||
+			DEFAULT_FORMAT_SECTION.designedFor?.eyebrow,
+		description:
+			formatSection?.designedFor?.description ||
+			DEFAULT_FORMAT_SECTION.designedFor?.description,
+		features: formatSection?.designedFor?.features?.length
+			? formatSection?.designedFor?.features
+			: DEFAULT_FORMAT_SECTION.designedFor?.features,
+	};
+
+	const captainsSection = content?.captainsSection;
+	const captainsEyebrow =
+		captainsSection?.eyebrow || DEFAULT_CAPTAINS_SECTION.eyebrow;
+	const captainsTitle =
+		captainsSection?.title || DEFAULT_CAPTAINS_SECTION.title;
+	const captainsSubtitle =
+		captainsSection?.subtitle || DEFAULT_CAPTAINS_SECTION.subtitle;
+	const captainsIntro =
+		captainsSection?.intro || DEFAULT_CAPTAINS_SECTION.intro;
+	const captainsList = captainsSection?.captains?.length
+		? captainsSection.captains
+		: DEFAULT_CAPTAINS_SECTION.captains;
+
 	return (
 		<main className="min-h-screen bg-white">
 			{/* Hero Section */}
-			<section
-				className="relative isolate overflow-hidden bg-gradient-to-b from-[#040404] via-[#0b0b0b] to-[#111111] px-4 pt-12 pb-24 text-white"
-				data-sanity={heroDataAttribute?.toString()}
-			>
-				{heroVideoSource ? (
-					<div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-						{heroVideoSource.type === "youtube" ? (
-							<iframe
-								title="Sensational League hero video"
-								src={heroVideoSource.src}
-								className="absolute inset-0"
-								style={{
-									width: "140%",
-									height: "140%",
-									top: "50%",
-									left: "50%",
-									transform: "translate(-50%, -50%)",
-									pointerEvents: "none",
-								}}
-								allow="autoplay; fullscreen; picture-in-picture"
-								allowFullScreen
-								loading="lazy"
-								referrerPolicy="strict-origin-when-cross-origin"
-							/>
-						) : (
-							<video
-								className="absolute inset-0 h-full w-full object-cover"
-								style={{ transform: "scale(1.2)" }}
-								src={heroVideoSource.src}
-								poster={heroPosterUrl}
-								autoPlay
-								muted
-								playsInline
-								loop
-							/>
-						)}
-						<div className="absolute inset-0 bg-black opacity-70 mix-blend-multiply" />
-					</div>
-				) : null}
-
-				<div
-					className="pointer-events-none absolute inset-0 opacity-45 mix-blend-screen"
-					aria-hidden="true"
-					style={{
-						background:
-							"radial-gradient(circle at 12% 12%, rgba(255,255,255,0.12), transparent 42%), radial-gradient(circle at 78% 8%, rgba(212,255,0,0.05), transparent 60%)",
-					}}
-				/>
-				<div
-					className="pointer-events-none absolute inset-x-[-15%] top-1/3 h-[40%] rounded-full bg-white/8 blur-[160px]"
-					aria-hidden="true"
-				/>
-				<div
-					className="pointer-events-none absolute inset-x-0 bottom-0 h-60 bg-gradient-to-t from-[#151515] via-[#0f0f0f]/85 to-transparent"
-					aria-hidden="true"
-				/>
-				<div
-					className="pointer-events-none absolute inset-x-0 bottom-[-140px] h-[200px] bg-gradient-to-b from-transparent via-[#0b0b0b] to-[#151515]"
-					aria-hidden="true"
-				/>
-
-
-
-				<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-12 lg:flex-row lg:items-end">
-					<div className="flex-1">
-					<img
-						src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
-						alt="Sensational League"
-						className="mb-10 w-full max-w-[760px]"
-					/>
-						<p className="brand-caption text-xs uppercase tracking-[0.4em] text-white/60">
-							{HERO_LOCATION_LABEL}
-						</p>
-
-						<p
-							className="brand-body mt-6 max-w-2xl text-lg text-white/75"
-							data-sanity={heroSublineAttribute?.toString()}
-						>
-							{content?.hero?.subline || HERO_SUBLINE_DEFAULT}
-						</p>
-
-
-
-						<HeroStats stats={content?.hero?.stats} variant="dark" />
-
-					<div className="mt-10 flex flex-wrap gap-4">
-							<Link
-								href="/player-draft"
-								className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
+		<section
+			className="relative overflow-hidden bg-[#020202] px-4 pb-24 pt-20 text-white"
+			data-sanity={heroDataAttribute?.toString()}
+		>
+			<div
+				className="pointer-events-none absolute inset-0 opacity-60"
+				style={{
+					background:
+						"radial-gradient(circle at 15% 10%, rgba(212,255,0,0.08), transparent 55%), radial-gradient(circle at 80% 6%, rgba(255,255,255,0.12), transparent 40%)",
+				}}
+			/>
+				<div className="relative mx-auto max-w-6xl">
+				<div className="rounded-[48px] border border-white/5 bg-[#040404] p-10 shadow-[0_30px_120px_rgba(0,0,0,0.55)]">
+						<div className="grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_380px]">
+							<div className="space-y-8">
+								<div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/60 px-5 py-2 text-[0.65rem] font-black uppercase tracking-[0.35em]">
+									<span>Copenhagen</span>
+									<span>Season 01</span>
+								</div>
+								<img
+									src="/logos/SL-LOCKUP-WITH-TAGLINE.svg"
+									alt="Sensational League"
+									className="w-full max-w-[420px] drop-shadow-[0_18px_60px_rgba(0,0,0,0.65)]"
+								/>
+								<p className="brand-caption text-xs uppercase tracking-[0.4em] text-white/70">
+									{HERO_LOCATION_LABEL}
+								</p>
+								<p
+									className="brand-body max-w-2xl text-base text-white/85"
+									data-sanity={heroSublineAttribute?.toString()}
+								>
+									{content?.hero?.subline || HERO_SUBLINE_DEFAULT}
+								</p>
+								<HeroStats stats={content?.hero?.stats} variant="dark" />
+								<div className="flex flex-wrap gap-4">
+									<Link
+										href="/player-draft"
+										className="inline-flex items-center gap-2 rounded-full border border-white px-6 py-3 text-xs font-black uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
+									>
+										About the Player Draft
+										<span aria-hidden>→</span>
+									</Link>
+									<Link
+										href="#about"
+										className="inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-black uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
+									>
+										About the League
+									</Link>
+								</div>
+							</div>
+							<div
+								id="player-draft"
+								data-sanity={
+									applicationCardAttribute?.toString() ??
+									heroCtaAttribute?.toString()
+								}
+								className="relative"
 							>
-								About the Player Draft
-								<span aria-hidden>→</span>
-							</Link>
-							<Link
-								href="#about"
-							className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:bg-white hover:text-black"
-							>
-								About the League
-							</Link>
-						</div>
-					</div>
-					<div
-						id="player-draft"
-						data-sanity={
-							applicationCardAttribute?.toString() ??
-							heroCtaAttribute?.toString()
-						}
-						className="relative w-full max-w-md lg:self-end lg:translate-y-6"
-					>
-					<div
-						className="pointer-events-none absolute -inset-6 rounded-[44px] bg-white/15 blur-3xl"
-						aria-hidden="true"
-					/>
-						<div className="relative">
-							<ApplicationCard
-								badge={heroCardBadge}
-								title={heroCardTitle}
-								description={heroCardDescription}
-								ctaText={heroCardCtaText}
-								ctaLink={heroCardLink}
-								helperText={heroCardHelperText}
-								deadlineLabel={heroCardDeadline}
-								countdown={countdownConfig}
-								resourceEyebrow={heroResourceEyebrow}
-								resourceLinkLabel={heroResourceLinkLabel}
-								resourceLinkHref={heroResourceLinkHref}
-							/>
+								<div
+									className="pointer-events-none absolute -inset-3 rounded-[30px] bg-white/20 blur-3xl"
+									aria-hidden="true"
+								/>
+								<div className="relative">
+									<ApplicationCard
+										badge={heroCardBadge}
+										title={heroCardTitle}
+										description={heroCardDescription}
+										ctaText={heroCardCtaText}
+										ctaLink={heroCardLink}
+										helperText={heroCardHelperText}
+										deadlineLabel={heroCardDeadline}
+										countdown={countdownConfig}
+										resourceEyebrow={heroResourceEyebrow}
+										resourceLinkLabel={heroResourceLinkLabel}
+										resourceLinkHref={heroResourceLinkHref}
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+			<div
+				className="pointer-events-none absolute inset-x-0 bottom-0 h-32 translate-y-1/2 bg-gradient-to-b from-transparent via-[#030303] to-[#090909]"
+				aria-hidden="true"
+			/>
+		</section>
 
-				{content?.hero?.video?.credit && (
-					<p className="brand-caption absolute bottom-6 right-6 text-xs uppercase tracking-[0.3em] text-white/60">
-						{content.hero.video.credit}
-					</p>
-				)}
-			</section>
-
-			<section className="relative -mt-16 bg-gradient-to-b from-[#151515] via-[#1b1b1b] to-[#f7f7f2] px-4 pt-28 pb-16">
-				<div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#151515] via-[#111111]/80 to-transparent" aria-hidden="true" />
-				<div className="mx-auto max-w-7xl">
-					<div className="rounded-[32px] border border-black/10 bg-[#fdfdf8] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.25)]">
-						<MediaGrid
-							images={content?.hero?.images}
-							dataAttribute={
-								content?._id
-									? createDataAttribute({
-										id: content._id,
-										type: content._type || "homePage",
-										path: "hero.images",
-									}).toString()
-								: undefined
-							}
-						/>
+		{heroVideoSource && (
+			<>
+				<section className="relative -mt-16 bg-[#050505] px-4 pb-28 pt-20 text-white">
+					<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,255,0,0.06),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_40%)] opacity-60" />
+					<div className="mx-auto max-w-6xl px-4 sm:px-8 lg:px-12">
+						<div className="relative overflow-hidden rounded-[40px] border border-white/5 bg-[#080808] shadow-[0_60px_160px_rgba(0,0,0,0.55)]">
+							<div className="space-y-6 p-6 sm:p-8 lg:p-10">
+								<div className="flex flex-wrap items-center justify-between gap-4">
+									<div>
+										<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/60">
+											Season film
+										</p>
+										<h3 className="mt-2 text-3xl font-black uppercase tracking-[0.18em]">
+											Fast. Rebellious. Female.
+										</h3>
+									</div>
+									{content?.hero?.video?.credit && (
+										<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/60">
+											{content.hero.video.credit}
+										</p>
+									)}
+								</div>
+								<div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-black/50 shadow-[0_50px_140px_rgba(0,0,0,0.6)]">
+									<div className="relative aspect-[9/13] w-full sm:aspect-video">
+										{heroVideoSource.type === "youtube" ? (
+											<iframe
+												title="Sensational League hero video"
+												src={`${heroVideoSource.src}&controls=1`}
+												className="absolute inset-0 h-full w-full"
+												allow="autoplay; fullscreen; picture-in-picture"
+												allowFullScreen
+												loading="lazy"
+												referrerPolicy="strict-origin-when-cross-origin"
+												style={{ border: "none" }}
+											/>
+										) : (
+											<video
+												className="absolute inset-0 h-full w-full object-cover"
+												style={{ objectFit: heroVideoObjectFit }}
+												src={heroVideoSource.src}
+												poster={heroPosterUrl}
+												playsInline
+												loop
+												muted
+												autoPlay
+												controls
+												preload="metadata"
+											/>
+										)}
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-			</section>
+				</section>
+				<div className="relative z-0 -mt-20 h-32 bg-gradient-to-b from-[#050505] via-[#0d0d0d] to-[#f8f8f0]" />
+			</>
+		)}
+		{!heroVideoSource && (
+			<div className="relative z-0 -mt-16 h-24 bg-gradient-to-b from-[#050505] via-[#0d0d0d] to-[#f8f8f0]" />
+		)}
 
-			<section id="newsletter" className="bg-[#f7f7f2] px-4 py-12">
+			{/* 			<section id="newsletter" className="bg-[#f7f7f2] px-4 py-12">
 				<div className="mx-auto max-w-2xl text-center">
 								<HeroNewsletterSignup />
 				</div>
 
-			</section>
-
+			</section> */}
 
 			{/* Press Link CTA */}
-			<section
+			{/* 			<section
 				className="pt-12 bg-white"
 				data-sanity={pressCtaAttribute?.toString()}
 			>
@@ -1181,7 +1591,7 @@ export default function HomePage({ content }: HomePageProps) {
 						<span>{pressButtonText}</span>
 					</Link>
 				</div>
-			</section>
+			</section> */}
 
 			{embedEnabled && (
 				<ApplicationEmbedSection
@@ -1200,104 +1610,240 @@ export default function HomePage({ content }: HomePageProps) {
 			{/* About Section */}
 			<section
 				id="about"
-				className="bg-white py-20 md:py-32"
+				className="relative z-10 -mt-24 rounded-t-[64px] bg-[#f8f8f0] px-4 pb-36 pt-40 text-black shadow-[0_-40px_120px_rgba(0,0,0,0.35)]"
 				data-sanity={aboutDataAttribute?.toString()}
 			>
-				<div className="max-w-7xl mx-auto px-4">
-					<div className="mb-12 text-center">
-						<h2 className="text-6xl md:text-7xl font-black uppercase tracking-[0.15em] text-black mb-4">
-							ABOUT THE LEAGUE
-						</h2>
-						<div className="mx-auto h-2 w-24 bg-black" />
+				<div className="mx-auto max-w-7xl space-y-20">
+					<div
+						className="text-center space-y-5"
+						data-sanity={aboutTitleAttribute?.toString()}
+					>
+						{content?.about?.title ? (
+							<StyledTextRenderer
+								value={content.about.title}
+								className="text-5xl md:text-6xl font-black uppercase tracking-[0.12em] text-black"
+							/>
+						) : (
+							<h2 className="text-5xl md:text-6xl font-black uppercase tracking-[0.15em] text-black">
+								ABOUT THE LEAGUE
+							</h2>
+						)}
+						<div className="mx-auto h-1 w-24 bg-[var(--color-volt)]" />
+						<p className="brand-body mx-auto max-w-3xl text-base text-black/70">
+							{aboutDescription}
+						</p>
 					</div>
 
-
-					{/* Info Box - Point System */}
-					<div
-						className="max-w-5xl mx-auto mb-20"
-						data-sanity={aboutInfoCardAttribute?.toString()}
-					>
-						<div className="bg-[var(--color-volt)] border-[6px] border-black p-12 md:p-16 transform hover:translate-x-2 hover:-translate-y-2 transition-all duration-200">
-							<h3 className="brand-subhead text-3xl md:text-4xl font-black mb-6 uppercase tracking-[0.15em] text-black">
+					<div className="grid gap-10">
+						<div
+							className="rounded-[40px] border-4 border-black bg-[var(--color-volt)] p-12 text-black shadow-[12px_12px_0px_rgba(0,0,0,0.95)]"
+							data-sanity={aboutInfoCardAttribute?.toString()}
+						>
+							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-black/60">
+								THE FORMAT ENGINE
+							</p>
+							<h3 className="brand-subhead mt-3 text-3xl md:text-4xl font-black uppercase tracking-[0.15em]">
 								{infoCardTitle}
 							</h3>
-							<p className="brand-body text-xl md:text-2xl text-black leading-relaxed font-semibold">
+							<p className="brand-body mt-6 text-xl md:text-2xl font-semibold leading-relaxed">
 								{infoCardBody}
 							</p>
 						</div>
+						<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+							{(content?.about?.pillars && content.about.pillars.length > 0
+								? content.about.pillars
+								: [
+										{
+											title: "ELITE 7V7 COMPETITION",
+											description:
+												"Fast, high-scoring, skills focused, made for brands, broadcast and streaming.",
+										},
+										{
+											title: "8 TEAMS",
+											description: "Led by athlete-influencer Captains.",
+										},
+										{
+											title: "6 FESTIVAL MATCHDAYS",
+											description:
+												"Football meets music, culture, and community.",
+										},
+										{
+											title: "PROFESSIONAL PAY",
+											description:
+												"Athletes with creative control and shared value.",
+										},
+									]
+							).map((pillar, index) => (
+								<div
+									key={`${pillar.title}-${index}`}
+									className="rounded-[28px] border border-black/10 bg-white p-6 text-left shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
+									data-sanity={
+										content?._id && content?.about?.pillars
+											? createDataAttribute({
+													id: content._id,
+													type: content._type || "homePage",
+													path: `about.pillars[${index}]`,
+												})?.toString()
+											: undefined
+									}
+								>
+									<p className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
+										{pillar.title}
+									</p>
+									<p className="brand-body mt-2 text-sm text-black/75">
+										{pillar.description}
+									</p>
+								</div>
+							))}
+						</div>
 					</div>
 
-					{/* Feature Bullets - Flexible Grid Layout */}
-					<div
-						className={cn(
-							"max-w-6xl mx-auto grid gap-6",
-							content?.about?.pillars && content.about.pillars.length === 3
-								? "md:grid-cols-3"
-								: content?.about?.pillars && content.about.pillars.length === 2
-									? "md:grid-cols-2 max-w-4xl"
-									: content?.about?.pillars &&
-											content.about.pillars.length === 1
-										? "md:grid-cols-1 max-w-2xl"
-										: "md:grid-cols-2",
-						)}
-					>
-						{content?.about?.pillars && content.about.pillars.length > 0
-							? content.about.pillars.map((pillar, index) => (
+					<div className="grid gap-12 xl:grid-cols-2">
+						<div
+							className="rounded-[36px] border border-black/5 bg-white p-10 shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
+							data-sanity={whyDataAttribute?.toString()}
+						>
+							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-[var(--color-volt)]">
+								{whyEyebrow}
+							</p>
+							<h3 className="mt-4 text-3xl font-black uppercase tracking-[0.18em] text-black">
+								{whyTitle}
+							</h3>
+							<p className="brand-body mt-3 text-black/70">{whySubtitle}</p>
+							<div className="mt-10 space-y-7">
+								{whyStatements?.map((statement, index) => (
 									<div
-										key={index}
-										className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group"
-										data-sanity={
-											content._id
-												? createDataAttribute({
-														id: content._id,
-														type: content._type || "homePage",
-														path: `about.pillars[${index}]`,
-													})?.toString()
-												: undefined
-										}
+										key={`${statement?.title ?? "statement"}-${index}`}
+										className="rounded-2xl border border-black/5 bg-[#fdfdf9] p-5"
 									>
-										<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
-											<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
-												{pillar.title}
-											</strong>
-											{pillar.description}
+										<p className="text-sm font-black uppercase tracking-[0.32em] text-black/55">
+											{statement?.title}
 										</p>
-									</div>
-								))
-							: // Fallback to default content when no Sanity pillars are available
-								[
-									{
-										title: "ELITE 7V7 COMPETITION",
-										description:
-											"Fast, high-scoring, skills focused, made for brands, broadcast and streaming.",
-									},
-									{
-										title: "8 TEAMS",
-										description: "Led by athlete-influencer Captains.",
-									},
-									{
-										title: "6 FESTIVAL MATCHDAYS",
-										description:
-											"Football meets music, culture, and community.",
-									},
-									{
-										title: "PROFESSIONAL PAY",
-										description:
-											"Athletes with creative control and shared value.",
-									},
-								].map((pillar, index) => (
-									<div
-										key={index}
-										className="border-[5px] border-black p-10 bg-white hover:bg-[var(--color-volt)] hover:translate-x-2 hover:-translate-y-2 transition-all duration-200 group"
-									>
-										<p className="brand-body text-xl md:text-2xl text-black leading-relaxed">
-											<strong className="brand-caption text-lg tracking-[0.1em] uppercase block mb-3 font-black">
-												{pillar.title}
-											</strong>
-											{pillar.description}
+										<p className="brand-body mt-2 text-black/75">
+											{statement?.description}
 										</p>
 									</div>
 								))}
+							</div>
+						</div>
+						<div
+							className="rounded-[36px] border border-black/5 bg-white p-10 shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
+							data-sanity={formatDataAttribute?.toString()}
+						>
+							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-black/50">
+								{formatEyebrow}
+							</p>
+							<h3 className="mt-4 text-3xl font-black uppercase tracking-[0.16em]">
+								{formatTitle}
+							</h3>
+							<p className="brand-body mt-3 text-black/70">{formatSubtitle}</p>
+							<div className="mt-8 space-y-4">
+								{formatConcepts.map((concept, index) => (
+									<div
+										key={`${concept}-${index}`}
+										className="rounded-2xl border border-black/10 bg-[#fdfdf9] p-4 text-sm text-black/80"
+									>
+										{concept}
+									</div>
+								))}
+							</div>
+							<div className="mt-8 rounded-[28px] border border-black/80 bg-black p-6 text-white">
+								<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/65">
+									{designedFor.eyebrow}
+								</p>
+								<p className="brand-body mt-3 text-sm text-white/80">
+									{designedFor.description}
+								</p>
+								<ul className="mt-5 grid gap-2 text-xs font-black uppercase tracking-[0.22em] text-white/85 md:grid-cols-2">
+									{designedFor.features?.map((feature, index) => (
+										<li key={`${feature}-${index}`}>{feature}</li>
+									))}
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section
+				id="captains"
+				className="bg-black px-4 py-24 text-white"
+				data-sanity={captainsDataAttribute?.toString()}
+			>
+				<div className="mx-auto max-w-7xl space-y-12">
+					<div className="text-center space-y-4">
+						<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/60">
+							{captainsEyebrow}
+						</p>
+						<h2 className="text-5xl font-black uppercase tracking-[0.18em]">
+							{captainsTitle}
+						</h2>
+						{captainsSubtitle && (
+							<p className="brand-body mx-auto max-w-3xl text-base text-white/70">
+								{captainsSubtitle}
+							</p>
+						)}
+						{captainsIntro && (
+							<p className="brand-body mx-auto max-w-3xl text-sm text-white/60">
+								{captainsIntro}
+							</p>
+						)}
+					</div>
+					<div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+						{captainsList.map((captain, index) => {
+							const initials = getInitials(captain.name);
+							const videoUrl = normalizeUrl(captain.videoUrl);
+							const posterUrl = captain.photo
+								? (getImageUrl(captain.photo, 1200) ?? undefined)
+								: undefined;
+							return (
+								<article
+									key={`${captain.name ?? "captain"}-${index}`}
+									className="group flex h-full flex-col gap-5 rounded-[32px] border border-white/10 bg-white/[0.07] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.45)] backdrop-blur"
+								>
+									<CaptainVideoPreview
+										videoUrl={videoUrl}
+										posterUrl={posterUrl}
+										fallbackInitials={initials}
+									/>
+									<div className="space-y-4">
+										<p className="brand-caption text-[0.6rem] uppercase tracking-[0.35em] text-white/55">
+											{captain.tagline}
+										</p>
+										<div className="flex flex-wrap items-baseline gap-3">
+											<h3 className="text-2xl font-black uppercase tracking-[0.22em]">
+												{captain.name}
+											</h3>
+											{captain.oneLiner && (
+												<span className="text-xs font-bold uppercase tracking-[0.35em] text-white/40">
+													{captain.oneLiner}
+												</span>
+											)}
+										</div>
+										{captain.summary && (
+											<p className="brand-body text-sm leading-relaxed text-white/80">
+												{captain.summary}
+											</p>
+										)}
+										<div className="flex flex-wrap gap-3 text-[0.62rem] font-black uppercase tracking-[0.3em]">
+											{captain.superpower && (
+												<span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-volt)]/50 bg-[var(--color-volt)]/10 px-4 py-1 text-[var(--color-volt)]">
+													<span>Superpower</span>
+													<span className="tracking-normal text-white">
+														{captain.superpower}
+													</span>
+												</span>
+											)}
+											{captain.oneLiner && (
+												<span className="inline-flex items-center rounded-full border border-white/25 px-4 py-1 text-white/65">
+													{captain.oneLiner}
+												</span>
+											)}
+										</div>
+									</div>
+								</article>
+							);
+						})}
 					</div>
 				</div>
 			</section>
