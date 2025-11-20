@@ -160,7 +160,7 @@ const HERO_CARD_DEFAULT_DESCRIPTION = [
 	"Submit your application and become one of the Sensational 80.",
 ].join(" ");
 const HERO_SUBLINE_DEFAULT =
-	"Copenhagen • Spring 2026 — Sensational League is launching a fast 7v7 format that turns performance, community, visibility, and opportunity into the scoring system.";
+	"Sensational League is a new pro 7v7 women's football league built as a sports entertainment experience.";
 const HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";
 const DEFAULT_EMBED_DESCRIPTION =
 	"Submit your application below in Danish or English. Captains and staff receive every submission instantly inside SharePoint so we can follow up with invites, feedback, and next steps.";
@@ -962,7 +962,7 @@ interface ApplicationCardProps {
 
 function ApplicationCard({
 	badge = "Player Draft 2025–26",
-	title = "We’re looking for 80 football players",
+	title = "WE’RE LOOKING FOR 80 FOOTBALL PLAYERS",
 	description,
 	ctaText,
 	ctaLink,
@@ -1226,15 +1226,6 @@ export default function HomePage({ content }: HomePageProps) {
 			})
 		: undefined;
 
-
-	const formatDataAttribute = content?._id
-		? createDataAttribute({
-				id: content._id,
-				type: content._type || "homePage",
-				path: "formatSection",
-			})
-		: undefined;
-
 	const captainsDataAttribute = content?._id
 		? createDataAttribute({
 				id: content._id,
@@ -1351,19 +1342,7 @@ export default function HomePage({ content }: HomePageProps) {
 		applicationEmbedSettings?.deadlineNote || DEFAULT_EMBED_DEADLINE_NOTE;
 	const embedHeight = applicationEmbedSettings?.height || 760;
 
-	const aboutDescription =
-		content?.about?.description ||
-		"Sensational League is an international 7v7 professional women’s football league launching April 2026 in Copenhagen before expanding across Europe and the US.";
-
 	const formatSection = content?.formatSection;
-	const formatEyebrow =
-		formatSection?.eyebrow || DEFAULT_FORMAT_SECTION.eyebrow;
-	const formatTitle = formatSection?.title || DEFAULT_FORMAT_SECTION.title;
-	const formatSubtitle =
-		formatSection?.subtitle || DEFAULT_FORMAT_SECTION.subtitle;
-	const formatConcepts = formatSection?.coreConcepts?.length
-		? formatSection.coreConcepts
-		: DEFAULT_FORMAT_SECTION.coreConcepts;
 	const designedFor = {
 		eyebrow:
 			formatSection?.designedFor?.eyebrow ||
@@ -1474,7 +1453,7 @@ const captainsEnabled =
 
 		{heroVideoSource && (
 			<>
-				<section className="relative -mt-12 bg-[#050505] px-4 pb-24 pt-16 text-white">
+				<section className="relative -mt-12 bg-[#050505] px-4 pb-48 pt-16 text-white">
 					<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,255,0,0.06),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_40%)] opacity-60" />
 					<div className="relative mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-10">
 						<div className="flex flex-wrap items-center justify-between gap-4">
@@ -1526,7 +1505,6 @@ const captainsEnabled =
 						</div>
 					</div>
 				</section>
-				<div className="relative z-0 -mt-16 h-28 bg-gradient-to-b from-[#050505] via-[#0d0d0d] to-[#f8f8f0]" />
 			</>
 		)}
 		{!heroVideoSource && (
@@ -1573,7 +1551,7 @@ const captainsEnabled =
 			{/* About Section */}
 			<section
 				id="about"
-				className="relative z-10 -mt-24 rounded-t-[64px] bg-[#f8f8f0] px-4 pb-36 pt-40 text-black shadow-[0_-40px_120px_rgba(0,0,0,0.35)]"
+				className="relative z-10 -mt-24 rounded-t-[80px] bg-[#f8f8f0] px-4 pb-36 pt-40 text-black shadow-[0_-40px_120px_rgba(0,0,0,0.35)]"
 				data-sanity={aboutDataAttribute?.toString()}
 			>
 				<div className="mx-auto max-w-7xl space-y-20">
@@ -1592,9 +1570,6 @@ const captainsEnabled =
 							</h2>
 						)}
 						<div className="mx-auto h-1 w-24 bg-[var(--color-volt)]" />
-						<p className="brand-body mx-auto max-w-3xl text-base text-black/70">
-							{aboutDescription}
-						</p>
 					</div>
 
 					<div className="grid gap-10">
@@ -1612,7 +1587,7 @@ const captainsEnabled =
 								{infoCardBody}
 							</p>
 						</div>
-						<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+						<div className="grid gap-6 md:grid-cols-3">
 							{(content?.about?.pillars && content.about.pillars.length > 0
 								? content.about.pillars
 								: [
@@ -1630,16 +1605,11 @@ const captainsEnabled =
 											description:
 												"Football meets music, culture, and community.",
 										},
-										{
-											title: "PROFESSIONAL PAY",
-											description:
-												"Athletes with creative control and shared value.",
-										},
 									]
 							).map((pillar, index) => (
 								<div
 									key={`${pillar.title}-${index}`}
-									className="rounded-[28px] border border-black/10 bg-white p-6 text-left shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
+									className="flex flex-col justify-between rounded-[32px] border-2 border-black bg-white p-8 text-left shadow-[8px_8px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:-translate-y-1 hover:translate-x-1 hover:shadow-[12px_12px_0px_rgba(0,0,0,1)]"
 									data-sanity={
 										content?._id && content?.about?.pillars
 											? createDataAttribute({
@@ -1650,57 +1620,39 @@ const captainsEnabled =
 											: undefined
 									}
 								>
-									<p className="brand-caption text-[0.65rem] uppercase tracking-[0.35em] text-black/50">
-										{pillar.title}
-									</p>
-									<p className="brand-body mt-2 text-sm text-black/75">
-										{pillar.description}
-									</p>
+									<div>
+										<p className="brand-caption mb-4 text-xs uppercase tracking-[0.3em] text-black/50">
+											{pillar.title}
+										</p>
+										<p className="brand-body text-lg font-medium leading-relaxed text-black">
+											{pillar.description}
+										</p>
+									</div>
 								</div>
 							))}
 						</div>
 					</div>
 
-					<div className="grid gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-						<div
-							className="rounded-[36px] border border-black/5 bg-white p-10 shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
-							data-sanity={formatDataAttribute?.toString()}
-						>
-							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-black/50">
-								{formatEyebrow}
-							</p>
-							<div className="mt-4 space-y-4">
-								<h3 className="text-3xl font-black uppercase tracking-[0.16em]">
-									{formatTitle}
+					<div className="rounded-[40px] border-4 border-black bg-black p-8 md:p-12 text-white shadow-[16px_16px_0_rgba(0,0,0,0.85)]">
+						<div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+							<div className="space-y-6">
+								<h3 className="text-3xl md:text-4xl font-black uppercase tracking-[0.15em] text-white">
+									{designedFor.eyebrow}
 								</h3>
-								<p className="brand-body text-black/70">{formatSubtitle}</p>
+								<p className="brand-body text-lg text-white/80 leading-relaxed">
+									{designedFor.description}
+								</p>
 							</div>
-							<div className="mt-10 grid gap-4 md:grid-cols-2">
-								{formatConcepts.map((concept, index) => (
-									<div
-										key={`${concept}-${index}`}
-										className="min-h-[120px] rounded-3xl border border-black/10 bg-[#fdfdf9] px-5 py-4 text-sm text-black/80 shadow-[0_14px_40px_rgba(0,0,0,0.08)]"
-									>
-										{concept}
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="rounded-[36px] border-4 border-black bg-black p-8 text-white shadow-[14px_14px_0_rgba(0,0,0,0.85)]">
-							<p className="brand-caption text-xs uppercase tracking-[0.35em] text-white/65">
-								{designedFor.eyebrow}
-							</p>
-							<p className="brand-body mt-4 text-sm text-white/80">
-								{designedFor.description}
-							</p>
-							<ul className="mt-6 space-y-3 text-xs font-black uppercase tracking-[0.22em] text-white/85">
-								{designedFor.features?.map((feature, index) => (
+							<ul className="grid gap-4 sm:grid-cols-2">
+								{designedFor.features?.map((feature) => (
 									<li
-										key={`${feature}-${index}`}
-										className="flex items-center gap-3 rounded-3xl border border-white/15 bg-white/5 px-4 py-3"
+										key={feature}
+										className="flex items-center gap-4 rounded-2xl border border-white/15 bg-white/5 px-5 py-4 transition-all duration-300 hover:border-[var(--color-volt)]/50 hover:bg-white/10"
 									>
-										<span className="inline-block h-2 w-2 rounded-full bg-[var(--color-volt)]" />
-										<span>{feature}</span>
+										<span className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-[var(--color-volt)] shadow-[0_0_12px_rgba(212,255,0,0.6)]" />
+										<span className="text-xs font-black uppercase tracking-[0.15em] text-white/90 leading-snug">
+											{feature}
+										</span>
 									</li>
 								))}
 							</ul>

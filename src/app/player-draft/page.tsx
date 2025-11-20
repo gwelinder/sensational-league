@@ -25,7 +25,6 @@ const DEFAULT_FINAL_CTA_HELPER =
 const DEFAULT_HERO_NAV_BUTTONS = [
 	{ label: "How it works", href: "#how-it-works" },
 	{ label: "Timeline", href: "#timeline" },
-	{ label: "FAQ", href: "#faq" },
 ];
 
 const DEFAULT_HERO_HIGHLIGHTS = [
@@ -459,9 +458,11 @@ function SectionHeader({
 }
 
 function PlayerDraftPageContent({ content }: { content?: PlayerDraftContent }) {
-	const heroNavButtons = content?.hero?.navButtons?.length
-		? content.hero.navButtons
-		: DEFAULT_HERO_NAV_BUTTONS;
+	const heroNavButtons = (
+		content?.hero?.navButtons?.length
+			? content.hero.navButtons
+			: DEFAULT_HERO_NAV_BUTTONS
+	).filter((btn) => !btn.label?.toLowerCase().includes("why sensational"));
 	const heroHighlights = content?.hero?.highlights?.length
 		? content.hero.highlights
 		: DEFAULT_HERO_HIGHLIGHTS;
