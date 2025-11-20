@@ -1493,7 +1493,7 @@ const captainsEnabled =
 									className="absolute inset-0 h-full w-full object-cover"
 									style={{ objectFit: heroVideoObjectFit }}
 									src={heroVideoSource.src}
-									poster={heroPosterUrl}
+					/* 				poster={heroPosterUrl} */
 									playsInline
 									loop
 									muted
