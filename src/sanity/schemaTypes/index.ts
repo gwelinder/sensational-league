@@ -8,6 +8,7 @@ import { policy } from "./policy";
 import { pressRelease } from "./pressRelease";
 import { emailTemplate } from "./emailTemplate";
 import { siteSettings } from "./siteSettings";
+import { captain } from "./captain";
 import { contributorSettings } from "./contributorSettings";
 import { logoImage } from "./objects/logoImage";
 import { logo } from "./logo";
@@ -64,6 +65,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     emailTemplate,
     contributorSettings,
     logo,
+    captain,
     
     // League Management
     season,

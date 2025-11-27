@@ -5,6 +5,7 @@ import { createDataAttribute } from "@sanity/visual-editing";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { CountdownTicker } from "@/components/CountdownTicker";
 import { SectionsRenderer } from "@/components/SectionsRenderer";
 import StyledTextRenderer from "@/components/StyledTextRenderer";
 import TypeformApplyButton from "@/components/TypeformApplyButton";
@@ -1410,6 +1411,15 @@ const captainsEnabled =
 									{content?.hero?.subline || HERO_SUBLINE_DEFAULT}
 								</p>
 								<HeroStats stats={content?.hero?.stats} variant="dark" />
+								{/* Countdown Ticker */}
+								{countdownConfig?.enabled !== false && (
+									<CountdownTicker
+										deadline={countdownConfig?.deadline || "2026-01-01T00:00:00"}
+										label={countdownConfig?.label || "Application deadline"}
+										timezone={countdownConfig?.timezone || "CET"}
+										variant="dark"
+									/>
+								)}
 								<div className="flex flex-wrap gap-4">
 									<Link
 										href="/player-draft"
