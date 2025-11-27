@@ -44,6 +44,12 @@ import {
   communication,
   event
 } from "./league";
+import {
+  draftApplicant,
+  cdpSegment,
+  emailFlow,
+  emailEvent
+} from "./cdp";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
 	types: [
@@ -68,6 +74,12 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     notification,
     communication,
     event,
+    
+    // CDP (Customer Data Platform)
+    draftApplicant,
+    cdpSegment,
+    emailFlow,
+    emailEvent,
     
     // Objects
     blockContent,

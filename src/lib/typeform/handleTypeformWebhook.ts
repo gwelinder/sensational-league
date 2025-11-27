@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { createSharePointListItem as createSharePointListItemImpl } from "@/lib/sharepoint/saveListItem";
 import { sendPlayerDraftThankYou as sendPlayerDraftThankYouImpl } from "@/lib/email/sendPlayerDraftThankYou";
+import { syncTypeformToCDP as syncTypeformToCDPImpl } from "@/lib/cdp";
 import {
 	mapPlayerDraftResponse,
 	type TypeformFormResponse,
@@ -9,6 +10,7 @@ import {
 export interface HandleTypeformWebhookDeps {
 	createSharePointListItem?: typeof createSharePointListItemImpl;
 	sendPlayerDraftThankYou?: typeof sendPlayerDraftThankYouImpl;
+	syncTypeformToCDP?: typeof syncTypeformToCDPImpl;
 }
 
 export interface HandleTypeformWebhookEnv {
@@ -24,9 +26,26 @@ export interface HandleTypeformWebhookResult {
 	body: Record<string, unknown>;
 }
 
+/**
+ * Attribution data extracted from Typeform hidden fields.
+ * These are passed from the website via the Typeform embed.
+ */
+export interface TypeformAttribution {
+	utm_source?: string;
+	utm_medium?: string;
+	utm_campaign?: string;
+	utm_term?: string;
+	utm_content?: string;
+	page_url?: string;
+	page_referrer?: string;
+	session_id?: string;
+	user_agent?: string;
+}
+
 const defaultDeps: Required<HandleTypeformWebhookDeps> = {
 	createSharePointListItem: createSharePointListItemImpl,
 	sendPlayerDraftThankYou: sendPlayerDraftThankYouImpl,
+	syncTypeformToCDP: syncTypeformToCDPImpl,
 };
 
 function toBuffer(body: RawWebhookBody): Buffer {
@@ -89,6 +108,26 @@ function parseFormResponse(payload: unknown): TypeformFormResponse | null {
 	return null;
 }
 
+/**
+ * Extract attribution data from Typeform hidden fields.
+ * These are passed from the website embed for campaign tracking.
+ */
+function extractAttribution(hidden: Record<string, string> | undefined): TypeformAttribution {
+	if (!hidden) return {};
+
+	return {
+		utm_source: hidden.utm_source,
+		utm_medium: hidden.utm_medium,
+		utm_campaign: hidden.utm_campaign,
+		utm_term: hidden.utm_term,
+		utm_content: hidden.utm_content,
+		page_url: hidden.page_url,
+		page_referrer: hidden.page_referrer,
+		session_id: hidden.session_id,
+		user_agent: hidden.user_agent,
+	};
+}
+
 export async function handleTypeformWebhook(
 	rawBody: RawWebhookBody,
 	signatureHeader: string | null,
@@ -142,12 +181,35 @@ export async function handleTypeformWebhook(
 		};
 	}
 
+	// Extract attribution data from hidden fields
+	const attribution = extractAttribution(formResponse.hidden);
+
+	// Log attribution data for analytics debugging
+	if (Object.values(attribution).some(Boolean)) {
+		console.log("📊 Typeform submission attribution:", {
+			responseId: formResponse.token,
+			...attribution,
+		});
+	}
+
 	const mappingResult = mapPlayerDraftResponse(formResponse);
 	if (mappingResult.missingRequired.length > 0) {
 		return {
 			status: 400,
 			body: { error: "Missing required fields", missing: mappingResult.missingRequired },
 		};
+	}
+
+	// Add attribution data to SharePoint fields if configured
+	const ATTRIBUTION_FIELDS_ENABLED = process.env.SHAREPOINT_PLAYER_APPLICATIONS_ATTRIBUTION_ENABLED === "true";
+	if (ATTRIBUTION_FIELDS_ENABLED) {
+		// These SharePoint field names would need to be created in the list
+		if (attribution.utm_source) mappingResult.fields.UTMSource = attribution.utm_source;
+		if (attribution.utm_medium) mappingResult.fields.UTMMedium = attribution.utm_medium;
+		if (attribution.utm_campaign) mappingResult.fields.UTMCampaign = attribution.utm_campaign;
+		if (attribution.page_url) mappingResult.fields.SourcePageURL = attribution.page_url;
+		if (attribution.page_referrer) mappingResult.fields.SourceReferrer = attribution.page_referrer;
+		if (attribution.session_id) mappingResult.fields.SessionID = attribution.session_id;
 	}
 
 	try {
@@ -167,13 +229,40 @@ export async function handleTypeformWebhook(
 			});
 		}
 
+		// Sync to CDP (Customer Data Platform)
+		let cdpSync: { success: boolean; applicantId?: string; flowsTriggered?: number } | undefined;
+		if (deps.syncTypeformToCDP && mappingResult.email) {
+			try {
+				cdpSync = await deps.syncTypeformToCDP(formResponse, id, {
+					email: mappingResult.email,
+					fullName: mappingResult.fullName,
+					positionPreference: mappingResult.positionPreference,
+				});
+				
+				if (cdpSync.success) {
+					console.log(`✅ CDP sync successful: applicant=${cdpSync.applicantId}, flows=${cdpSync.flowsTriggered}`);
+				} else {
+					console.warn("⚠️ CDP sync returned unsuccessful");
+				}
+			} catch (cdpError) {
+				// Don't fail the webhook if CDP sync fails
+				console.error("⚠️ CDP sync error (non-fatal):", cdpError);
+			}
+		}
+
 		return {
 			status: 200,
 			body: {
 				success: true,
 				sharePointItemId: id,
 				emailSent,
+				cdpSync: cdpSync ? {
+					success: cdpSync.success,
+					applicantId: cdpSync.applicantId,
+					flowsTriggered: cdpSync.flowsTriggered,
+				} : undefined,
 				unmappedRefs: mappingResult.unmappedRefs,
+				attribution: Object.values(attribution).some(Boolean) ? attribution : undefined,
 			},
 		};
 	} catch (error) {

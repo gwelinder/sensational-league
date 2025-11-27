@@ -16,6 +16,10 @@
     "seed:press": "tsx scripts/seed-press-release.ts",
     "seed:email": "tsx scripts/seed-email-template.ts",
     "seed:player-draft": "tsx scripts/seed-player-draft.ts",
+    "seed:player-draft-templates": "tsx scripts/seed-player-draft-templates.ts",
+    "seed:player-draft-flows": "tsx scripts/seed-player-draft-flows.ts",
+    "seed:cdp-segments": "tsx scripts/seed-cdp-segments.ts",
+    "seed:cdp": "pnpm seed:player-draft-templates && pnpm seed:player-draft-flows && pnpm seed:cdp-segments",
     "typeform:webhook": "tsx scripts/run-typeform-webhook.ts",
     "typeform:map": "tsx scripts/preview-typeform-mapping.ts",
     "upload:captain-video": "tsx scripts/upload-captain-video.ts"

@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "./globals.css";
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
@@ -10,14 +9,10 @@ import {
 	WebsiteStructuredData,
 } from "@/components/StructuredData";
 import { SanityLive } from "@/sanity/lib/live";
-
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-const GA_SCRIPT_ID = GA_MEASUREMENT_ID
-	? `ga-init-${GA_MEASUREMENT_ID}`
-	: undefined;
-const GA_CONSENT_SCRIPT_ID = GA_MEASUREMENT_ID
-	? `ga-consent-default-${GA_MEASUREMENT_ID}`
-	: undefined;
+import {
+	GoogleTagManager,
+	GoogleTagManagerNoScript,
+} from "@/components/GoogleTagManager";
 
 // GT Standard fonts are loaded via @font-face in globals.css
 // This provides better performance and brand consistency
@@ -135,36 +130,9 @@ export default async function RootLayout({
 				<WebsiteStructuredData />
 			</head>
 			<body className="min-h-dvh antialiased bg-[var(--color-surface)] text-[var(--color-text)]">
+				<GoogleTagManagerNoScript />
 				<SiteChrome>{children}</SiteChrome>
-				{GA_MEASUREMENT_ID && (
-					<>
-						<Script id={GA_CONSENT_SCRIPT_ID as string} strategy="beforeInteractive">
-							{`
-								window.dataLayer = window.dataLayer || [];
-								function gtag(){dataLayer.push(arguments);}
-								gtag('consent', 'default', {
-									ad_storage: 'denied',
-									ad_user_data: 'denied',
-									ad_personalization: 'denied',
-									analytics_storage: 'denied',
-									wait_for_update: 500
-								});
-							`}
-						</Script>
-						<Script
-							src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-							strategy="afterInteractive"
-						/>
-						<Script id={GA_SCRIPT_ID as string} strategy="afterInteractive">
-							{`
-								window.dataLayer = window.dataLayer || [];
-								function gtag(){dataLayer.push(arguments);}
-								gtag('js', new Date());
-								gtag('config', '${GA_MEASUREMENT_ID}');
-							`}
-						</Script>
-					</>
-				)}
+				<GoogleTagManager />
 				<SanityLive />
 				{isEnabled && (
 					<>
