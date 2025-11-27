@@ -11,13 +11,41 @@ import type {
   ApplicantStatus,
 } from "./types";
 
-// Create a client with write access for CDP operations
-const cdpClient: SanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: "2024-01-01",
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
+// Create client lazily to support scripts that load env vars dynamically
+let _cdpClient: SanityClient | null = null;
+
+function getCdpClient(): SanityClient {
+  if (!_cdpClient) {
+    const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+    const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+    
+    if (!projectId || !dataset) {
+      throw new Error(
+        "Missing NEXT_PUBLIC_SANITY_PROJECT_ID or NEXT_PUBLIC_SANITY_DATASET environment variables"
+      );
+    }
+    
+    _cdpClient = createClient({
+      projectId,
+      dataset,
+      apiVersion: "2024-01-01",
+      useCdn: false,
+      token: process.env.SANITY_API_TOKEN,
+    });
+  }
+  return _cdpClient;
+}
+
+// Export a proxy that lazily initializes the client
+export const cdpClient = new Proxy({} as SanityClient, {
+  get(_target, prop) {
+    const client = getCdpClient();
+    const value = client[prop as keyof SanityClient];
+    if (typeof value === "function") {
+      return value.bind(client);
+    }
+    return value;
+  },
 });
 
 // === APPLICANT OPERATIONS ===
@@ -261,7 +289,7 @@ export async function enrollApplicantInFlow(
 export async function updateFlowEnrollment(
   applicantId: string,
   flowId: string,
-  updates: Partial<DraftApplicant["flowEnrollments"]>[number]
+  updates: Partial<NonNullable<DraftApplicant["flowEnrollments"]>[number]>
 ): Promise<void> {
   const applicant = await cdpClient.fetch<DraftApplicant>(
     `*[_type == "draftApplicant" && _id == $id][0]`,
@@ -388,5 +416,3 @@ export async function getCDPStats(): Promise<{
     emailsOpenedToday: emailStats.opened,
   };
 }
-
-export { cdpClient };

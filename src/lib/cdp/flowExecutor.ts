@@ -415,7 +415,7 @@ function evaluateBranchCondition(
       fieldValue = applicant.preferredPositions || [];
       break;
     default:
-      fieldValue = (applicant as Record<string, unknown>)[field];
+      fieldValue = (applicant as unknown as Record<string, unknown>)[field];
   }
 
   switch (operator) {
@@ -539,10 +539,12 @@ export async function triggerSegmentFlows(
  */
 export async function processPendingFlowSteps(): Promise<{
   processed: number;
+  emailsSent: number;
   errors: string[];
 }> {
   const now = new Date().toISOString();
   let processed = 0;
+  let emailsSent = 0;
   const errors: string[] = [];
 
   // Find applicants with pending steps
@@ -568,8 +570,13 @@ export async function processPendingFlowSteps(): Promise<{
         const flow = await getEmailFlow(enrollment.flow._ref);
         if (!flow) continue;
 
-        await executeFlowStep(applicant, flow, enrollment.currentStep);
+        const result = await executeFlowStep(applicant, flow, enrollment.currentStep);
         processed++;
+        
+        // Count emails sent
+        if (result.action === "sent_email" && !result.error) {
+          emailsSent++;
+        }
       } catch (error) {
         const errorMsg = `Failed to process flow ${enrollment.flow._ref} for ${applicant.email}: ${error}`;
         console.error(errorMsg);
@@ -578,5 +585,5 @@ export async function processPendingFlowSteps(): Promise<{
     }
   }
 
-  return { processed, errors };
+  return { processed, emailsSent, errors };
 }

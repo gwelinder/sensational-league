@@ -29,6 +29,16 @@
  * - Recreational
  * - Returning Players (was active, now returning)
  * 
+ * BY AGE GROUP:
+ * - 18-24 (Young Players)
+ * - 25-34 (Prime Players)
+ * - 35-44 (Experienced Players)
+ * - 45+ (Veteran Players)
+ * 
+ * BY ACTIVITY STATUS:
+ * - Currently Active in Club
+ * - Previously Active (Not Current)
+ * 
  * Run with: pnpm seed:cdp-segments
  */
 
@@ -115,19 +125,55 @@ const segments = [
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Centre Back",
+          value: "centre-back",
         },
         {
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Full Back",
+          value: "Centre-back",
         },
         {
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Wing Back",
+          value: "full-back",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Full-back",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Wing-back",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Sweeper",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Left centre-back",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Right centre-back",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Right full-back",
         },
       ],
     },
@@ -151,25 +197,25 @@ const segments = [
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Defensive Midfielder",
+          value: "midfielder",
         },
         {
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Central Midfielder",
+          value: "Attacking midfielder",
         },
         {
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Attacking Midfielder",
+          value: "Central midfielder",
         },
         {
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Wide Midfielder",
+          value: "Defensive midfielder",
         },
       ],
     },
@@ -205,7 +251,25 @@ const segments = [
           _key: generateKey("cond"),
           field: "preferredPositions",
           operator: "contains",
-          value: "Second Striker",
+          value: "winger",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Forward",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Left winger",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "preferredPositions",
+          operator: "contains",
+          value: "Right winger",
         },
       ],
     },
@@ -473,13 +537,13 @@ const segments = [
           _key: generateKey("cond"),
           field: "highestLevel",
           operator: "eq",
-          value: "Elite",
+          value: "International",
         },
         {
           _key: generateKey("cond"),
           field: "highestLevel",
           operator: "eq",
-          value: "Semi-Professional",
+          value: "National",
         },
       ],
     },
@@ -490,7 +554,7 @@ const segments = [
   {
     _type: "cdpSegment",
     _id: "segment-club-level",
-    name: "Club Level",
+    name: "Club/Amateur Level",
     slug: { _type: "slug", current: "club-level" },
     description: "Applicants with club/amateur level experience",
     color: "#3B82F6", // Blue
@@ -499,12 +563,6 @@ const segments = [
     rules: {
       matchType: "any",
       conditions: [
-        {
-          _key: generateKey("cond"),
-          field: "highestLevel",
-          operator: "eq",
-          value: "Club",
-        },
         {
           _key: generateKey("cond"),
           field: "highestLevel",
@@ -560,6 +618,157 @@ const segments = [
     rules: {
       matchType: "all",
       conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "currentlyActive",
+          operator: "isFalse",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+
+  // ========== BY AGE GROUP ==========
+  {
+    _type: "cdpSegment",
+    _id: "segment-age-18-24",
+    name: "Age 18-24",
+    slug: { _type: "slug", current: "age-18-24" },
+    description: "Young players aged 18-24",
+    color: "#00FBFF", // Cyan
+    icon: "users",
+    type: "rule",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "ageGroup",
+          operator: "eq",
+          value: "18-24",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-age-25-34",
+    name: "Age 25-34",
+    slug: { _type: "slug", current: "age-25-34" },
+    description: "Prime age players aged 25-34",
+    color: "#D4FF00", // Volt Yellow
+    icon: "users",
+    type: "rule",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "ageGroup",
+          operator: "eq",
+          value: "25-34",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-age-35-44",
+    name: "Age 35-44",
+    slug: { _type: "slug", current: "age-35-44" },
+    description: "Experienced players aged 35-44",
+    color: "#FF4400", // Orange
+    icon: "users",
+    type: "rule",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "ageGroup",
+          operator: "eq",
+          value: "35-44",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-age-45-plus",
+    name: "Age 45+",
+    slug: { _type: "slug", current: "age-45-plus" },
+    description: "Veteran players aged 45 and above",
+    color: "#AE00FF", // Purple
+    icon: "users",
+    type: "rule",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "ageGroup",
+          operator: "eq",
+          value: "45+",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+
+  // ========== BY ACTIVITY STATUS ==========
+  {
+    _type: "cdpSegment",
+    _id: "segment-currently-active",
+    name: "Currently Active in Club",
+    slug: { _type: "slug", current: "currently-active" },
+    description: "Players who are currently active in a football club",
+    color: "#10B981", // Green
+    icon: "football",
+    type: "rule",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "currentlyActive",
+          operator: "isTrue",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-previously-active",
+    name: "Previously Active (Not Current)",
+    slug: { _type: "slug", current: "previously-active" },
+    description: "Players who were previously in a club but not currently active",
+    color: "#F59E0B", // Amber
+    icon: "clock",
+    type: "rule",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "previouslyActive",
+          operator: "isTrue",
+        },
         {
           _key: generateKey("cond"),
           field: "currentlyActive",
@@ -687,6 +896,149 @@ const segments = [
     memberCount: 0,
     active: true,
   },
+
+  // ========== NEWSLETTER SEGMENTS ==========
+  {
+    _type: "cdpSegment",
+    _id: "segment-newsletter-active",
+    name: "Newsletter: Active Subscribers",
+    slug: { _type: "slug", current: "newsletter-active" },
+    description: "Active newsletter subscribers",
+    color: "#10B981", // Green
+    icon: "mail",
+    type: "rule",
+    documentType: "newsletterSubscriber",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "status",
+          operator: "eq",
+          value: "active",
+        },
+      ],
+    },
+    syncToResend: true,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-newsletter-unsubscribed",
+    name: "Newsletter: Unsubscribed",
+    slug: { _type: "slug", current: "newsletter-unsubscribed" },
+    description: "Newsletter subscribers who have unsubscribed",
+    color: "#EF4444", // Red
+    icon: "mail",
+    type: "rule",
+    documentType: "newsletterSubscriber",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "status",
+          operator: "eq",
+          value: "unsubscribed",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-newsletter-homepage",
+    name: "Newsletter: Homepage Signups",
+    slug: { _type: "slug", current: "newsletter-homepage" },
+    description: "Newsletter subscribers who signed up from the homepage",
+    color: "#3B82F6", // Blue
+    icon: "mail",
+    type: "rule",
+    documentType: "newsletterSubscriber",
+    rules: {
+      matchType: "any",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "source",
+          operator: "eq",
+          value: "homepage-hero",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "source",
+          operator: "eq",
+          value: "homepage-header",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "source",
+          operator: "eq",
+          value: "homepage-footer",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-newsletter-also-applicant",
+    name: "Newsletter: Also Draft Applicants",
+    slug: { _type: "slug", current: "newsletter-also-applicant" },
+    description: "Newsletter subscribers who also applied for the player draft",
+    color: "#AE00FF", // Purple
+    icon: "mail",
+    type: "rule",
+    documentType: "newsletterSubscriber",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "linkedApplicant",
+          operator: "notEmpty",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
+  {
+    _type: "cdpSegment",
+    _id: "segment-newsletter-only",
+    name: "Newsletter: Newsletter Only (No Application)",
+    slug: { _type: "slug", current: "newsletter-only" },
+    description: "Newsletter subscribers who have NOT applied for the player draft",
+    color: "#00FBFF", // Cyan
+    icon: "mail",
+    type: "rule",
+    documentType: "newsletterSubscriber",
+    rules: {
+      matchType: "all",
+      conditions: [
+        {
+          _key: generateKey("cond"),
+          field: "linkedApplicant",
+          operator: "empty",
+        },
+        {
+          _key: generateKey("cond"),
+          field: "status",
+          operator: "eq",
+          value: "active",
+        },
+      ],
+    },
+    syncToResend: false,
+    memberCount: 0,
+    active: true,
+  },
 ];
 
 async function seed() {
@@ -720,6 +1072,8 @@ async function seed() {
   console.log("   Status: New, Under Review, Shortlisted, Trial Invites, Selected, Waitlisted");
   console.log("   Engagement: High Engagement, Low Engagement, Unsubscribed");
   console.log("   Experience: Elite, Club Level, Recreational, Returning Players");
+  console.log("   Age Groups: 18-24, 25-34, 35-44, 45+");
+  console.log("   Activity: Currently Active, Previously Active");
   console.log("   Special: Social Media Active, Interested in Alternatives, Copenhagen Area, High Rated");
   console.log("\nYou can manage segments in Sanity Studio:");
   console.log("   Go to /studio → CDP → Segments");

@@ -16,8 +16,19 @@ import {
   updateDraftApplicant,
 } from "./sanityClient";
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend client lazily
+let _resend: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!_resend) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing RESEND_API_KEY environment variable");
+    }
+    _resend = new Resend(apiKey);
+  }
+  return _resend;
+}
 
 /**
  * Create a new Resend audience for a segment
@@ -26,7 +37,7 @@ export async function createResendAudience(
   segmentName: string
 ): Promise<string | null> {
   try {
-    const response = await resend.audiences.create({
+    const response = await getResendClient().audiences.create({
       name: `SL CDP: ${segmentName}`,
     });
 
@@ -49,7 +60,7 @@ export async function getResendAudiences(): Promise<
   Array<{ id: string; name: string }> | null
 > {
   try {
-    const response = await resend.audiences.list();
+    const response = await getResendClient().audiences.list();
 
     if (response.error) {
       console.error("Failed to list Resend audiences:", response.error);
@@ -71,7 +82,7 @@ export async function addContactToAudience(
   applicant: DraftApplicant
 ): Promise<string | null> {
   try {
-    const response = await resend.contacts.create({
+    const response = await getResendClient().contacts.create({
       audienceId,
       email: applicant.email,
       firstName: applicant.firstName,
@@ -108,7 +119,7 @@ export async function updateResendContact(
   }
 ): Promise<boolean> {
   try {
-    const response = await resend.contacts.update({
+    const response = await getResendClient().contacts.update({
       audienceId,
       id: contactId,
       ...updates,
@@ -134,7 +145,7 @@ export async function removeContactFromAudience(
   email: string
 ): Promise<boolean> {
   try {
-    const response = await resend.contacts.remove({
+    const response = await getResendClient().contacts.remove({
       audienceId,
       email,
     });
@@ -158,7 +169,7 @@ export async function getAudienceContacts(
   audienceId: string
 ): Promise<Array<{ id: string; email: string }> | null> {
   try {
-    const response = await resend.contacts.list({ audienceId });
+    const response = await getResendClient().contacts.list({ audienceId });
 
     if (response.error) {
       console.error("Failed to list Resend contacts:", response.error);

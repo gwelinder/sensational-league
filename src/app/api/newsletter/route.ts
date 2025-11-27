@@ -3,8 +3,18 @@ import { resendClient } from "@/lib/email/resendClient";
 import { renderEmailTemplate } from "@/lib/email-renderer";
 import { getGraphClient } from "@/lib/sharepoint/graphClient";
 import { client } from "@/sanity/lib/client";
+import { createClient } from "@sanity/client";
 
 // Graph client + Resend helpers are shared across API routes
+
+// Create a write-enabled Sanity client for CDP operations
+const sanityWriteClient = createClient({
+	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+	apiVersion: "2024-01-01",
+	token: process.env.SANITY_API_TOKEN,
+	useCdn: false,
+});
 
 // Helper: Save to SharePoint (independent operation)
 async function saveToSharePoint(
@@ -85,6 +95,80 @@ async function saveToSharePoint(
 			stack: spError instanceof Error ? spError.stack : undefined,
 			siteId: process.env.SHAREPOINT_SITE_ID,
 			listId: process.env.SHAREPOINT_NEWSLETTER_LIST_ID,
+		});
+		return false;
+	}
+}
+
+// Helper: Save to Sanity CDP (independent operation)
+async function saveToCDP(
+	email: string,
+	consentGiven: boolean,
+	consentTimestamp: string,
+	timestamp: string,
+	source?: string,
+): Promise<boolean> {
+	if (!process.env.SANITY_API_TOKEN) {
+		console.warn("⚠️ Sanity API token not configured - skipping CDP save");
+		return false;
+	}
+
+	try {
+		const normalizedEmail = email.toLowerCase();
+		
+		// Check if subscriber already exists
+		const existing = await sanityWriteClient.fetch(
+			`*[_type == "newsletterSubscriber" && email == $email][0]{ _id }`,
+			{ email: normalizedEmail }
+		);
+
+		// Check if there's a linked draft applicant with the same email
+		const linkedApplicant = await sanityWriteClient.fetch(
+			`*[_type == "draftApplicant" && email == $email][0]{ _id }`,
+			{ email: normalizedEmail }
+		);
+
+		const subscriberData = {
+			_type: "newsletterSubscriber" as const,
+			email: normalizedEmail,
+			status: "active",
+			source: source || "unknown",
+			subscribedAt: timestamp,
+			consentGiven,
+			consentTimestamp,
+			lastSyncedAt: new Date().toISOString(),
+			...(linkedApplicant?._id && {
+				linkedApplicant: { _type: "reference" as const, _ref: linkedApplicant._id },
+			}),
+		};
+
+		if (existing) {
+			// Update existing subscriber - reactivate if they're subscribing again
+			await sanityWriteClient
+				.patch(existing._id)
+				.set({
+					status: "active",
+					source: source || "unknown",
+					consentGiven,
+					consentTimestamp,
+					lastSyncedAt: new Date().toISOString(),
+					...(linkedApplicant?._id && {
+						linkedApplicant: { _type: "reference" as const, _ref: linkedApplicant._id },
+					}),
+				})
+				.commit();
+			console.log("✅ CDP: Updated existing subscriber for", email);
+		} else {
+			// Create new subscriber
+			await sanityWriteClient.create(subscriberData);
+			console.log("✅ CDP: Created new subscriber for", email);
+		}
+
+		return true;
+	} catch (cdpError) {
+		console.error("❌ CDP error:", cdpError);
+		console.error("CDP error details:", {
+			message: cdpError instanceof Error ? cdpError.message : "Unknown error",
 		});
 		return false;
 	}
@@ -263,10 +347,17 @@ export async function POST(request: NextRequest) {
 			`📧 Newsletter signup: ${email} from ${source || "unknown source"}`,
 		);
 
-		// Run SharePoint and Email operations in parallel using Promise.allSettled
+		// Run SharePoint, CDP, and Email operations in parallel using Promise.allSettled
 		// This ensures they are completely independent - failures don't cascade
-		const [sharePointResult, emailResult] = await Promise.allSettled([
+		const [sharePointResult, cdpResult, emailResult] = await Promise.allSettled([
 			saveToSharePoint(
+				email,
+				consentGiven,
+				consentTimestamp || timestamp,
+				timestamp,
+				source,
+			),
+			saveToCDP(
 				email,
 				consentGiven,
 				consentTimestamp || timestamp,
@@ -278,6 +369,8 @@ export async function POST(request: NextRequest) {
 
 		const sharePointSuccess =
 			sharePointResult.status === "fulfilled" && sharePointResult.value;
+		const cdpSuccess =
+			cdpResult.status === "fulfilled" && cdpResult.value;
 		const emailSuccess =
 			emailResult.status === "fulfilled" && emailResult.value;
 
@@ -287,6 +380,9 @@ export async function POST(request: NextRequest) {
 				"❌ SharePoint operation rejected:",
 				sharePointResult.reason,
 			);
+		}
+		if (cdpResult.status === "rejected") {
+			console.error("❌ CDP operation rejected:", cdpResult.reason);
 		}
 		if (emailResult.status === "rejected") {
 			console.error("❌ Email operation rejected:", emailResult.reason);
@@ -308,6 +404,7 @@ export async function POST(request: NextRequest) {
 			success: true,
 			message: "Successfully subscribed to newsletter",
 			sharePointSaved: sharePointSuccess,
+			cdpSaved: cdpSuccess,
 			emailSent: emailSuccess,
 		});
 	} catch (error) {

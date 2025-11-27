@@ -88,6 +88,20 @@ export const cdpSegment = defineType({
       },
       initialValue: "rule",
     }),
+    defineField({
+      name: "documentType",
+      title: "Target Document Type",
+      type: "string",
+      options: {
+        list: [
+          { title: "Draft Applicants", value: "draftApplicant" },
+          { title: "Newsletter Subscribers", value: "newsletterSubscriber" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "draftApplicant",
+      description: "Which type of contacts this segment targets",
+    }),
 
     // === RULE-BASED CRITERIA ===
     defineField({
@@ -123,12 +137,14 @@ export const cdpSegment = defineType({
                   type: "string",
                   options: {
                     list: [
+                      // Draft Applicant fields
                       { title: "Status", value: "status" },
                       { title: "Preferred Position", value: "preferredPositions" },
                       { title: "Age Group", value: "ageGroup" },
                       { title: "Highest Level", value: "highestLevel" },
                       { title: "City", value: "city" },
                       { title: "Currently Active", value: "currentlyActive" },
+                      { title: "Previously Active", value: "previouslyActive" },
                       { title: "Social Media Active", value: "socialMediaActive" },
                       { title: "Interest if Not Selected", value: "interestIfNotSelected" },
                       { title: "Rating", value: "rating" },
@@ -136,6 +152,10 @@ export const cdpSegment = defineType({
                       { title: "Days Since Submission", value: "daysSinceSubmission" },
                       { title: "Emails Opened", value: "emailsOpened" },
                       { title: "Has Unsubscribed", value: "unsubscribed" },
+                      // Newsletter Subscriber fields
+                      { title: "Source (Newsletter)", value: "source" },
+                      { title: "Linked Applicant", value: "linkedApplicant" },
+                      { title: "Consent Given", value: "consentGiven" },
                     ],
                   },
                   validation: (Rule) => Rule.required(),

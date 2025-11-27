@@ -212,3 +212,120 @@ When implementing features:
 - All branding assets follow the comprehensive brand guidelines (see `/public/SENSATIONAL LEAGUE - BRAND GUIDELINES.pdf`)
 - Maintain the "Fast. Rebellious. Female." ethos in all UX decisions
 - Focus on performance and motion - all directional movement should lean right to match the logo's forward momentum
+
+## CDP (Customer Data Platform)
+
+The CDP manages player draft applicants, email automation, and segmentation.
+
+### CDP Architecture
+
+```
+src/lib/cdp/
+├── index.ts           # Main exports
+├── types.ts           # TypeScript types
+├── sanityClient.ts    # Sanity CRUD operations
+├── segmentEvaluator.ts # Dynamic segment rules engine
+├── flowExecutor.ts    # Email flow automation
+├── resendSync.ts      # Resend integration
+└── syncFromTypeform.ts # Import from Typeform/SharePoint
+
+src/sanity/schemaTypes/cdp/
+├── draftApplicant.ts  # Player applicant profile
+├── cdpSegment.ts      # Audience segments
+├── emailFlow.ts       # Automation workflows
+└── emailEvent.ts      # Email tracking events
+```
+
+### CDP Commands
+
+```bash
+# Seed CDP content
+pnpm seed:player-draft-templates  # Email templates
+pnpm seed:player-draft-flows      # Automation flows
+pnpm seed:cdp-segments           # Audience segments
+pnpm seed:cdp                    # All CDP content
+
+# Sync & evaluate
+pnpm sync:sharepoint-to-cdp      # Import applicants from SharePoint
+pnpm cdp:evaluate-segments       # Evaluate segment membership
+```
+
+### CDP API Endpoints
+
+- `GET /api/cdp?action=stats` - Get CDP statistics
+- `POST /api/cdp?action=sync-segments` - Evaluate all segments (requires `x-api-key` header)
+- `POST /api/cdp?action=sync-resend` - Sync segments to Resend (requires `x-api-key` header)
+- `POST /api/cdp?action=process-flows` - Process pending email flow steps (requires `x-api-key` header)
+- `GET /api/cron/cdp` - Cron job endpoint (requires `Authorization: Bearer <CRON_SECRET>`)
+- `POST /api/cdp/resend-webhook` - Resend webhook for email events
+
+### CDP Environment Variables
+
+```bash
+# Required for CDP API protection
+CDP_API_KEY=your_secret_key
+
+# Required for cron jobs
+CRON_SECRET=your_cron_secret
+
+# Required for email sending
+RESEND_API_KEY=your_resend_key
+RESEND_VERIFIED_DOMAIN=updates.sensationalleague.com
+
+# Optional: Resend webhook verification
+RESEND_WEBHOOK_SECRET=your_webhook_secret
+
+# Required for SharePoint sync
+SHAREPOINT_SITE_ID=your_site_id
+SHAREPOINT_PLAYER_APPLICATIONS_LIST_ID=your_list_id
+SHAREPOINT_NEWSLETTER_LIST_ID=your_newsletter_list_id
+AZURE_TENANT_ID=your_tenant_id
+AZURE_CLIENT_ID=your_client_id
+AZURE_CLIENT_SECRET=your_client_secret
+```
+
+### Setting Up Resend Webhooks
+
+1. Go to [Resend Dashboard](https://resend.com/webhooks)
+2. Create a new webhook with URL: `https://your-domain.com/api/cdp/resend-webhook`
+3. Select events: `email.sent`, `email.delivered`, `email.opened`, `email.clicked`, `email.bounced`, `email.complained`, `contact.unsubscribed`
+4. Copy the signing secret to `RESEND_WEBHOOK_SECRET`
+
+### Vercel Cron Configuration
+
+The `vercel.json` file configures automatic flow processing every 5 minutes:
+
+```json
+{
+  "crons": [{
+    "path": "/api/cron/cdp",
+    "schedule": "*/5 * * * *"
+  }]
+}
+```
+
+Add `CRON_SECRET` to your Vercel environment variables for authentication.
+
+### Segment Types
+
+**Player Draft Segments:**
+- **Position-based**: Goalkeepers, Defenders, Midfielders, Forwards
+- **Status-based**: New Applicants, Under Review, Shortlisted, Trial Invites, Selected, Waitlisted
+- **Engagement-based**: High Engagement, Low Engagement, Unsubscribed
+- **Experience-based**: Elite/Professional, Club/Amateur, Recreational
+- **Age-based**: 18-24, 25-34, 35-44, 45+
+- **Activity-based**: Currently Active, Previously Active
+- **Special**: Social Media Active, Copenhagen Area, High Rated
+
+**Newsletter Segments:**
+- **Status-based**: Active Subscribers, Unsubscribed
+- **Source-based**: Homepage Signups
+- **Cross-reference**: Also Draft Applicants, Newsletter Only
+
+### Email Flow Triggers
+
+- `new_submission` - When a new application is submitted
+- `status_change` - When applicant status changes (e.g., "shortlisted", "selected")
+- `segment_entry` - When applicant enters a segment
+- `segment_exit` - When applicant exits a segment
+- `manual` - Manually triggered campaigns

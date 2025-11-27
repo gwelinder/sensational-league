@@ -1,8 +1,12 @@
 /**
- * Segment Evaluator - Evaluates segment rules against applicants
+ * Segment Evaluator - Evaluates segment rules against contacts
  * 
- * Handles dynamic segmentation based on applicant attributes,
+ * Handles dynamic segmentation based on contact attributes,
  * and manages segment membership updates.
+ * 
+ * Supports both:
+ * - draftApplicant documents (player draft applicants)
+ * - newsletterSubscriber documents (newsletter subscribers)
  */
 
 import type {
@@ -20,27 +24,106 @@ import {
   getDraftApplicantsBySegment,
 } from "./sanityClient";
 import { syncSegmentToResend } from "./resendSync";
+import { createClient, type SanityClient } from "@sanity/client";
+
+// Lazy-initialized Sanity client for newsletter subscriber queries
+let _sanityClient: SanityClient | null = null;
+
+function getSanityClient(): SanityClient {
+  if (!_sanityClient) {
+    _sanityClient = createClient({
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+      apiVersion: "2024-01-01",
+      token: process.env.SANITY_API_TOKEN,
+      useCdn: false,
+    });
+  }
+  return _sanityClient;
+}
+
+// Newsletter Subscriber type
+interface NewsletterSubscriber {
+  _id: string;
+  email: string;
+  status: string;
+  source?: string;
+  subscribedAt?: string;
+  unsubscribedAt?: string;
+  consentGiven?: boolean;
+  consentTimestamp?: string;
+  linkedApplicant?: { _ref: string };
+  segments?: Array<{ _ref: string }>;
+  emailEngagement?: {
+    emailsSent?: number;
+    emailsOpened?: number;
+    emailsClicked?: number;
+  };
+}
+
+// Generic contact type for evaluation
+type Contact = DraftApplicant | NewsletterSubscriber;
 
 /**
- * Evaluate a single condition against an applicant
+ * Get all newsletter subscribers
+ */
+async function getAllNewsletterSubscribers(): Promise<NewsletterSubscriber[]> {
+  return getSanityClient().fetch(`*[_type == "newsletterSubscriber"]`);
+}
+
+/**
+ * Get newsletter subscribers by segment
+ */
+async function getNewsletterSubscribersBySegment(segmentId: string): Promise<NewsletterSubscriber[]> {
+  return getSanityClient().fetch(
+    `*[_type == "newsletterSubscriber" && references($segmentId)]`,
+    { segmentId }
+  );
+}
+
+/**
+ * Update newsletter subscriber segments
+ */
+async function updateNewsletterSubscriberSegments(
+  subscriberId: string,
+  segmentIds: string[]
+): Promise<void> {
+  const segmentRefs = segmentIds.map((id) => ({
+    _type: "reference",
+    _ref: id,
+    _key: id,
+  }));
+
+  await getSanityClient()
+    .patch(subscriberId)
+    .set({ segments: segmentRefs })
+    .commit();
+}
+
+/**
+ * Evaluate a single condition against a contact (applicant or subscriber)
  */
 function evaluateCondition(
-  applicant: DraftApplicant,
+  contact: Contact,
   condition: SegmentCondition
 ): boolean {
   const { field, operator, value } = condition;
 
-  // Get the field value from applicant
+  // Get the field value from contact
   let fieldValue: unknown;
 
   // Handle nested fields
   if (field === "emailsOpened") {
-    fieldValue = applicant.emailEngagement?.emailsOpened ?? 0;
+    fieldValue = contact.emailEngagement?.emailsOpened ?? 0;
   } else if (field === "unsubscribed") {
-    fieldValue = applicant.emailEngagement?.unsubscribed ?? false;
+    // Check for unsubscribed in different places depending on contact type
+    const applicantEngagement = (contact as DraftApplicant).emailEngagement;
+    const subscriberStatus = (contact as NewsletterSubscriber).status;
+    fieldValue = applicantEngagement?.unsubscribed || subscriberStatus === "unsubscribed" || false;
   } else if (field === "daysSinceSubmission") {
-    if (applicant.submittedAt) {
-      const submittedDate = new Date(applicant.submittedAt);
+    const dateField = (contact as DraftApplicant).submittedAt || (contact as NewsletterSubscriber).subscribedAt;
+    if (dateField) {
+      const submittedDate = new Date(dateField);
       const now = new Date();
       fieldValue = Math.floor(
         (now.getTime() - submittedDate.getTime()) / (1000 * 60 * 60 * 24)
@@ -48,8 +131,11 @@ function evaluateCondition(
     } else {
       fieldValue = 0;
     }
+  } else if (field === "linkedApplicant") {
+    // Special handling for linkedApplicant reference field
+    fieldValue = (contact as NewsletterSubscriber).linkedApplicant?._ref;
   } else {
-    fieldValue = (applicant as Record<string, unknown>)[field];
+    fieldValue = (contact as unknown as Record<string, unknown>)[field];
   }
 
   return evaluateOperator(fieldValue, operator, value);
@@ -126,10 +212,10 @@ function evaluateOperator(
 }
 
 /**
- * Evaluate if an applicant matches a segment's rules
+ * Evaluate if a contact matches a segment's rules
  */
-export function evaluateApplicantForSegment(
-  applicant: DraftApplicant,
+export function evaluateContactForSegment(
+  contact: Contact,
   segment: CDPSegment
 ): boolean {
   // Manual segments don't use rule evaluation
@@ -146,14 +232,24 @@ export function evaluateApplicantForSegment(
   if (matchType === "all") {
     // All conditions must match (AND)
     return conditions.every((condition) =>
-      evaluateCondition(applicant, condition)
+      evaluateCondition(contact, condition)
     );
   } else {
     // Any condition must match (OR)
     return conditions.some((condition) =>
-      evaluateCondition(applicant, condition)
+      evaluateCondition(contact, condition)
     );
   }
+}
+
+/**
+ * Legacy function for backwards compatibility
+ */
+export function evaluateApplicantForSegment(
+  applicant: DraftApplicant,
+  segment: CDPSegment
+): boolean {
+  return evaluateContactForSegment(applicant, segment);
 }
 
 /**
@@ -217,50 +313,84 @@ export async function evaluateSegment(
 }
 
 /**
- * Evaluate all active segments and update applicant memberships
+ * Evaluate all active segments and update contact memberships
  * This is the main entry point for segment recomputation
  */
 export async function evaluateAllSegments(): Promise<SegmentEvaluationResult[]> {
   const segments = await getAllActiveSegments();
   const applicants = await getAllDraftApplicants();
+  const subscribers = await getAllNewsletterSubscribers();
   const results: SegmentEvaluationResult[] = [];
 
-  // Build a map of applicant -> segments
+  // Build a map of contact -> segments for both types
   const applicantSegments = new Map<string, Set<string>>();
+  const subscriberSegments = new Map<string, Set<string>>();
   
   for (const applicant of applicants) {
     applicantSegments.set(applicant._id, new Set());
+  }
+  for (const subscriber of subscribers) {
+    subscriberSegments.set(subscriber._id, new Set());
   }
 
   // Evaluate each segment
   for (const segment of segments) {
     if (segment.type !== "rule") continue;
 
+    const documentType = (segment as CDPSegment & { documentType?: string }).documentType || "draftApplicant";
     const segmentMembers: string[] = [];
 
-    for (const applicant of applicants) {
-      if (evaluateApplicantForSegment(applicant, segment)) {
-        segmentMembers.push(applicant._id);
-        applicantSegments.get(applicant._id)?.add(segment._id);
+    if (documentType === "newsletterSubscriber") {
+      // Evaluate against newsletter subscribers
+      for (const subscriber of subscribers) {
+        if (evaluateContactForSegment(subscriber, segment)) {
+          segmentMembers.push(subscriber._id);
+          subscriberSegments.get(subscriber._id)?.add(segment._id);
+        }
       }
+
+      // Get previous members
+      const previousMembers = await getNewsletterSubscribersBySegment(segment._id);
+      const previousMemberIds = new Set(previousMembers.map((s) => s._id));
+      
+      const added = segmentMembers.filter((id) => !previousMemberIds.has(id));
+      const removed = Array.from(previousMemberIds).filter(
+        (id) => !segmentMembers.includes(id)
+      );
+
+      results.push({
+        segmentId: segment._id,
+        segmentName: segment.name,
+        members: segmentMembers,
+        added,
+        removed,
+      });
+    } else {
+      // Evaluate against draft applicants (default)
+      for (const applicant of applicants) {
+        if (evaluateContactForSegment(applicant, segment)) {
+          segmentMembers.push(applicant._id);
+          applicantSegments.get(applicant._id)?.add(segment._id);
+        }
+      }
+
+      // Get previous members to calculate changes
+      const previousMembers = await getDraftApplicantsBySegment(segment._id);
+      const previousMemberIds = new Set(previousMembers.map((a) => a._id));
+      
+      const added = segmentMembers.filter((id) => !previousMemberIds.has(id));
+      const removed = Array.from(previousMemberIds).filter(
+        (id) => !segmentMembers.includes(id)
+      );
+
+      results.push({
+        segmentId: segment._id,
+        segmentName: segment.name,
+        members: segmentMembers,
+        added,
+        removed,
+      });
     }
-
-    // Get previous members to calculate changes
-    const previousMembers = await getDraftApplicantsBySegment(segment._id);
-    const previousMemberIds = new Set(previousMembers.map((a) => a._id));
-    
-    const added = segmentMembers.filter((id) => !previousMemberIds.has(id));
-    const removed = Array.from(previousMemberIds).filter(
-      (id) => !segmentMembers.includes(id)
-    );
-
-    results.push({
-      segmentId: segment._id,
-      segmentName: segment.name,
-      members: segmentMembers,
-      added,
-      removed,
-    });
 
     // Update segment member count
     await updateSegmentMemberCount(segment._id, segmentMembers.length);
@@ -278,6 +408,11 @@ export async function evaluateAllSegments(): Promise<SegmentEvaluationResult[]> 
   // Update each applicant's segment membership
   for (const [applicantId, segmentIds] of applicantSegments) {
     await updateApplicantSegments(applicantId, Array.from(segmentIds));
+  }
+
+  // Update each subscriber's segment membership
+  for (const [subscriberId, segmentIds] of subscriberSegments) {
+    await updateNewsletterSubscriberSegments(subscriberId, Array.from(segmentIds));
   }
 
   return results;

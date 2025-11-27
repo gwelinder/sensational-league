@@ -46,6 +46,7 @@ import {
 } from "./league";
 import {
   draftApplicant,
+  newsletterSubscriber,
   cdpSegment,
   emailFlow,
   emailEvent
@@ -77,6 +78,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     
     // CDP (Customer Data Platform)
     draftApplicant,
+    newsletterSubscriber,
     cdpSegment,
     emailFlow,
     emailEvent,

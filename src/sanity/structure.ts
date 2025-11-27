@@ -63,6 +63,14 @@ export const structure: StructureResolver = (S) =>
                     .defaultOrdering([{ field: 'submittedAt', direction: 'desc' }])
                 ),
               S.listItem()
+                .title('Newsletter Subscribers')
+                .icon(() => '📬')
+                .child(
+                  S.documentTypeList('newsletterSubscriber')
+                    .title('Newsletter Subscribers')
+                    .defaultOrdering([{ field: 'subscribedAt', direction: 'desc' }])
+                ),
+              S.listItem()
                 .title('Segments')
                 .icon(() => '🎯')
                 .child(

@@ -13,6 +13,24 @@ interface CDPStats {
   emailsOpenedToday: number;
 }
 
+interface NewsletterStats {
+  totalSubscribers: number;
+  activeSubscribers: number;
+  unsubscribed: number;
+  bySource: Record<string, number>;
+  alsoApplicants: number;
+}
+
+interface DemographicStats {
+  byAge: Record<string, number>;
+  byCity: Record<string, number>;
+  byExperience: Record<string, number>;
+  byPosition: Record<string, number>;
+  socialMediaActive: number;
+  currentlyActive: number;
+  previouslyActive: number;
+}
+
 interface RecentApplicant {
   _id: string;
   email: string;
@@ -63,9 +81,193 @@ const statusLabels: Record<string, string> = {
   withdrawn: "Withdrawn",
 };
 
+const ageColors: Record<string, string> = {
+  "18-24": "#00FBFF",
+  "25-34": "#D4FF00",
+  "35-44": "#FF4400",
+  "45+": "#AE00FF",
+};
+
+const experienceColors: Record<string, string> = {
+  Professional: "#AE00FF",
+  International: "#D4FF00",
+  National: "#FF4400",
+  Amateur: "#3B82F6",
+  Recreational: "#10B981",
+};
+
+const positionColors: Record<string, string> = {
+  Forward: "#FF4400",
+  Midfielder: "#D4FF00",
+  Defender: "#10B981",
+  Goalkeeper: "#3B82F6",
+};
+
+// Simple horizontal bar chart component
+function HorizontalBarChart({
+  data,
+  colors,
+  maxValue,
+}: {
+  data: Record<string, number>;
+  colors?: Record<string, string>;
+  maxValue?: number;
+}) {
+  const entries = Object.entries(data).filter(([, v]) => v > 0);
+  const max = maxValue || Math.max(...entries.map(([, v]) => v), 1);
+
+  if (entries.length === 0) {
+    return <Text muted size={1}>No data available</Text>;
+  }
+
+  return (
+    <Stack space={2}>
+      {entries.map(([label, value]) => (
+        <Flex key={label} align="center" gap={2}>
+          <Text size={1} style={{ width: 80, flexShrink: 0 }}>
+            {label}
+          </Text>
+          <div style={{ flex: 1, height: 20, background: "#1a1a1a", borderRadius: 4 }}>
+            <div
+              style={{
+                width: `${(value / max) * 100}%`,
+                height: "100%",
+                background: colors?.[label] || "#D4FF00",
+                borderRadius: 4,
+                minWidth: value > 0 ? 4 : 0,
+              }}
+            />
+          </div>
+          <Text size={1} muted style={{ width: 30, textAlign: "right" }}>
+            {value}
+          </Text>
+        </Flex>
+      ))}
+    </Stack>
+  );
+}
+
+// Donut chart component
+function DonutChart({
+  data,
+  colors,
+  size = 120,
+}: {
+  data: Record<string, number>;
+  colors?: Record<string, string>;
+  size?: number;
+}) {
+  const entries = Object.entries(data).filter(([, v]) => v > 0);
+  const total = entries.reduce((sum, [, v]) => sum + v, 0);
+
+  if (total === 0) {
+    return (
+      <Flex align="center" justify="center" style={{ width: size, height: size }}>
+        <Text muted size={1}>No data</Text>
+      </Flex>
+    );
+  }
+
+  const defaultColors = ["#D4FF00", "#FF4400", "#AE00FF", "#00FBFF", "#10B981", "#3B82F6"];
+  let currentAngle = 0;
+
+  const segments = entries.map(([label, value], index) => {
+    const angle = (value / total) * 360;
+    const startAngle = currentAngle;
+    currentAngle += angle;
+
+    const color = colors?.[label] || defaultColors[index % defaultColors.length];
+    const x1 = 50 + 40 * Math.cos((Math.PI * startAngle) / 180);
+    const y1 = 50 + 40 * Math.sin((Math.PI * startAngle) / 180);
+    const x2 = 50 + 40 * Math.cos((Math.PI * (startAngle + angle)) / 180);
+    const y2 = 50 + 40 * Math.sin((Math.PI * (startAngle + angle)) / 180);
+    const largeArc = angle > 180 ? 1 : 0;
+
+    return (
+      <path
+        key={label}
+        d={`M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`}
+        fill={color}
+      />
+    );
+  });
+
+  return (
+    <Flex gap={3} align="center">
+      <svg width={size} height={size} viewBox="0 0 100 100">
+        {segments}
+        <circle cx="50" cy="50" r="25" fill="#1a1a1a" />
+        <text x="50" y="50" textAnchor="middle" dy=".3em" fill="white" fontSize="14" fontWeight="bold">
+          {total}
+        </text>
+      </svg>
+      <Stack space={1}>
+        {entries.map(([label, value], index) => (
+          <Flex key={label} align="center" gap={2}>
+            <div
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: 2,
+                backgroundColor: colors?.[label] || defaultColors[index % defaultColors.length],
+              }}
+            />
+            <Text size={0}>
+              {label}: {value}
+            </Text>
+          </Flex>
+        ))}
+      </Stack>
+    </Flex>
+  );
+}
+
+// Percentage card component
+function PercentageCard({
+  label,
+  value,
+  total,
+  color,
+}: {
+  label: string;
+  value: number;
+  total: number;
+  color: string;
+}) {
+  const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+
+  return (
+    <Card padding={3} radius={2} style={{ borderLeft: `4px solid ${color}` }}>
+      <Stack space={2}>
+        <Text size={0} muted>
+          {label}
+        </Text>
+        <Flex align="baseline" gap={1}>
+          <Heading size={2}>{percentage}%</Heading>
+          <Text size={0} muted>
+            ({value}/{total})
+          </Text>
+        </Flex>
+        <div style={{ height: 4, background: "#1a1a1a", borderRadius: 2 }}>
+          <div
+            style={{
+              width: `${percentage}%`,
+              height: "100%",
+              background: color,
+              borderRadius: 2,
+            }}
+          />
+        </div>
+      </Stack>
+    </Card>
+  );
+}
+
 export function CDPDashboard() {
   const client = useClient({ apiVersion: "2024-01-01" });
   const [stats, setStats] = useState<CDPStats | null>(null);
+  const [newsletterStats, setNewsletterStats] = useState<NewsletterStats | null>(null);
+  const [demographics, setDemographics] = useState<DemographicStats | null>(null);
   const [recentApplicants, setRecentApplicants] = useState<RecentApplicant[]>([]);
   const [segments, setSegments] = useState<Segment[]>([]);
   const [flows, setFlows] = useState<Flow[]>([]);
@@ -76,7 +278,7 @@ export function CDPDashboard() {
     try {
       setLoading(true);
 
-      // Fetch stats
+      // Fetch stats and demographics
       const [
         applicantStats,
         segmentCount,
@@ -85,6 +287,8 @@ export function CDPDashboard() {
         recent,
         segmentList,
         flowList,
+        allApplicants,
+        newsletterData,
       ] = await Promise.all([
         client.fetch(`{
           "total": count(*[_type == "draftApplicant"]),
@@ -110,7 +314,7 @@ export function CDPDashboard() {
           }`
         ),
         client.fetch<Segment[]>(
-          `*[_type == "cdpSegment" && active == true] | order(memberCount desc) [0...8] {
+          `*[_type == "cdpSegment" && active == true] | order(memberCount desc) [0...10] {
             _id, name, memberCount, color
           }`
         ),
@@ -119,7 +323,100 @@ export function CDPDashboard() {
             _id, name, active, stats
           }`
         ),
+        // Fetch all applicant data for demographic analysis
+        client.fetch<Array<{
+          ageGroup?: string;
+          city?: string;
+          highestLevel?: string;
+          preferredPositions?: string[];
+          socialMediaActive?: boolean;
+          currentlyActive?: boolean;
+          previouslyActive?: boolean;
+        }>>(
+          `*[_type == "draftApplicant"] {
+            ageGroup, city, highestLevel, preferredPositions, 
+            socialMediaActive, currentlyActive, previouslyActive
+          }`
+        ),
+        // Fetch newsletter subscriber stats
+        client.fetch<{
+          total: number;
+          active: number;
+          unsubscribed: number;
+          alsoApplicants: number;
+          subscribers: Array<{ source?: string }>;
+        }>(`{
+          "total": count(*[_type == "newsletterSubscriber"]),
+          "active": count(*[_type == "newsletterSubscriber" && status == "active"]),
+          "unsubscribed": count(*[_type == "newsletterSubscriber" && status == "unsubscribed"]),
+          "alsoApplicants": count(*[_type == "newsletterSubscriber" && defined(linkedApplicant)]),
+          "subscribers": *[_type == "newsletterSubscriber"]{ source }
+        }`),
       ]);
+
+      // Calculate demographic stats from raw data
+      const byAge: Record<string, number> = {};
+      const byCity: Record<string, number> = {};
+      const byExperience: Record<string, number> = {};
+      const byPosition: Record<string, number> = {
+        Forward: 0,
+        Midfielder: 0,
+        Defender: 0,
+        Goalkeeper: 0,
+      };
+      let socialMediaActive = 0;
+      let currentlyActive = 0;
+      let previouslyActive = 0;
+
+      for (const a of allApplicants) {
+        // Age groups
+        if (a.ageGroup) {
+          byAge[a.ageGroup] = (byAge[a.ageGroup] || 0) + 1;
+        }
+
+        // Cities - normalize Copenhagen variants
+        if (a.city) {
+          let normalizedCity = a.city;
+          if (a.city.toLowerCase().includes("copenhagen") || a.city.toLowerCase().includes("københavn")) {
+            normalizedCity = "Copenhagen";
+          }
+          byCity[normalizedCity] = (byCity[normalizedCity] || 0) + 1;
+        }
+
+        // Experience levels
+        if (a.highestLevel) {
+          byExperience[a.highestLevel] = (byExperience[a.highestLevel] || 0) + 1;
+        }
+
+        // Positions - categorize into main groups
+        if (a.preferredPositions) {
+          for (const pos of a.preferredPositions) {
+            const posLower = pos.toLowerCase();
+            if (posLower.includes("goalkeeper")) {
+              byPosition.Goalkeeper++;
+            } else if (posLower.includes("back") || posLower.includes("defender") || posLower.includes("sweeper")) {
+              byPosition.Defender++;
+            } else if (posLower.includes("midfielder") || posLower.includes("midfield")) {
+              byPosition.Midfielder++;
+            } else if (posLower.includes("forward") || posLower.includes("striker") || posLower.includes("winger")) {
+              byPosition.Forward++;
+            }
+          }
+        }
+
+        if (a.socialMediaActive) socialMediaActive++;
+        if (a.currentlyActive) currentlyActive++;
+        if (a.previouslyActive) previouslyActive++;
+      }
+
+      // Sort cities by count and take top 5
+      const sortedCities = Object.entries(byCity)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      const topCities: Record<string, number> = {};
+      for (const [city, count] of sortedCities) {
+        topCities[city] = count;
+      }
 
       setStats({
         totalApplicants: applicantStats.total,
@@ -138,6 +435,31 @@ export function CDPDashboard() {
         activeFlows: flowCount,
         emailsSentToday: emailStats.sent,
         emailsOpenedToday: emailStats.opened,
+      });
+
+      setDemographics({
+        byAge,
+        byCity: topCities,
+        byExperience,
+        byPosition,
+        socialMediaActive,
+        currentlyActive,
+        previouslyActive,
+      });
+
+      // Process newsletter stats
+      const bySource: Record<string, number> = {};
+      for (const sub of newsletterData.subscribers) {
+        const source = sub.source || "unknown";
+        bySource[source] = (bySource[source] || 0) + 1;
+      }
+
+      setNewsletterStats({
+        totalSubscribers: newsletterData.total,
+        activeSubscribers: newsletterData.active,
+        unsubscribed: newsletterData.unsubscribed,
+        bySource,
+        alsoApplicants: newsletterData.alsoApplicants,
       });
 
       setRecentApplicants(recent);
@@ -170,7 +492,7 @@ export function CDPDashboard() {
       } else {
         alert(`Sync failed: ${result.error}`);
       }
-    } catch (error) {
+    } catch {
       alert("Sync failed");
     } finally {
       setSyncing(false);
@@ -216,9 +538,20 @@ export function CDPDashboard() {
         <Card padding={4} radius={2} shadow={1}>
           <Stack space={2}>
             <Text size={1} muted>
-              Total Applicants
+              Draft Applicants
             </Text>
             <Heading size={4}>{stats?.totalApplicants || 0}</Heading>
+          </Stack>
+        </Card>
+        <Card padding={4} radius={2} shadow={1}>
+          <Stack space={2}>
+            <Text size={1} muted>
+              Newsletter Subscribers
+            </Text>
+            <Heading size={4}>{newsletterStats?.totalSubscribers || 0}</Heading>
+            <Text size={0} muted>
+              {newsletterStats?.activeSubscribers || 0} active
+            </Text>
           </Stack>
         </Card>
         <Card padding={4} radius={2} shadow={1}>
@@ -227,14 +560,6 @@ export function CDPDashboard() {
               Active Segments
             </Text>
             <Heading size={4}>{stats?.activeSegments || 0}</Heading>
-          </Stack>
-        </Card>
-        <Card padding={4} radius={2} shadow={1}>
-          <Stack space={2}>
-            <Text size={1} muted>
-              Active Flows
-            </Text>
-            <Heading size={4}>{stats?.activeFlows || 0}</Heading>
           </Stack>
         </Card>
         <Card padding={4} radius={2} shadow={1}>
@@ -251,6 +576,115 @@ export function CDPDashboard() {
           </Stack>
         </Card>
       </Grid>
+
+      {/* Newsletter Stats Section */}
+      <Card padding={4} radius={2} shadow={1}>
+        <Stack space={4}>
+          <Heading size={2}>Newsletter Subscribers</Heading>
+          <Grid columns={[1, 2, 4]} gap={3}>
+            <PercentageCard
+              label="Active Subscribers"
+              value={newsletterStats?.activeSubscribers || 0}
+              total={newsletterStats?.totalSubscribers || 0}
+              color="#10B981"
+            />
+            <PercentageCard
+              label="Unsubscribed"
+              value={newsletterStats?.unsubscribed || 0}
+              total={newsletterStats?.totalSubscribers || 0}
+              color="#EF4444"
+            />
+            <PercentageCard
+              label="Also Draft Applicants"
+              value={newsletterStats?.alsoApplicants || 0}
+              total={newsletterStats?.totalSubscribers || 0}
+              color="#AE00FF"
+            />
+            <Card padding={3} radius={2} tone="transparent">
+              <Stack space={3}>
+                <Text size={1} weight="semibold">Signup Sources</Text>
+                <HorizontalBarChart data={newsletterStats?.bySource || {}} />
+              </Stack>
+            </Card>
+          </Grid>
+        </Stack>
+      </Card>
+
+      {/* Demographics Section */}
+      <Card padding={4} radius={2} shadow={1}>
+        <Stack space={4}>
+          <Heading size={2}>Player Demographics</Heading>
+          <Grid columns={[1, 2, 4]} gap={4}>
+            {/* Age Distribution */}
+            <Card padding={3} radius={2} tone="transparent">
+              <Stack space={3}>
+                <Text size={1} weight="semibold">Age Distribution</Text>
+                <HorizontalBarChart 
+                  data={demographics?.byAge || {}} 
+                  colors={ageColors}
+                />
+              </Stack>
+            </Card>
+
+            {/* Experience Level */}
+            <Card padding={3} radius={2} tone="transparent">
+              <Stack space={3}>
+                <Text size={1} weight="semibold">Experience Level</Text>
+                <HorizontalBarChart 
+                  data={demographics?.byExperience || {}} 
+                  colors={experienceColors}
+                />
+              </Stack>
+            </Card>
+
+            {/* Position Distribution */}
+            <Card padding={3} radius={2} tone="transparent">
+              <Stack space={3}>
+                <Text size={1} weight="semibold">Position Preferences</Text>
+                <DonutChart 
+                  data={demographics?.byPosition || {}} 
+                  colors={positionColors}
+                />
+              </Stack>
+            </Card>
+
+            {/* Top Cities */}
+            <Card padding={3} radius={2} tone="transparent">
+              <Stack space={3}>
+                <Text size={1} weight="semibold">Top Cities</Text>
+                <HorizontalBarChart data={demographics?.byCity || {}} />
+              </Stack>
+            </Card>
+          </Grid>
+        </Stack>
+      </Card>
+
+      {/* Activity & Engagement Metrics */}
+      <Card padding={4} radius={2} shadow={1}>
+        <Stack space={4}>
+          <Heading size={2}>Activity & Engagement</Heading>
+          <Grid columns={[1, 3, 3]} gap={3}>
+            <PercentageCard
+              label="Currently Active in Club"
+              value={demographics?.currentlyActive || 0}
+              total={stats?.totalApplicants || 0}
+              color="#10B981"
+            />
+            <PercentageCard
+              label="Previously Active"
+              value={demographics?.previouslyActive || 0}
+              total={stats?.totalApplicants || 0}
+              color="#F59E0B"
+            />
+            <PercentageCard
+              label="Social Media Active"
+              value={demographics?.socialMediaActive || 0}
+              total={stats?.totalApplicants || 0}
+              color="#FF4400"
+            />
+          </Grid>
+        </Stack>
+      </Card>
 
       {/* Status Breakdown */}
       <Card padding={4} radius={2} shadow={1}>

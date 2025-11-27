@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
   try {
     const rawBody = await request.text();
     const signature = request.headers.get("resend-signature");
-    const secret = process.env.RESEND_WEBHOOK_SECRET;
+    const secret = process.env.RESEND_WEBHOOK_SECRET ?? null;
 
     // Verify signature
     if (!verifyResendSignature(rawBody, signature, secret)) {
