@@ -75,7 +75,8 @@ export default function ConditionalLayout({
     }
   );
 
-  const homePage = useOptimistic<ConditionalLayoutProps['homePage'], SanityDocument>(
+  // Reserved for future conditional rendering based on CMS settings
+  const _homePage = useOptimistic<ConditionalLayoutProps['homePage'], SanityDocument>(
     initialHomePage,
     (currentHomePage, action) => {
       if (action.document?._type !== 'homePage') {
@@ -97,7 +98,8 @@ export default function ConditionalLayout({
     }
   );
 
-  const captainsEnabled = Boolean(homePage?.captainsSection?.enabled);
+  // Note: captainsEnabled could be used for conditional nav rendering in future
+  // const captainsEnabled = Boolean(homePage?.captainsSection?.enabled);
 
   if (isStudioRoute) {
     return <div id={SKIP_TO_CONTENT_ID}>{children}</div>;
@@ -105,7 +107,7 @@ export default function ConditionalLayout({
 
   return (
     <>
-			<Header settings={settings} captainsEnabled={captainsEnabled} />
+			<Header settings={settings} />
 			<div id={SKIP_TO_CONTENT_ID}>{children}</div>
       <Footer settings={settings} />
       <CookieBanner />

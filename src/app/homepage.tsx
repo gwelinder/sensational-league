@@ -1279,7 +1279,7 @@ export default function HomePage({ content }: HomePageProps) {
 	const heroVideoPosterFromSanity = content?.hero?.video?.poster
 		? (getImageUrl(content.hero.video.poster, 2400) ?? undefined)
 		: undefined;
-	const heroPosterUrl = heroVideoPosterFromSanity || DEFAULT_HERO_VIDEO_POSTER;
+	const _heroPosterUrl = heroVideoPosterFromSanity || DEFAULT_HERO_VIDEO_POSTER;
 	const heroVideoObjectFit = heroVideoVariant === "wide" ? "contain" : "cover";
 	const heroCtaText = resolveHeroCtaText(content?.hero?.ctaText);
 	const heroCtaLink = content?.hero?.ctaLink || DEFAULT_TYPEFORM_URL;

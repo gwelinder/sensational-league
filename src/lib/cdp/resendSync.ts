@@ -8,7 +8,7 @@
  */
 
 import { Resend } from "resend";
-import type { DraftApplicant, CDPSegment } from "./types";
+import type { DraftApplicant } from "./types";
 import {
   getSegment,
   getDraftApplicantsBySegment,

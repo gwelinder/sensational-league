@@ -71,8 +71,8 @@ function createBlock(
   };
 }
 
-// Helper to create a block with a link
-function createBlockWithLink(
+// Helper to create a block with a link (reserved for future use)
+function _createBlockWithLink(
   beforeText: string,
   linkText: string,
   linkUrl: string,

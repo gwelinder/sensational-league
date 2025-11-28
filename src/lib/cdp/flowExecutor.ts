@@ -12,7 +12,7 @@ import { renderEmailTemplate, type EmailVariables } from "@/lib/email-renderer";
 import type {
   DraftApplicant,
   EmailFlow,
-  FlowStep,
+  // FlowStep is used via union type
   EmailStep,
   WaitStep,
   BranchStep,
