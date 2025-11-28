@@ -1,5 +1,6 @@
 import type { Client } from "@microsoft/microsoft-graph-client";
 import { getGraphClient } from "./graphClient";
+import { logger } from "@/lib/logger";
 
 interface CreateSharePointListItemOptions {
   listId: string;
@@ -30,8 +31,8 @@ export async function createSharePointListItem({
       .post({ fields });
 
     return { id: result?.id };
-  } catch (error) {
-    console.error("❌ SharePoint create item error:", error);
-    throw error;
+  } catch (err) {
+    logger.sharepoint.error("SharePoint create item error", { action: "createListItem", listId }, err instanceof Error ? err : new Error(String(err)));
+    throw err;
   }
 }

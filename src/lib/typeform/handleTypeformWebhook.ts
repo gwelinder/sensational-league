@@ -6,6 +6,7 @@ import {
 	mapPlayerDraftResponse,
 	type TypeformFormResponse,
 } from "@/lib/typeform/typeformSharePointMapper";
+import { logger } from "@/lib/logger";
 
 export interface HandleTypeformWebhookDeps {
 	createSharePointListItem?: typeof createSharePointListItemImpl;
@@ -62,7 +63,7 @@ function verifyTypeformSignature(
 	secret?: string | null,
 ): boolean {
 	if (!secret) {
-		console.warn("⚠️ TYPEFORM_PLAYERDRAFT_SECRET not set - skipping signature verification");
+		logger.typeform.warn("TYPEFORM_PLAYERDRAFT_SECRET not set - skipping signature verification");
 		return true;
 	}
 
@@ -186,9 +187,12 @@ export async function handleTypeformWebhook(
 
 	// Log attribution data for analytics debugging
 	if (Object.values(attribution).some(Boolean)) {
-		console.log("📊 Typeform submission attribution:", {
+		logger.typeform.info("Typeform submission attribution", {
+			action: "handleWebhook",
 			responseId: formResponse.token,
-			...attribution,
+			utmSource: attribution.utm_source,
+			utmMedium: attribution.utm_medium,
+			utmCampaign: attribution.utm_campaign,
 		});
 	}
 
@@ -240,13 +244,13 @@ export async function handleTypeformWebhook(
 				});
 				
 				if (cdpSync.success) {
-					console.log(`✅ CDP sync successful: applicant=${cdpSync.applicantId}, flows=${cdpSync.flowsTriggered}`);
+					logger.cdp.info("CDP sync successful", { action: "syncTypeformToCDP", applicantId: cdpSync.applicantId, flowsTriggered: cdpSync.flowsTriggered });
 				} else {
-					console.warn("⚠️ CDP sync returned unsuccessful");
+					logger.cdp.warn("CDP sync returned unsuccessful", { action: "syncTypeformToCDP" });
 				}
 			} catch (cdpError) {
 				// Don't fail the webhook if CDP sync fails
-				console.error("⚠️ CDP sync error (non-fatal):", cdpError);
+				logger.cdp.error("CDP sync error (non-fatal)", { action: "syncTypeformToCDP" }, cdpError instanceof Error ? cdpError : new Error(String(cdpError)));
 			}
 		}
 
@@ -265,8 +269,8 @@ export async function handleTypeformWebhook(
 				attribution: Object.values(attribution).some(Boolean) ? attribution : undefined,
 			},
 		};
-	} catch (error) {
-		console.error("Failed to store Typeform submission in SharePoint:", error);
+	} catch (err) {
+		logger.sharepoint.error("Failed to store Typeform submission in SharePoint", { action: "createListItem" }, err instanceof Error ? err : new Error(String(err)));
 		return {
 			status: 500,
 			body: { error: "Failed to create SharePoint item" },

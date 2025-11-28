@@ -9,6 +9,7 @@
 
 import { Resend } from "resend";
 import type { DraftApplicant } from "./types";
+import { logger } from "@/lib/logger";
 import {
   getSegment,
   getDraftApplicantsBySegment,
@@ -42,13 +43,13 @@ export async function createResendAudience(
     });
 
     if (response.error) {
-      console.error("Failed to create Resend audience:", response.error);
+      logger.cdp.error("Failed to create Resend audience", { action: "createResendAudience", segmentName }, new Error(JSON.stringify(response.error)));
       return null;
     }
 
     return response.data?.id || null;
-  } catch (error) {
-    console.error("Error creating Resend audience:", error);
+  } catch (err) {
+    logger.cdp.error("Error creating Resend audience", { action: "createResendAudience", segmentName }, err instanceof Error ? err : new Error(String(err)));
     return null;
   }
 }
@@ -63,13 +64,13 @@ export async function getResendAudiences(): Promise<
     const response = await getResendClient().audiences.list();
 
     if (response.error) {
-      console.error("Failed to list Resend audiences:", response.error);
+      logger.cdp.error("Failed to list Resend audiences", { action: "getResendAudiences" }, new Error(JSON.stringify(response.error)));
       return null;
     }
 
     return response.data?.data || [];
-  } catch (error) {
-    console.error("Error listing Resend audiences:", error);
+  } catch (err) {
+    logger.cdp.error("Error listing Resend audiences", { action: "getResendAudiences" }, err instanceof Error ? err : new Error(String(err)));
     return null;
   }
 }
@@ -95,13 +96,13 @@ export async function addContactToAudience(
       if (response.error.message?.includes("already exists")) {
         return "existing";
       }
-      console.error("Failed to add contact to Resend:", response.error);
+      logger.cdp.error("Failed to add contact to Resend", { action: "addContactToAudience", email: applicant.email, audienceId }, new Error(JSON.stringify(response.error)));
       return null;
     }
 
     return response.data?.id || null;
-  } catch (error) {
-    console.error("Error adding contact to Resend:", error);
+  } catch (err) {
+    logger.cdp.error("Error adding contact to Resend", { action: "addContactToAudience", email: applicant.email, audienceId }, err instanceof Error ? err : new Error(String(err)));
     return null;
   }
 }
@@ -126,13 +127,13 @@ export async function updateResendContact(
     });
 
     if (response.error) {
-      console.error("Failed to update Resend contact:", response.error);
+      logger.cdp.error("Failed to update Resend contact", { action: "updateResendContact", contactId, audienceId }, new Error(JSON.stringify(response.error)));
       return false;
     }
 
     return true;
-  } catch (error) {
-    console.error("Error updating Resend contact:", error);
+  } catch (err) {
+    logger.cdp.error("Error updating Resend contact", { action: "updateResendContact", contactId, audienceId }, err instanceof Error ? err : new Error(String(err)));
     return false;
   }
 }
@@ -151,13 +152,13 @@ export async function removeContactFromAudience(
     });
 
     if (response.error) {
-      console.error("Failed to remove contact from Resend:", response.error);
+      logger.cdp.error("Failed to remove contact from Resend", { action: "removeContactFromAudience", email, audienceId }, new Error(JSON.stringify(response.error)));
       return false;
     }
 
     return true;
-  } catch (error) {
-    console.error("Error removing contact from Resend:", error);
+  } catch (err) {
+    logger.cdp.error("Error removing contact from Resend", { action: "removeContactFromAudience", email, audienceId }, err instanceof Error ? err : new Error(String(err)));
     return false;
   }
 }
@@ -172,13 +173,13 @@ export async function getAudienceContacts(
     const response = await getResendClient().contacts.list({ audienceId });
 
     if (response.error) {
-      console.error("Failed to list Resend contacts:", response.error);
+      logger.cdp.error("Failed to list Resend contacts", { action: "getAudienceContacts", audienceId }, new Error(JSON.stringify(response.error)));
       return null;
     }
 
     return response.data?.data || [];
-  } catch (error) {
-    console.error("Error listing Resend contacts:", error);
+  } catch (err) {
+    logger.cdp.error("Error listing Resend contacts", { action: "getAudienceContacts", audienceId }, err instanceof Error ? err : new Error(String(err)));
     return null;
   }
 }
@@ -335,12 +336,12 @@ export async function handleResendUnsubscribe(email: string): Promise<boolean> {
 
   const applicant = await getDraftApplicantByEmail(email);
   if (!applicant) {
-    console.warn(`Unsubscribe webhook: No applicant found for email ${email}`);
+    logger.cdp.warn("Unsubscribe webhook: No applicant found", { action: "handleResendUnsubscribe", email });
     return false;
   }
 
   await updateApplicantEmailEngagement(applicant._id, { unsubscribed: true });
   
-  console.log(`Marked ${email} as unsubscribed`);
+  logger.cdp.info("Marked applicant as unsubscribed", { action: "handleResendUnsubscribe", email, applicantId: applicant._id });
   return true;
 }

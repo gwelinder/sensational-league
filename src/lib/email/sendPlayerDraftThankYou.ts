@@ -1,6 +1,7 @@
 import { resendClient } from "./resendClient";
 import { client as sanityClient } from "@/sanity/lib/client";
 import { renderEmailTemplate, type EmailVariables } from "@/lib/email-renderer";
+import { logger } from "@/lib/logger";
 
 interface SendPlayerDraftThankYouOptions {
   email: string;
@@ -67,7 +68,7 @@ export async function sendPlayerDraftThankYou({
   submittedAt,
 }: SendPlayerDraftThankYouOptions): Promise<boolean> {
   if (!process.env.RESEND_API_KEY) {
-    console.warn("⚠️ Resend not configured - skipping player draft thank-you email");
+    logger.email.warn("Resend not configured - skipping player draft thank-you email", { email });
     return false;
   }
 
@@ -110,14 +111,14 @@ export async function sendPlayerDraftThankYou({
     });
 
     if (error) {
-      console.error("❌ Resend error (player draft thank-you):", error);
+      logger.email.error("Resend error sending player draft thank-you", { action: "sendPlayerDraftThankYou", email }, new Error(JSON.stringify(error)));
       return false;
     }
 
-    console.log("✅ Player draft thank-you email sent to", email);
+    logger.email.info("Player draft thank-you email sent", { action: "sendPlayerDraftThankYou", email });
     return true;
-  } catch (error) {
-    console.error("❌ Failed to send player draft thank-you email:", error);
+  } catch (err) {
+    logger.email.error("Failed to send player draft thank-you email", { action: "sendPlayerDraftThankYou", email }, err instanceof Error ? err : new Error(String(err)));
     return false;
   }
 }
