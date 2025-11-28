@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
+import ImpactCalculator from "@/components/ImpactCalculator";
 
 interface ImpactActivity {
   title?: string;
@@ -504,6 +505,9 @@ export default async function ImpactPage() {
           </div>
         </div>
       </section>
+
+      {/* Impact Calculator */}
+      <ImpactCalculator />
 
       {/* CTA Section */}
       <section className="border-t border-white/10 bg-black px-4 py-20">
