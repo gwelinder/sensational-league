@@ -138,6 +138,39 @@ Activate the differentiator - show impact as live competition:
 
 ---
 
+### 10. Teams Public Listing ✅ [Effort: Low | Impact: Medium]
+**Status**: ✅ Complete
+
+- [x] Create `/teams` page displaying all teams from CMS
+- [x] Show team logo, name, captain, stats (W/D/L/Pts)
+- [x] Highlight top 3 teams with visual distinction
+- [x] Empty state for pre-season when no teams exist
+- [x] Add teams link to header navigation
+- [x] Include teams in sitemap
+
+**Files Created/Modified**:
+- `src/app/teams/page.tsx`
+- `src/app/teams/loading.tsx`
+- `src/app/sitemap.ts`
+- `src/components/Header.tsx`
+
+---
+
+### 11. Schedule Page ✅ [Effort: Medium | Impact: Medium]
+**Status**: ✅ Complete
+
+- [x] Create `/schedule` page displaying matches from CMS
+- [x] Support match statuses (scheduled, live, completed, postponed, cancelled)
+- [x] Live matches section with animated pulse indicator
+- [x] Upcoming fixtures with date, time, teams, venue
+- [x] Recent results with score highlighting
+- [x] Team logos with fallback initials
+
+**Files Created**:
+- `src/app/schedule/page.tsx`
+
+---
+
 ## Deferred (Too Large - Weeks Effort)
 
 - ❌ Applicant Portal with auth (`/my-application`) - requires auth system
@@ -159,7 +192,9 @@ Activate the differentiator - show impact as live competition:
 | Structured Logging | ✅ | 2025-11-28 | 2025-11-28 |
 | Captain Video Gallery | ✅ | 2025-11-28 | 2025-11-28 |
 | Impact Calculator | ✅ | 2025-11-28 | 2025-11-28 |
+| Teams Listing | ✅ | 2025-11-28 | 2025-11-28 |
+| Schedule Page | ✅ | 2025-11-28 | 2025-11-28 |
 
 ---
 
-*All P1-P4 priorities complete! Build passing. Total: 9 features implemented.*
+*All planned priorities complete! Build passing. Total: 11 features implemented.*

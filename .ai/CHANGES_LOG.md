@@ -111,4 +111,21 @@ Tracking all changes made during vision execution.
 
 ---
 
-*Last Updated*: All 9 priorities complete (3 original + 3 P3/P4 from gap + 3 additional P4)
+#### Schema Activations (New Pages)
+- [x] Created `src/app/teams/page.tsx` - Public teams listing page with:
+  - Team grid with logos, names, captains
+  - Statistics (W/D/L/Pts)
+  - Top 3 visual highlighting
+  - Empty state for pre-season
+- [x] Created `src/app/teams/loading.tsx` - Loading skeleton
+- [x] Created `src/app/schedule/page.tsx` - Match schedule page with:
+  - Live matches section with pulse indicator
+  - Upcoming fixtures with date/time/venue
+  - Recent results with score highlighting
+  - Support for all match statuses
+- [x] Updated `src/components/Header.tsx` - Added Teams link
+- [x] Updated `src/app/sitemap.ts` - Added teams and team slug routes
+
+---
+
+*Last Updated*: All 11 priorities complete (3 original + 3 P3/P4 from gap + 5 additional features)
