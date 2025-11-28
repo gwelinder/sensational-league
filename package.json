@@ -26,7 +26,8 @@
     "typeform:webhook": "tsx scripts/run-typeform-webhook.ts",
     "typeform:map": "tsx scripts/preview-typeform-mapping.ts",
     "upload:captain-video": "tsx scripts/upload-captain-video.ts",
-    "seed:captains": "tsx scripts/seed-captains.ts"
+    "seed:captains": "tsx scripts/seed-captains.ts",
+    "seed:community-challenges": "tsx scripts/seed-community-challenges.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.933.0",
