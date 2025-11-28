@@ -47,11 +47,51 @@ Activate the differentiator - show impact as live competition:
 
 ---
 
+## Additional Enhancements (P3/P4)
+
+### 4. RSS Feed for Press ✅ [Effort: Low | Impact: Medium]
+**Status**: ✅ Complete
+
+- [x] Create `/press/feed.xml` RSS 2.0 endpoint
+- [x] Add RSS auto-discovery link in root layout
+- [x] Add RSS link in footer navigation
+
+**Files Created**:
+- `src/app/press/feed.xml/route.ts`
+
+---
+
+### 5. Public Stats API ✅ [Effort: Low | Impact: Low]
+**Status**: ✅ Complete
+
+- [x] Create `/api/stats` public endpoint
+- [x] Return non-sensitive aggregate statistics
+
+**Files Created**:
+- `src/app/api/stats/route.ts`
+
+---
+
+### 6. Production Fixes ✅ [Effort: Low | Impact: Critical]
+**Status**: ✅ Complete
+
+- [x] Fix TypeScript build error (captainsEnabled prop)
+- [x] Fix ESLint warnings (unused variables)
+
+**Files Modified**:
+- `src/components/ConditionalLayout.tsx`
+- Multiple files for unused variable cleanup
+
+---
+
 ## Deferred (Too Large - Weeks Effort)
 
 - ❌ Applicant Portal with auth (`/my-application`) - requires auth system
 - ❌ Live League Dashboard connected to Sanity - requires full schema integration
 - ❌ Mobile Player App Experience - requires PWA enhancements
+- ❌ Structured logging system
+- ❌ Captain video gallery enhancement
+- ❌ Impact calculator interactive feature
 
 ---
 
@@ -62,7 +102,10 @@ Activate the differentiator - show impact as live competition:
 | Captain Story Pages | ✅ | 2025-01-27 | 2025-01-27 |
 | Countdown Ticker | ✅ | 2025-01-27 | 2025-01-27 |
 | Impact Visualization | ✅ | 2025-01-27 | 2025-01-27 |
+| RSS Feed | ✅ | 2025-11-28 | 2025-11-28 |
+| Public Stats API | ✅ | 2025-11-28 | 2025-11-28 |
+| Build Fixes | ✅ | 2025-11-28 | 2025-11-28 |
 
 ---
 
-*All 3 priorities complete!*
+*All planned priorities complete! Build passing.*
