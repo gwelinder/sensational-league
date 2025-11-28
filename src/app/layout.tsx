@@ -126,6 +126,12 @@ export default async function RootLayout({
 		<html lang="en">
 			<head>
 				<link rel="icon" href="/favicon.ico" sizes="any" />
+				<link
+					rel="alternate"
+					type="application/rss+xml"
+					title="Sensational League - Press Releases"
+					href="/press/feed.xml"
+				/>
 				<OrganizationStructuredData />
 				<WebsiteStructuredData />
 			</head>
