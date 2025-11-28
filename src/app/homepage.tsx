@@ -1703,6 +1703,11 @@ const captainsEnabled =
 							const posterUrl = captain.photo
 								? (getImageUrl(captain.photo, 1200) ?? undefined)
 								: undefined;
+							const captainSlug = captain.name
+								?.toLowerCase()
+								.replace(/\s+/g, "-")
+								.replace(/[æå]/g, "a")
+								.replace(/[ø]/g, "o");
 						return (
 							<article
 								key={`${captain.name ?? "captain"}-${index}`}
@@ -1742,10 +1747,32 @@ const captainsEnabled =
 										</span>
 									)}
 								</div>
+								{captainSlug && (
+									<Link
+										href={`/captains/${captainSlug}`}
+										className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-volt)] transition-colors hover:text-white"
+									>
+										View Profile
+										<span aria-hidden>→</span>
+									</Link>
+								)}
 								</div>
 							</article>
 						);
 						})}
+					</div>
+					<div className="mt-12 text-center">
+						<Link
+							href="/captains"
+							className={cn(
+								"inline-flex items-center gap-3 rounded-none border-2 border-[var(--color-volt)]",
+								"bg-transparent px-8 py-4 text-sm font-black uppercase tracking-[0.3em] text-[var(--color-volt)]",
+								"transition-all duration-200 hover:bg-[var(--color-volt)] hover:text-black"
+							)}
+						>
+							Meet All Captains
+							<span aria-hidden>→</span>
+						</Link>
 					</div>
 				</div>
 		</section>

@@ -25,7 +25,8 @@
     "cdp:evaluate-segments": "tsx scripts/evaluate-cdp-segments.ts",
     "typeform:webhook": "tsx scripts/run-typeform-webhook.ts",
     "typeform:map": "tsx scripts/preview-typeform-mapping.ts",
-    "upload:captain-video": "tsx scripts/upload-captain-video.ts"
+    "upload:captain-video": "tsx scripts/upload-captain-video.ts",
+    "seed:captains": "tsx scripts/seed-captains.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.933.0",

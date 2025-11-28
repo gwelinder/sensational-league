@@ -32,34 +32,21 @@ interface HeaderProps {
 			}>;
 		};
 	};
-	captainsEnabled?: boolean;
 }
 
 
-export default function Header({ settings, captainsEnabled = false }: HeaderProps) {
-	const showCaptainsLink = Boolean(captainsEnabled);
+export default function Header({ settings }: HeaderProps) {
 	const defaultLinks = [
 		{ href: "/#about", label: "About" },
 		{ href: "/player-draft", label: "Draft" },
-		...(showCaptainsLink ? [{ href: "/#captains", label: "Captains" }] : []),
+		{ href: "/captains", label: "Captains" },
+		{ href: "/impact", label: "Impact" },
 		{ href: "/press", label: "News" },
 	];
 
-	const rawLinks = settings?.navigation?.links?.length
+	const links = settings?.navigation?.links?.length
 		? settings.navigation.links
 		: defaultLinks;
-
-	const links = showCaptainsLink
-		? rawLinks
-		: rawLinks.filter(({ href, label }) => {
-			const normalizedHref = (href ?? "").toLowerCase();
-			const normalizedLabel = (label ?? "").toLowerCase();
-			return !(
-				normalizedHref.includes("#captains") ||
-				normalizedHref.replace(/\/?$/, "") === "/captains" ||
-				normalizedLabel === "captains"
-			);
-		});
 
 	const navAttribute = settings?._id ? createDataAttribute({
 		id: settings._id,
@@ -186,7 +173,7 @@ export default function Header({ settings, captainsEnabled = false }: HeaderProp
 			{/* Mobile Navigation */}
 			<div className="md:hidden px-4 pb-3">
 				<nav className="flex flex-wrap gap-4" aria-label="Mobile Navigation">
-					{links.slice(0, 4).map(({ href, label }) => (
+					{links.slice(0, 5).map(({ href, label }) => (
 						<Link
 							key={href}
 							href={href}

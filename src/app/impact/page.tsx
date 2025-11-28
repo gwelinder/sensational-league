@@ -181,7 +181,7 @@ export default async function ImpactPage() {
             Impact Leaderboard
           </h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg text-white/70">
-            In Sensational League, winning isn't just about goals. Teams earn
+            In Sensational League, winning isn&apos;t just about goals. Teams earn
             points by driving real-world impact aligned with UN Sustainable
             Development Goals. Football as a force for good.
           </p>
@@ -353,7 +353,7 @@ export default async function ImpactPage() {
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center text-white/60">
             Every community challenge aligns with the United Nations Sustainable
-            Development Goals. Here's how Sensational League teams are
+            Development Goals. Here&apos;s how Sensational League teams are
             contributing.
           </p>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">

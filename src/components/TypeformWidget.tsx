@@ -117,7 +117,7 @@ export function TypeformWidget({
 						Thanks for applying
 					</p>
 					<p className="brand-body text-base text-black/80">
-						Thanks for applying to become a Sensational player. We'll be in
+						Thanks for applying to become a Sensational player. We&apos;ll be in
 						touch soon by mail. Sign up for our newsletter and share your
 						Sensational dreams with your network of friends and fans.
 					</p>
