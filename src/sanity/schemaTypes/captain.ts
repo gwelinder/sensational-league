@@ -67,6 +67,72 @@ export const captain = defineType({
       description: "CDN URL for the captain's intro video",
     }),
     defineField({
+      name: "videoGallery",
+      title: "Video Gallery",
+      type: "array",
+      description: "Additional videos showcasing the captain",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "title",
+              title: "Video Title",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: "url",
+              title: "Video URL",
+              type: "url",
+              description: "CDN URL or YouTube link",
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: "thumbnail",
+              title: "Custom Thumbnail",
+              type: "image",
+              description: "Optional custom thumbnail (auto-generated if empty)",
+            }),
+            defineField({
+              name: "duration",
+              title: "Duration",
+              type: "string",
+              description: "E.g., '2:45'",
+            }),
+            defineField({
+              name: "category",
+              title: "Category",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Intro", value: "intro" },
+                  { title: "Highlights", value: "highlights" },
+                  { title: "Interview", value: "interview" },
+                  { title: "Behind the Scenes", value: "bts" },
+                  { title: "Match Footage", value: "match" },
+                ],
+              },
+            }),
+          ],
+          preview: {
+            select: {
+              title: "title",
+              category: "category",
+              media: "thumbnail",
+            },
+            prepare({ title, category, media }) {
+              return {
+                title: title || "Untitled Video",
+                subtitle: category || "Video",
+                media,
+              };
+            },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: "bio",
       title: "Full Biography",
       type: "blockContent",

@@ -8,6 +8,7 @@ import { getImageUrl } from "@/lib/sanity-image";
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { cn } from "@/lib/utils";
 import { getCaptainGradient, getInitials } from "@/lib/captain-utils";
+import CaptainVideoGallery from "@/components/CaptainVideoGallery";
 
 interface CareerHighlight {
   title?: string;
@@ -19,6 +20,17 @@ interface SocialMedia {
   instagram?: string;
   twitter?: string;
   linkedin?: string;
+}
+
+interface VideoGalleryItem {
+  title: string;
+  url: string;
+  thumbnail?: {
+    asset?: { _ref?: string };
+    alt?: string;
+  };
+  duration?: string;
+  category?: string;
 }
 
 interface Captain {
@@ -34,6 +46,7 @@ interface Captain {
     alt?: string;
   };
   videoUrl?: string;
+  videoGallery?: VideoGalleryItem[];
   bio?: PortableTextBlock[];
   teamVision?: string;
   lookingFor?: string[];
@@ -64,6 +77,16 @@ async function getCaptain(slug: string): Promise<Captain | null> {
         alt
       },
       videoUrl,
+      videoGallery[] {
+        title,
+        url,
+        thumbnail {
+          asset,
+          alt
+        },
+        duration,
+        category
+      },
       bio,
       teamVision,
       lookingFor,
@@ -326,6 +349,15 @@ export default async function CaptainPage({
             </p>
           </div>
         </section>
+      )}
+
+      {/* Video Gallery */}
+      {(captain.videoUrl || (captain.videoGallery && captain.videoGallery.length > 0)) && (
+        <CaptainVideoGallery
+          mainVideoUrl={captain.videoUrl}
+          videos={captain.videoGallery}
+          captainName={captain.name}
+        />
       )}
 
       {/* Bio Section */}
