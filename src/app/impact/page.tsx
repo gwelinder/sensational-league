@@ -55,14 +55,15 @@ const SDG_GOALS: Record<string, { name: string; color: string; icon: string }> =
   sdg17: { name: "Partnerships", color: "#19486A", icon: "17" },
 };
 
-// Example challenges for preview (will be replaced by CMS data later)
-const EXAMPLE_CHALLENGES = [
+// Fallback example challenges (used when CMS has no data)
+const FALLBACK_CHALLENGES = [
   {
     title: "Beach Cleanup Day",
     description: "Teams compete to clean the most beach area and collect recyclable materials.",
     sdgGoals: ["sdg14", "sdg13"],
     points: 500,
     deadline: "Monthly",
+    status: "active",
   },
   {
     title: "Youth Coaching Sessions",
@@ -70,6 +71,7 @@ const EXAMPLE_CHALLENGES = [
     sdgGoals: ["sdg4", "sdg5", "sdg3"],
     points: 750,
     deadline: "Ongoing",
+    status: "active",
   },
   {
     title: "Social Media Amplification",
@@ -77,6 +79,7 @@ const EXAMPLE_CHALLENGES = [
     sdgGoals: ["sdg5", "sdg10"],
     points: 250,
     deadline: "Weekly",
+    status: "active",
   },
   {
     title: "Charity Match Day",
@@ -84,8 +87,65 @@ const EXAMPLE_CHALLENGES = [
     sdgGoals: ["sdg1", "sdg11", "sdg17"],
     points: 1000,
     deadline: "Seasonal",
+    status: "upcoming",
   },
 ];
+
+interface CommunityChallenge {
+  _id: string;
+  title: string;
+  description: string;
+  sdgGoals?: string[];
+  pointsAvailable: number;
+  status: "draft" | "upcoming" | "active" | "completed";
+  startDate?: string;
+  endDate?: string;
+  icon?: string;
+  category?: string;
+}
+
+async function getCommunityChallengеs(): Promise<CommunityChallenge[]> {
+  const { data } = await sanityFetch({
+    query: `*[_type == "communityChallenge" && status in ["active", "upcoming"]] | order(order asc) {
+      _id,
+      title,
+      description,
+      sdgGoals,
+      pointsAvailable,
+      status,
+      startDate,
+      endDate,
+      icon,
+      category
+    }`,
+  });
+  return (data as CommunityChallenge[]) || [];
+}
+
+// Type for display challenges (merged from CMS or fallback)
+interface DisplayChallenge {
+  title: string;
+  description: string;
+  sdgGoals: string[];
+  points: number;
+  deadline: string;
+  status: string;
+}
+
+function getStatusLabel(status: string, endDate?: string): string {
+  if (status === "active") {
+    if (endDate) {
+      const end = new Date(endDate);
+      const now = new Date();
+      const daysLeft = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 7 && daysLeft > 0) return `${daysLeft} days left`;
+      if (daysLeft <= 0) return "Ending soon";
+    }
+    return "Ongoing";
+  }
+  if (status === "upcoming") return "Coming Soon";
+  return "Monthly";
+}
 
 async function getTeamsWithImpact(): Promise<Team[]> {
   const { data } = await sanityFetch({
@@ -145,7 +205,29 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function ImpactPage() {
-  const teams = await getTeamsWithImpact();
+  const [teams, cmsChallenges] = await Promise.all([
+    getTeamsWithImpact(),
+    getCommunityChallengеs(),
+  ]);
+
+  // Use CMS challenges if available, otherwise fall back to examples
+  const challenges: DisplayChallenge[] = cmsChallenges.length > 0
+    ? cmsChallenges.map((c) => ({
+        title: c.title,
+        description: c.description,
+        sdgGoals: c.sdgGoals || [],
+        points: c.pointsAvailable,
+        deadline: getStatusLabel(c.status, c.endDate),
+        status: c.status,
+      }))
+    : FALLBACK_CHALLENGES.map((c) => ({
+        title: c.title,
+        description: c.description,
+        sdgGoals: c.sdgGoals,
+        points: c.points,
+        deadline: c.deadline,
+        status: c.status,
+      }));
 
   // Calculate totals across all teams
   const allStats = teams.map((t) => calculateTeamImpactStats(t));
@@ -386,9 +468,9 @@ export default async function ImpactPage() {
             season. Points earned here count toward the league standings.
           </p>
           <div className="grid gap-6 md:grid-cols-2">
-            {EXAMPLE_CHALLENGES.map((challenge, index) => (
+            {challenges.map((challenge, index) => (
               <div
-                key={index}
+                key={`challenge-${index}`}
                 className="rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:border-[var(--color-volt)]/30"
               >
                 <div className="mb-4 flex items-start justify-between gap-4">
@@ -404,7 +486,7 @@ export default async function ImpactPage() {
                 </p>
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex gap-1">
-                    {challenge.sdgGoals.map((sdg) => (
+                    {challenge.sdgGoals.map((sdg: string) => (
                       <span
                         key={sdg}
                         className="flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold"
