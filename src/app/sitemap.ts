@@ -9,8 +9,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     `*[_type == "captain" && defined(slug.current)]{ "slug": slug.current }`
   )
 
+  // Fetch team slugs for dynamic routes
+  const teams = await client.fetch<{ slug: string }[]>(
+    `*[_type == "team" && defined(slug.current)]{ "slug": slug.current }`
+  )
+
   const captainUrls: MetadataRoute.Sitemap = captains.map((captain) => ({
     url: `${baseUrl}/captains/${captain.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }))
+
+  const teamUrls: MetadataRoute.Sitemap = teams.map((team) => ({
+    url: `${baseUrl}/teams/${team.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly',
     priority: 0.7,
@@ -44,11 +56,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/teams`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/player-draft`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     ...captainUrls,
+    ...teamUrls,
   ]
 }
