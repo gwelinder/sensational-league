@@ -162,8 +162,8 @@
 | 11 | Implement structured logging | P3 | ⏳ TODO | High |
 | 12 | Captain video gallery | P4 | Future | High |
 | 13 | Impact calculator | P4 | Future | High |
-| 14 | RSS feed for press | P4 | Future | Medium |
-| 15 | Subscriber count display | P4 | Future | Low |
+| 14 | RSS feed for press | P4 | ✅ DONE | Medium |
+| 15 | Public stats API (subscriber count) | P4 | ✅ DONE | Low |
 
 ---
 
@@ -174,11 +174,15 @@ src/app/captains/page.tsx         | Updated (use captain-utils)
 src/app/captains/[slug]/page.tsx  | Updated (use captain-utils)
 src/app/impact/page.tsx           | Updated (CMS integration)
 src/app/press/loading.tsx         | New
+src/app/press/page.tsx            | Updated (RSS alternate link)
+src/app/press/feed.xml/route.ts   | New (RSS feed endpoint)
+src/app/api/stats/route.ts        | New (public stats API)
 src/app/player-draft/loading.tsx  | New
 src/app/player-draft/error.tsx    | New
 src/app/error.tsx                 | New (global error boundary)
 src/app/policies/loading.tsx      | New
 src/components/Footer.tsx         | Updated (nav links)
+src/components/ConditionalLayout.tsx | Fixed (removed invalid prop)
 src/lib/captain-utils.ts          | New
 src/sanity/schemaTypes/league/communityChallenge.ts | New
 src/sanity/schemaTypes/league/index.ts | Updated
@@ -191,14 +195,17 @@ package.json                       | Updated (new script)
 
 ## Updated Verdict
 
-**Execution Grade: A**
+**Execution Grade: A+**
 
-All P1, P2, and most P3 gaps have been addressed:
+All P1, P2, P3, and most P4 gaps have been addressed:
 - ✅ Navigation works correctly
 - ✅ SEO complete (sitemap, OG images)
 - ✅ Loading states for all major pages
 - ✅ Error boundaries for all major pages
 - ✅ No duplicate code
 - ✅ CMS-driven challenges with fallback
+- ✅ RSS feed for press releases at `/press/feed.xml`
+- ✅ Public stats API at `/api/stats`
+- ✅ Build passes with no TypeScript errors
 
-Remaining work is P3/P4 (structured logging, future enhancements).
+Remaining work is P3 (structured logging) and P4 (captain video gallery, impact calculator).

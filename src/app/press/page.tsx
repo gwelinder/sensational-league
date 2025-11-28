@@ -210,6 +210,9 @@ export async function generateMetadata(): Promise<Metadata> {
 		},
 		alternates: {
 			canonical: "https://sensationalleague.com/press",
+			types: {
+				'application/rss+xml': 'https://sensationalleague.com/press/feed.xml',
+			},
 		},
 		robots: {
 			index: true,
