@@ -107,7 +107,13 @@
 ## Priority 4: UX/Accessibility Gaps
 
 ### 4.1 No Error Boundaries
-**Status**: NOT IMPLEMENTED (medium priority)
+**Status**: ✅ FIXED (2025-11-28)
+**Files Created**:
+- `src/app/error.tsx` - Global error boundary
+- `src/app/captains/error.tsx`
+- `src/app/impact/error.tsx`
+- `src/app/press/error.tsx`
+- `src/app/player-draft/error.tsx`
 
 ### 4.2 No Empty State for Captains Page
 **Status**: ACCEPTABLE
@@ -151,7 +157,7 @@
 | 6 | Update homepage captain section to link to /captains | P2 | ✅ DONE | Low |
 | 7 | Move challenges to CMS | P2 | ✅ DONE | Medium |
 | 8 | Extract duplicate utility functions | P3 | ✅ DONE | Low |
-| 9 | Add error boundaries | P3 | ⏳ TODO | Medium |
+| 9 | Add error boundaries | P3 | ✅ DONE | Medium |
 | 10 | Clean up ESLint disables | P3 | Partial | Medium |
 | 11 | Implement structured logging | P3 | ⏳ TODO | High |
 | 12 | Captain video gallery | P4 | Future | High |
@@ -169,6 +175,9 @@ src/app/captains/[slug]/page.tsx  | Updated (use captain-utils)
 src/app/impact/page.tsx           | Updated (CMS integration)
 src/app/press/loading.tsx         | New
 src/app/player-draft/loading.tsx  | New
+src/app/player-draft/error.tsx    | New
+src/app/error.tsx                 | New (global error boundary)
+src/app/policies/loading.tsx      | New
 src/components/Footer.tsx         | Updated (nav links)
 src/lib/captain-utils.ts          | New
 src/sanity/schemaTypes/league/communityChallenge.ts | New
@@ -182,13 +191,14 @@ package.json                       | Updated (new script)
 
 ## Updated Verdict
 
-**Execution Grade: A-**
+**Execution Grade: A**
 
-All P1 and P2 gaps have been addressed:
+All P1, P2, and most P3 gaps have been addressed:
 - ✅ Navigation works correctly
 - ✅ SEO complete (sitemap, OG images)
 - ✅ Loading states for all major pages
+- ✅ Error boundaries for all major pages
 - ✅ No duplicate code
 - ✅ CMS-driven challenges with fallback
 
-Remaining work is P3/P4 (error boundaries, logging, future enhancements).
+Remaining work is P3/P4 (structured logging, future enhancements).
