@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
+import { getCaptainGradient, getInitials } from "@/lib/captain-utils";
 
 interface Captain {
   _id: string;
@@ -49,27 +50,6 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
-
-function getCaptainGradient(name?: string) {
-  const base = (name || "Sensational").split("").reduce((acc, char, index) => {
-    return acc + char.charCodeAt(0) * (index + 1);
-  }, 0);
-  const hue = base % 360;
-  const secondary = (hue + 32) % 360;
-  return `linear-gradient(135deg, hsl(${hue}, 65%, 22%), hsl(${secondary}, 70%, 12%))`;
-}
-
-function getInitials(name?: string): string {
-  if (!name) return "SL";
-  return (
-    name
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? "")
-      .join("") || "SL"
-  );
-}
 
 export default async function CaptainsPage() {
   const captains = await getCaptains();

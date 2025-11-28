@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getImageUrl } from "@/lib/sanity-image";
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { cn } from "@/lib/utils";
+import { getCaptainGradient, getInitials } from "@/lib/captain-utils";
 
 interface CareerHighlight {
   title?: string;
@@ -129,27 +130,6 @@ export async function generateMetadata({
 }
 
 export const revalidate = 3600;
-
-function getCaptainGradient(name?: string) {
-  const base = (name || "Sensational").split("").reduce((acc, char, index) => {
-    return acc + char.charCodeAt(0) * (index + 1);
-  }, 0);
-  const hue = base % 360;
-  const secondary = (hue + 32) % 360;
-  return `linear-gradient(135deg, hsl(${hue}, 65%, 22%), hsl(${secondary}, 70%, 12%))`;
-}
-
-function getInitials(name?: string): string {
-  if (!name) return "SL";
-  return (
-    name
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? "")
-      .join("") || "SL"
-  );
-}
 
 export default async function CaptainPage({
   params,

@@ -48,7 +48,6 @@ export default function Footer({ settings }: FooterProps) {
 			})
 		: undefined;
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const taglineAttribute = settings?._id
 		? createDataAttribute({
 				id: settings._id,
@@ -300,8 +299,44 @@ export default function Footer({ settings }: FooterProps) {
 
 				{/* Bottom Section */}
 				<div className="border-t border-white/10 pt-8">
-					{/* Links */}
-				<div className="flex items-center justify-center gap-4 mb-6">
+					{/* Navigation Links */}
+				<div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-6">
+					<Link
+						href="/captains"
+						className={cn(
+							"brand-caption text-sm text-white uppercase tracking-wider font-bold",
+							"hover:text-[var(--color-volt)] transition-colors",
+						)}
+					>
+						Captains
+					</Link>
+					<Link
+						href="/impact"
+						className={cn(
+							"brand-caption text-sm text-white uppercase tracking-wider font-bold",
+							"hover:text-[var(--color-volt)] transition-colors",
+						)}
+					>
+						Impact
+					</Link>
+					<Link
+						href="/player-draft"
+						className={cn(
+							"brand-caption text-sm text-white uppercase tracking-wider font-bold",
+							"hover:text-[var(--color-volt)] transition-colors",
+						)}
+					>
+						Draft
+					</Link>
+					<Link
+						href="/press"
+						className={cn(
+							"brand-caption text-sm text-white uppercase tracking-wider font-bold",
+							"hover:text-[var(--color-volt)] transition-colors",
+						)}
+					>
+						News
+					</Link>
 					<Link
 						href="/privacy"
 						className={cn(
