@@ -43,7 +43,8 @@ import {
   leagueStandings,
   notification,
   communication,
-  event
+  event,
+  communityChallenge
 } from "./league";
 import {
   draftApplicant,
@@ -77,6 +78,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     notification,
     communication,
     event,
+    communityChallenge,
     
     // CDP (Customer Data Platform)
     draftApplicant,

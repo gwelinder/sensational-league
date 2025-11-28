@@ -7,3 +7,4 @@ export { leagueStandings } from "./leagueStandings";
 export { notification } from "./notification";
 export { communication } from "./communication";
 export { event } from "./event";
+export { communityChallenge } from "./communityChallenge";
