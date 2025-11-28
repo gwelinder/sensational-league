@@ -84,14 +84,65 @@ Activate the differentiator - show impact as live competition:
 
 ---
 
+### 7. Structured Logging System ✅ [Effort: Medium | Impact: High]
+**Status**: ✅ Complete
+
+- [x] Create `src/lib/logger.ts` with structured logging utility
+- [x] Support log levels (debug, info, warn, error)
+- [x] Add component-based loggers (CDP, Email, SharePoint, Typeform, API, App)
+- [x] Include contextual metadata (component, action, IDs)
+- [x] Add performance timing helper
+- [x] Update key files to use structured logger
+
+**Files Created/Modified**:
+- `src/lib/logger.ts`
+- `src/lib/email/sendPlayerDraftThankYou.ts`
+- `src/lib/cdp/resendSync.ts`
+- `src/lib/sharepoint/saveListItem.ts`
+- `src/lib/typeform/handleTypeformWebhook.ts`
+
+---
+
+### 8. Captain Video Gallery ✅ [Effort: Medium | Impact: Medium]
+**Status**: ✅ Complete
+
+- [x] Extend captain schema with `videoGallery` field
+- [x] Support video categories (intro, highlights, interview, bts, match)
+- [x] Create `CaptainVideoGallery` component with:
+  - Auto-generated thumbnails
+  - YouTube embed support
+  - Category organization
+  - Navigation between videos
+- [x] Integrate into captain detail pages
+
+**Files Created/Modified**:
+- `src/sanity/schemaTypes/captain.ts`
+- `src/components/CaptainVideoGallery.tsx`
+- `src/app/captains/[slug]/page.tsx`
+
+---
+
+### 9. Impact Calculator ✅ [Effort: Medium | Impact: High]
+**Status**: ✅ Complete
+
+- [x] Create `ImpactCalculator` interactive component
+- [x] Support 6 activity types with configurable hours/people
+- [x] Calculate points using formula: base + (hours × multiplier) + (people × factor)
+- [x] Show SDGs addressed across activities
+- [x] Sticky results panel with totals
+- [x] CTA to player draft application
+
+**Files Created/Modified**:
+- `src/components/ImpactCalculator.tsx`
+- `src/app/impact/page.tsx`
+
+---
+
 ## Deferred (Too Large - Weeks Effort)
 
 - ❌ Applicant Portal with auth (`/my-application`) - requires auth system
 - ❌ Live League Dashboard connected to Sanity - requires full schema integration
 - ❌ Mobile Player App Experience - requires PWA enhancements
-- ❌ Structured logging system
-- ❌ Captain video gallery enhancement
-- ❌ Impact calculator interactive feature
 
 ---
 
@@ -105,7 +156,10 @@ Activate the differentiator - show impact as live competition:
 | RSS Feed | ✅ | 2025-11-28 | 2025-11-28 |
 | Public Stats API | ✅ | 2025-11-28 | 2025-11-28 |
 | Build Fixes | ✅ | 2025-11-28 | 2025-11-28 |
+| Structured Logging | ✅ | 2025-11-28 | 2025-11-28 |
+| Captain Video Gallery | ✅ | 2025-11-28 | 2025-11-28 |
+| Impact Calculator | ✅ | 2025-11-28 | 2025-11-28 |
 
 ---
 
-*All planned priorities complete! Build passing.*
+*All P1-P4 priorities complete! Build passing. Total: 9 features implemented.*
