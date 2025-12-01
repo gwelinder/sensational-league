@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+// @sanity/ui is a peer dependency of sanity - ensure it's installed
 import { Card, Flex, Text, Heading, Stack, Grid, Button, Spinner } from "@sanity/ui";
 import { useClient } from "sanity";
 
