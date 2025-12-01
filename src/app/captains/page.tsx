@@ -28,6 +28,7 @@ interface HomePageCaptain {
   oneLiner?: string;
   summary?: string;
   superpower?: string;
+  bio?: string;
   photo?: {
     asset?: { _ref?: string };
     alt?: string;
@@ -69,6 +70,7 @@ async function getCaptains(): Promise<Captain[]> {
           oneLiner,
           summary,
           superpower,
+          bio,
           photo {
             asset,
             alt
