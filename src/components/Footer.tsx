@@ -310,6 +310,7 @@ export default function Footer({ settings }: FooterProps) {
 					>
 						Captains
 					</Link>
+					{/* Hidden until launch
 					<Link
 						href="/impact"
 						className={cn(
@@ -319,6 +320,7 @@ export default function Footer({ settings }: FooterProps) {
 					>
 						Impact
 					</Link>
+					*/}
 					<Link
 						href="/player-draft"
 						className={cn(

@@ -40,8 +40,8 @@ export default function Header({ settings }: HeaderProps) {
 		{ href: "/#about", label: "About" },
 		{ href: "/player-draft", label: "Draft" },
 		{ href: "/captains", label: "Captains" },
-		{ href: "/teams", label: "Teams" },
-		{ href: "/impact", label: "Impact" },
+		// { href: "/teams", label: "Teams" },  // Hidden until launch
+		// { href: "/impact", label: "Impact" }, // Hidden until launch
 		{ href: "/press", label: "News" },
 	];
 
