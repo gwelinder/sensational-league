@@ -22,8 +22,22 @@ interface Captain {
   nationalCaps?: number;
 }
 
+interface HomePageCaptain {
+  name?: string;
+  tagline?: string;
+  oneLiner?: string;
+  summary?: string;
+  superpower?: string;
+  photo?: {
+    asset?: { _ref?: string };
+    alt?: string;
+  };
+  videoUrl?: string;
+}
+
 async function getCaptains(): Promise<Captain[]> {
-  const { data } = await sanityFetch({
+  // First try to get standalone captain documents
+  const { data: captainDocs } = await sanityFetch({
     query: `*[_type == "captain"] | order(order asc) {
       _id,
       name,
@@ -40,7 +54,49 @@ async function getCaptains(): Promise<Captain[]> {
       nationalCaps
     }`,
   });
-  return (data as Captain[]) || [];
+  
+  if (captainDocs && (captainDocs as Captain[]).length > 0) {
+    return captainDocs as Captain[];
+  }
+  
+  // Fallback: get captains from homepage captainsSection
+  const { data: homePage } = await sanityFetch({
+    query: `*[_type == "homePage"][0] {
+      captainsSection {
+        captains[] {
+          name,
+          tagline,
+          oneLiner,
+          summary,
+          superpower,
+          photo {
+            asset,
+            alt
+          }
+        }
+      }
+    }`,
+  });
+  
+  const homePageCaptains = (homePage as { captainsSection?: { captains?: HomePageCaptain[] } })?.captainsSection?.captains || [];
+  
+  // Convert homepage captains to the Captain format
+  return homePageCaptains.map((c, index) => ({
+    _id: `homepage-captain-${index}`,
+    name: c.name || "Unknown",
+    slug: { 
+      current: (c.name || "captain")
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[æå]/g, "a")
+        .replace(/[ø]/g, "o")
+    },
+    tagline: c.tagline,
+    oneLiner: c.oneLiner,
+    summary: c.summary,
+    superpower: c.superpower,
+    photo: c.photo,
+  }));
 }
 
 export const metadata: Metadata = {
