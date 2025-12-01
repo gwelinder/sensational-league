@@ -1,6 +1,10 @@
 /**
  * Seed script to populate initial captain profiles in Sanity
  * Run with: pnpm seed:captains
+ * 
+ * NOTE: The homepage captainsSection also contains captain data.
+ * This script creates standalone captain documents for the /captains page
+ * with additional detail fields (careerHighlights, teamVision, etc.)
  */
 
 import * as dotenv from "dotenv";
@@ -35,21 +39,23 @@ const client = createClient({
 	useCdn: false,
 });
 
-// Example captain data - replace with actual captain information
+const HERO_VIDEO_CDN_BASE = "https://sensational-hero-video.generaite.workers.dev";
+
+// The real 6 Sensational League captains
 const captains = [
 	{
 		_type: "captain",
-		_id: "captain-bettina-sorensen",
-		name: "Bettina Sørensen",
-		slug: { _type: "slug", current: "bettina-sorensen" },
+		_id: "captain-bettina-falk",
+		name: "Bettina Falk",
+		slug: { _type: "slug", current: "bettina-falk" },
 		tagline: "Defender • 5x Danish Champion • Brøndby Legend",
-		oneLiner: "56 Caps × Brøndby Legend",
+		oneLiner: "Brøndby Legend x 56 Caps",
 		summary:
-			"A cornerstone of Danish women's football for over a decade, Bettina brings unmatched tactical intelligence and leadership to the field. Her journey from grassroots to international glory embodies the spirit of Sensational League.",
-		superpower: "Reading the game three moves ahead",
+			"Led club and country with grit before reshaping how cities move and play. 56 caps for Denmark plus five titles with Brøndby.",
+		superpower: "Reading the game and speed",
 		position: "defender",
 		nationalCaps: 56,
-		clubs: ["Brøndby IF", "FC Nordsjælland", "Danish National Team"],
+		clubs: ["Brøndby IF", "Danish National Team"],
 		teamVision:
 			"I want to build a team that plays fearless, attacking football while maintaining a rock-solid defensive foundation. Looking for players who are hungry to learn, love the game, and want to be part of something bigger than themselves.",
 		lookingFor: [
@@ -61,26 +67,17 @@ const captains = [
 			{
 				title: "5x Danish Champion",
 				year: "2015-2020",
-				description:
-					"Won five consecutive Danish league titles with Brøndby IF",
+				description: "Won five Danish league titles with Brøndby IF",
 			},
 			{
-				title: "World Cup Qualifier",
-				year: "2019",
-				description:
-					"Key player in Denmark's qualification campaign",
-			},
-			{
-				title: "UEFA License Coach",
-				year: "2022",
-				description: "Completed UEFA B coaching license",
+				title: "56 International Caps",
+				year: "2008-2018",
+				description: "Represented Denmark at World Cup and Euro qualifiers",
 			},
 		],
 		quote:
 			"Football gave me everything - now it's time to give back and create opportunities for the next generation.",
-		socialMedia: {
-			instagram: "bettina_sorensen",
-		},
+		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/bettina`,
 		featured: true,
 		order: 1,
 		bio: [
@@ -90,17 +87,7 @@ const captains = [
 				children: [
 					{
 						_type: "span",
-						text: "Bettina Sørensen is one of the most decorated defenders in Danish women's football history. Her career spanning over 15 years has seen her lift countless trophies and inspire a generation of young players.",
-					},
-				],
-			},
-			{
-				_type: "block",
-				style: "normal",
-				children: [
-					{
-						_type: "span",
-						text: "Beyond her achievements on the pitch, Bettina has been a vocal advocate for gender equality in sports and has worked extensively with youth development programs across Denmark.",
+						text: "Bettina Falk is one of the most decorated defenders in Danish women's football history. Her career spanning over 15 years has seen her lift countless trophies and inspire a generation of young players.",
 					},
 				],
 			},
@@ -108,49 +95,44 @@ const captains = [
 	},
 	{
 		_type: "captain",
-		_id: "captain-majken-nielsen",
-		name: "Majken Nielsen",
-		slug: { _type: "slug", current: "majken-nielsen" },
-		tagline: "Midfielder • Playmaker • Youth Academy Director",
-		oneLiner: "42 Caps × Technical Maestro",
+		_id: "captain-line-roddik-hansen",
+		name: "Line Røddik Hansen",
+		slug: { _type: "slug", current: "line-roddik-hansen" },
+		tagline: "Defender • Lyon, FC Barcelona & Denmark",
+		oneLiner: "132 Caps x Lyon, Barca",
 		summary:
-			"Known for her exceptional vision and passing range, Majken has orchestrated some of the most memorable moments in Danish football. Now she's ready to orchestrate something even bigger.",
-		superpower: "The perfect through ball",
-		position: "midfielder",
-		nationalCaps: 42,
-		clubs: ["FC Rosengård", "Fortuna Hjørring", "Danish National Team"],
+			"From Birkerød to conquering Europe. 132 caps, EURO silver, and a career across Lyon, Barça, Ajax, and more.",
+		superpower: "Calm under chaos",
+		position: "defender",
+		nationalCaps: 132,
+		clubs: ["Olympique Lyon", "FC Barcelona", "Ajax", "Brøndby IF", "Danish National Team"],
 		teamVision:
-			"Football should be beautiful, and I believe in building from the back with purpose. I'm looking for technically gifted players who aren't afraid to take risks and express themselves on the ball.",
+			"I believe in smart, tactical football where every player understands their role. Looking for players who can stay calm under pressure and execute when it matters.",
 		lookingFor: [
-			"Ball-playing goalkeeper",
-			"Technical center-backs comfortable on the ball",
-			"Creative forwards who link play",
+			"Defenders with elite positioning",
+			"Players who thrive in big moments",
+			"Leaders on and off the pitch",
 		],
 		careerHighlights: [
 			{
-				title: "Champions League Quarter-finalist",
-				year: "2018",
-				description:
-					"Led FC Rosengård to the Champions League quarter-finals",
+				title: "132 International Caps",
+				year: "2006-2020",
+				description: "One of Denmark's most capped players ever",
 			},
 			{
-				title: "Player of the Year",
+				title: "EURO 2017 Silver Medal",
 				year: "2017",
-				description: "Named Danish Women's Player of the Year",
+				description: "Led Denmark to the European Championship final",
 			},
 			{
-				title: "Youth Academy Founder",
-				year: "2021",
-				description:
-					"Founded a youth academy focused on technical development",
+				title: "Champions League Winner",
+				year: "2016-2017",
+				description: "Won the Champions League with Olympique Lyon",
 			},
 		],
 		quote:
-			"The most beautiful football comes from players who are free to express themselves.",
-		socialMedia: {
-			instagram: "majken_nielsen",
-			twitter: "majken14",
-		},
+			"The bigger the game, the calmer you need to be. That's when champions are made.",
+		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/line`,
 		featured: true,
 		order: 2,
 		bio: [
@@ -160,7 +142,7 @@ const captains = [
 				children: [
 					{
 						_type: "span",
-						text: "Majken Nielsen has been described as one of the most technically gifted players to emerge from Denmark. Her ability to control the tempo of a game and find impossible passes has made her a fan favorite everywhere she has played.",
+						text: "Line Røddik Hansen's journey from Birkerød to conquering Europe is the stuff of legend. With 132 caps for Denmark and a career spanning Lyon, Barcelona, and Ajax, she brings unparalleled experience to Sensational League.",
 					},
 				],
 			},
@@ -168,49 +150,39 @@ const captains = [
 	},
 	{
 		_type: "captain",
-		_id: "captain-rene-christensen",
-		name: "René Christensen",
-		slug: { _type: "slug", current: "rene-christensen" },
-		tagline: "Forward • Goal Machine • Entrepreneur",
-		oneLiner: "78 Goals × Serial Winner",
+		_id: "captain-theresa-eslund",
+		name: "Theresa Eslund",
+		slug: { _type: "slug", current: "theresa-eslund" },
+		tagline: "Right Back • 133 Caps • UEFA EURO 2017 Best XI",
+		oneLiner: "133 Caps · UEFA EURO 2017 BEST XI",
 		summary:
-			"Denmark's all-time leading scorer in women's football, René brings an unmatched winning mentality and clinical finishing ability. Her entrepreneurial spirit extends beyond football into community development.",
-		superpower: "Finding the net from anywhere",
-		position: "forward",
-		nationalCaps: 65,
-		clubs: ["LSK Kvinner", "Brøndby IF", "Danish National Team"],
+			"Starred across Norway, USA, Australia, and Denmark—selected for the UEFA EURO 2017 Best XI.",
+		superpower: "Relentless drive",
+		position: "defender",
+		nationalCaps: 133,
+		clubs: ["Fortuna Hjørring", "Avaldsnes IL", "Western Sydney Wanderers", "Danish National Team"],
 		teamVision:
-			"Attack, attack, attack. I want to build the most exciting team in the league - one that fans can't take their eyes off. We'll press high, move fast, and score goals.",
+			"I want a team that never stops running, never stops fighting. The right flank is about relentless energy and overlapping runs.",
 		lookingFor: [
-			"Speedy wingers who love to run at defenders",
-			"Physical strikers who can hold the ball up",
-			"Energetic midfielders for pressing",
+			"Players with exceptional stamina",
+			"Wingers who track back",
+			"Midfielders who support attacks",
 		],
 		careerHighlights: [
 			{
-				title: "All-time Top Scorer",
-				year: "2020",
-				description:
-					"Became Denmark's all-time leading scorer in women's football with 78 goals",
+				title: "133 International Caps",
+				year: "2006-2021",
+				description: "Denmark's most capped female player in history",
 			},
 			{
-				title: "Golden Boot",
-				year: "2016",
-				description:
-					"Won the Norwegian league Golden Boot with LSK Kvinner",
-			},
-			{
-				title: "Social Enterprise Founder",
-				year: "2023",
-				description:
-					"Founded a sports-focused social enterprise supporting women in business",
+				title: "UEFA EURO 2017 Best XI",
+				year: "2017",
+				description: "Selected as the best right-back at the European Championship",
 			},
 		],
-		quote: "Goals win games, but impact wins hearts.",
-		socialMedia: {
-			instagram: "rene_christensen9",
-			linkedin: "https://linkedin.com/in/rene-christensen",
-		},
+		quote:
+			"Every sprint, every tackle, every moment matters. That's how you build a legacy.",
+		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/theresa`,
 		featured: true,
 		order: 3,
 		bio: [
@@ -220,17 +192,167 @@ const captains = [
 				children: [
 					{
 						_type: "span",
-						text: "René Christensen needs no introduction to fans of Danish football. Her incredible goal-scoring record speaks for itself, but it's her leadership qualities and determination that truly set her apart.",
+						text: "Theresa Eslund is Denmark's most capped female player ever. Her relentless drive and tactical intelligence earned her a spot in the UEFA EURO 2017 Best XI, and she's ready to bring that same energy to Sensational League.",
 					},
 				],
 			},
+		],
+	},
+	{
+		_type: "captain",
+		_id: "captain-nina-frausing-pedersen",
+		name: "Nina Frausing Pedersen",
+		slug: { _type: "slug", current: "nina-frausing-pedersen" },
+		tagline: "Defender • Liverpool & Fortuna Hjørring",
+		oneLiner: "National Caps x Liverpool, Fortuna Hjørring, Brøndby",
+		summary:
+			"International across Denmark, Sweden, Germany, England, and Australia—while earning a PhD.",
+		superpower: "Perseverance",
+		position: "defender",
+		nationalCaps: 48,
+		clubs: ["Liverpool FC", "Fortuna Hjørring", "Brøndby IF", "Turbine Potsdam", "Danish National Team"],
+		teamVision:
+			"Football is about intelligence and perseverance. I'm looking for players who think two steps ahead and never give up.",
+		lookingFor: [
+			"Smart, tactical players",
+			"Defenders who read the game",
+			"Players balancing football with life goals",
+		],
+		careerHighlights: [
+			{
+				title: "International Career",
+				year: "2010-2020",
+				description: "Played professionally across 5 countries",
+			},
+			{
+				title: "PhD Researcher",
+				year: "2023",
+				description: "Earned doctorate while maintaining professional career",
+			},
+		],
+		quote:
+			"You can achieve anything if you're willing to work for it—on and off the pitch.",
+		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/nina`,
+		featured: true,
+		order: 4,
+		bio: [
 			{
 				_type: "block",
 				style: "normal",
 				children: [
 					{
 						_type: "span",
-						text: "Off the pitch, René has become a successful entrepreneur and advocate for women in sports business, launching initiatives that combine her love of football with social impact.",
+						text: "Nina Frausing Pedersen proves that elite football and academic excellence can go hand in hand. While playing for Liverpool and across Europe, she earned her PhD—embodying the Sensational League spirit of excellence in all pursuits.",
+					},
+				],
+			},
+		],
+	},
+	{
+		_type: "captain",
+		_id: "captain-nicoline-sorensen",
+		name: "Nicoline Sørensen",
+		slug: { _type: "slug", current: "nicoline-sorensen" },
+		tagline: "Forward • Everton & Brøndby • Denmark International",
+		oneLiner: "54 Caps x Everton striker",
+		summary:
+			"One of Denmark's most electric attackers with 100+ club games and national TV commentary chops.",
+		superpower: "Instant change of pace",
+		position: "forward",
+		nationalCaps: 54,
+		clubs: ["Everton FC", "Brøndby IF", "Linköpings FC", "Danish National Team"],
+		teamVision:
+			"Attack is about creativity and instinct. I want players who can unlock defenses with a single touch.",
+		lookingFor: [
+			"Creative forwards",
+			"Players with flair and confidence",
+			"Attackers who love the big stage",
+		],
+		careerHighlights: [
+			{
+				title: "54 International Caps",
+				year: "2015-present",
+				description: "Regular starter for the Danish national team",
+			},
+			{
+				title: "Everton Career",
+				year: "2020-2023",
+				description: "49 appearances in the FA Women's Super League",
+			},
+			{
+				title: "TV Expert",
+				year: "2023-present",
+				description: "National TV football commentator and analyst",
+			},
+		],
+		quote:
+			"Football should be fun. When you play with joy, magic happens.",
+		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/nicoline`,
+		featured: true,
+		order: 5,
+		bio: [
+			{
+				_type: "block",
+				style: "normal",
+				children: [
+					{
+						_type: "span",
+						text: "Nicoline Sørensen brings electric pace and creativity to every team she plays for. From Everton to the Danish national team, she's known for her ability to change games in an instant.",
+					},
+				],
+			},
+		],
+	},
+	{
+		_type: "captain",
+		_id: "captain-rikke-sevecke",
+		name: "Rikke Sevecke",
+		slug: { _type: "slug", current: "rikke-sevecke" },
+		tagline: "Defender • Everton & Portland Thorns",
+		oneLiner: "54 Caps x Everton, Portland Thorns",
+		summary:
+			"Modern centre-back dominating in Denmark, France, England, and the NWSL—now advocating athlete heart health.",
+		superpower: "Strength with purpose",
+		position: "defender",
+		nationalCaps: 54,
+		clubs: ["Portland Thorns", "Everton FC", "Bordeaux", "Brøndby IF", "Danish National Team"],
+		teamVision:
+			"Defense is about strength and intelligence. I want a backline that opponents fear.",
+		lookingFor: [
+			"Physical, commanding defenders",
+			"Players who communicate constantly",
+			"Leaders who organize the team",
+		],
+		careerHighlights: [
+			{
+				title: "54 International Caps",
+				year: "2014-2022",
+				description: "Key defender for Danish national team",
+			},
+			{
+				title: "NWSL Career",
+				year: "2022",
+				description: "Played for Portland Thorns in America's top league",
+			},
+			{
+				title: "Heart Health Advocate",
+				year: "2023-present",
+				description: "Leading voice for athlete cardiac screening after retirement",
+			},
+		],
+		quote:
+			"True strength is using your platform for something bigger than yourself.",
+		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/rikke`,
+		featured: true,
+		order: 6,
+		bio: [
+			{
+				_type: "block",
+				style: "normal",
+				children: [
+					{
+						_type: "span",
+						text: "Rikke Sevecke's career took her from Denmark to France, England, and America's NWSL. After her playing career, she's become a powerful advocate for athlete heart health, using her platform to drive real change.",
 					},
 				],
 			},

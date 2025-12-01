@@ -236,7 +236,7 @@ export default function CaptainVideoGallery({
     ...(mainVideoUrl
       ? [{ title: `${captainName} - Captain Film`, url: mainVideoUrl, category: "intro" as const }]
       : []),
-    ...videos,
+    ...(videos || []),
   ];
   
   if (allVideos.length === 0) {

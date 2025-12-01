@@ -2,36 +2,9 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { client } from "@/sanity/lib/client";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { getImageUrl } from "@/lib/sanity-image";
-import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { cn } from "@/lib/utils";
-import { getCaptainGradient, getInitials } from "@/lib/captain-utils";
-import CaptainVideoGallery from "@/components/CaptainVideoGallery";
-
-interface CareerHighlight {
-  title?: string;
-  year?: string;
-  description?: string;
-}
-
-interface SocialMedia {
-  instagram?: string;
-  twitter?: string;
-  linkedin?: string;
-}
-
-interface VideoGalleryItem {
-  title: string;
-  url: string;
-  thumbnail?: {
-    asset?: { _ref?: string };
-    alt?: string;
-  };
-  duration?: string;
-  category?: string;
-}
+import CaptainHeroVideo from "./CaptainHeroVideo";
 
 interface Captain {
   _id: string;
@@ -40,22 +13,12 @@ interface Captain {
   tagline?: string;
   oneLiner?: string;
   summary?: string;
-  superpower?: string;
-  photo?: {
-    asset?: { _ref?: string };
-    alt?: string;
-  };
   videoUrl?: string;
-  videoGallery?: VideoGalleryItem[];
-  bio?: PortableTextBlock[];
-  teamVision?: string;
-  lookingFor?: string[];
-  careerHighlights?: CareerHighlight[];
-  clubs?: string[];
   nationalCaps?: number;
-  socialMedia?: SocialMedia;
-  quote?: string;
   position?: string;
+  socialMedia?: {
+    instagram?: string;
+  };
 }
 
 interface Params {
@@ -71,47 +34,34 @@ async function getCaptain(slug: string): Promise<Captain | null> {
       tagline,
       oneLiner,
       summary,
-      superpower,
-      photo {
-        asset,
-        alt
-      },
       videoUrl,
-      videoGallery[] {
-        title,
-        url,
-        thumbnail {
-          asset,
-          alt
-        },
-        duration,
-        category
-      },
-      bio,
-      teamVision,
-      lookingFor,
-      careerHighlights[] {
-        title,
-        year,
-        description
-      },
-      clubs,
       nationalCaps,
+      position,
       socialMedia {
-        instagram,
-        twitter,
-        linkedin
-      },
-      quote,
-      position
+        instagram
+      }
     }`,
     params: { slug },
   });
   return data as Captain | null;
 }
 
+async function getAllCaptains(): Promise<Captain[]> {
+  const { data } = await sanityFetch({
+    query: `*[_type == "captain"] | order(order asc) {
+      _id,
+      name,
+      slug,
+      tagline,
+      oneLiner,
+      videoUrl,
+      nationalCaps
+    }`,
+  });
+  return (data as Captain[]) || [];
+}
+
 async function getAllCaptainSlugs(): Promise<{ slug: string }[]> {
-  // Use plain client for static generation (no draftMode dependency)
   const data = await client.fetch<{ slug: string }[]>(
     `*[_type == "captain"] { "slug": slug.current }`
   );
@@ -160,348 +110,163 @@ export default async function CaptainPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const captain = await getCaptain(slug);
+  const [captain, allCaptains] = await Promise.all([
+    getCaptain(slug),
+    getAllCaptains(),
+  ]);
 
   if (!captain) {
     notFound();
   }
 
-  const photoUrl = captain.photo ? getImageUrl(captain.photo, 1200) : null;
-  const initials = getInitials(captain.name);
+  // Get other captains for navigation
+  const otherCaptains = allCaptains.filter((c) => c.slug.current !== slug);
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden px-4 pb-20 pt-32">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            background:
-              "radial-gradient(circle at 15% 10%, rgba(212,255,0,0.08), transparent 55%), radial-gradient(circle at 80% 6%, rgba(255,255,255,0.12), transparent 40%)",
-          }}
-        />
+      {/* Hero Video Section - Full viewport */}
+      <section className="relative h-screen w-full overflow-hidden">
+        {/* Video Background */}
+        {captain.videoUrl ? (
+          <CaptainHeroVideo videoUrl={captain.videoUrl} captainName={captain.name} />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
+        )}
 
-        <div className="relative mx-auto max-w-6xl">
-          {/* Back Link */}
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+        {/* Back Button - Top Left */}
+        <div className="absolute left-6 top-28 z-20 md:left-10">
           <Link
             href="/captains"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-white/60 transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm transition-all hover:border-white hover:bg-white hover:text-black"
           >
             <span>←</span>
             <span>All Captains</span>
           </Link>
+        </div>
 
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start">
-            {/* Photo */}
-            <div className="relative aspect-[3/4] overflow-hidden rounded-[40px] border border-white/10 bg-white/5">
-              {photoUrl ? (
-                <Image
-                  src={photoUrl}
-                  alt={captain.photo?.alt || captain.name}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div
-                  className="flex h-full w-full items-center justify-center"
-                  style={{ backgroundImage: getCaptainGradient(captain.name) }}
-                >
-                  <span className="text-8xl font-black tracking-[0.3em] text-white/40">
-                    {initials}
-                  </span>
-                </div>
+        {/* Captain Info - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-12 md:px-10 md:pb-16">
+          <div className="mx-auto max-w-6xl">
+            {/* Stats Pills */}
+            <div className="mb-6 flex flex-wrap gap-3">
+              {captain.nationalCaps && (
+                <span className="rounded-full border border-[var(--color-volt)]/50 bg-[var(--color-volt)]/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-[var(--color-volt)]">
+                  {captain.nationalCaps} Caps
+                </span>
               )}
-
-              {/* Video Play Button */}
-              {captain.videoUrl && (
-                <a
-                  href={captain.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute bottom-6 left-6 right-6 flex items-center justify-center gap-3 rounded-full border border-white/30 bg-black/60 px-6 py-4 text-sm font-black uppercase tracking-[0.2em] backdrop-blur transition-all hover:bg-white hover:text-black"
-                >
-                  <span>▶</span>
-                  <span>Watch Captain Film</span>
-                </a>
+              {captain.position && (
+                <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
+                  {captain.position}
+                </span>
               )}
             </div>
 
-            {/* Content */}
-            <div className="space-y-8">
-              {captain.tagline && (
-                <p className="brand-caption text-xs uppercase tracking-[0.4em] text-white/50">
-                  {captain.tagline}
-                </p>
-              )}
+            {/* Name */}
+            <h1 className="text-5xl font-black uppercase tracking-[0.08em] md:text-7xl lg:text-8xl">
+              {captain.name}
+            </h1>
 
-              <h1 className="text-5xl font-black uppercase tracking-[0.12em] md:text-6xl">
-                {captain.name}
-              </h1>
+            {/* One Liner */}
+            {captain.oneLiner && (
+              <p className="mt-4 text-lg font-bold uppercase tracking-[0.2em] text-[var(--color-volt)] md:text-xl">
+                {captain.oneLiner}
+              </p>
+            )}
 
-              {captain.oneLiner && (
-                <p className="text-lg font-bold uppercase tracking-[0.25em] text-[var(--color-volt)]">
-                  {captain.oneLiner}
-                </p>
-              )}
+            {/* Summary */}
+            {captain.summary && (
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80 md:text-xl">
+                {captain.summary}
+              </p>
+            )}
 
-              {captain.summary && (
-                <p className="text-xl leading-relaxed text-white/80">
-                  {captain.summary}
-                </p>
-              )}
+            {/* Social Link */}
+            {captain.socialMedia?.instagram && (
+              <a
+                href={`https://instagram.com/${captain.socialMedia.instagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-white/60 transition-colors hover:text-white"
+              >
+                <span>@{captain.socialMedia.instagram}</span>
+                <span>↗</span>
+              </a>
+            )}
+          </div>
+        </div>
 
-              {/* Stats Row */}
-              <div className="flex flex-wrap gap-4">
-                {captain.nationalCaps && (
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-center">
-                    <p className="text-3xl font-black text-[var(--color-volt)]">
-                      {captain.nationalCaps}
-                    </p>
-                    <p className="brand-caption text-[0.6rem] uppercase tracking-[0.3em] text-white/50">
-                      National Caps
-                    </p>
-                  </div>
-                )}
-                {captain.position && (
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-center">
-                    <p className="text-xl font-black capitalize">
-                      {captain.position}
-                    </p>
-                    <p className="brand-caption text-[0.6rem] uppercase tracking-[0.3em] text-white/50">
-                      Position
-                    </p>
-                  </div>
-                )}
-                {captain.clubs && captain.clubs.length > 0 && (
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-center">
-                    <p className="text-3xl font-black text-[var(--color-volt)]">
-                      {captain.clubs.length}
-                    </p>
-                    <p className="brand-caption text-[0.6rem] uppercase tracking-[0.3em] text-white/50">
-                      Clubs
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Superpower */}
-              {captain.superpower && (
-                <div className="rounded-2xl border border-[var(--color-volt)]/30 bg-[var(--color-volt)]/10 px-6 py-4">
-                  <p className="brand-caption text-[0.6rem] uppercase tracking-[0.3em] text-[var(--color-volt)]">
-                    Superpower
-                  </p>
-                  <p className="mt-1 text-lg font-semibold text-white">
-                    {captain.superpower}
-                  </p>
-                </div>
-              )}
-
-              {/* Social Links */}
-              {captain.socialMedia && (
-                <div className="flex flex-wrap gap-3">
-                  {captain.socialMedia.instagram && (
-                    <a
-                      href={`https://instagram.com/${captain.socialMedia.instagram}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:border-white hover:bg-white hover:text-black"
-                    >
-                      @{captain.socialMedia.instagram}
-                    </a>
-                  )}
-                  {captain.socialMedia.twitter && (
-                    <a
-                      href={`https://twitter.com/${captain.socialMedia.twitter}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:border-white hover:bg-white hover:text-black"
-                    >
-                      @{captain.socialMedia.twitter}
-                    </a>
-                  )}
-                  {captain.socialMedia.linkedin && (
-                    <a
-                      href={captain.socialMedia.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:border-white hover:bg-white hover:text-black"
-                    >
-                      LinkedIn
-                    </a>
-                  )}
-                </div>
-              )}
-            </div>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 animate-bounce">
+          <div className="h-8 w-5 rounded-full border-2 border-white/30">
+            <div className="mx-auto mt-1.5 h-2 w-1 rounded-full bg-white/50" />
           </div>
         </div>
       </section>
 
-      {/* Quote Section */}
-      {captain.quote && (
-        <section className="border-y border-white/10 bg-[#0a0a0a] px-4 py-16">
-          <div className="mx-auto max-w-4xl text-center">
-            <blockquote className="text-2xl font-bold italic leading-relaxed text-white/90 md:text-3xl">
-              &ldquo;{captain.quote}&rdquo;
-            </blockquote>
-            <p className="mt-6 text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-volt)]">
-              — {captain.name}
-            </p>
-          </div>
-        </section>
-      )}
-
-      {/* Video Gallery */}
-      {(captain.videoUrl || (captain.videoGallery && captain.videoGallery.length > 0)) && (
-        <CaptainVideoGallery
-          mainVideoUrl={captain.videoUrl}
-          videos={captain.videoGallery}
-          captainName={captain.name}
-        />
-      )}
-
-      {/* Bio Section */}
-      {captain.bio && captain.bio.length > 0 && (
-        <section className="px-4 py-20">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="mb-8 text-3xl font-black uppercase tracking-[0.15em]">
-              Biography
-            </h2>
-            <div className="prose prose-lg prose-invert prose-p:text-white/80 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-wider">
-              <PortableText value={captain.bio} />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Team Vision */}
-      {captain.teamVision && (
-        <section className="border-t border-white/10 bg-[#0a0a0a] px-4 py-20">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="mb-8 text-3xl font-black uppercase tracking-[0.15em]">
-              Team Vision
-            </h2>
-            <p className="text-xl leading-relaxed text-white/80">
-              {captain.teamVision}
-            </p>
-          </div>
-        </section>
-      )}
-
-      {/* Looking For */}
-      {captain.lookingFor && captain.lookingFor.length > 0 && (
-        <section className="px-4 py-20">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="mb-8 text-3xl font-black uppercase tracking-[0.15em]">
-              {captain.name.split(" ")[0]} is Looking For...
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {captain.lookingFor.map((trait, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-6 py-4"
-                >
-                  <span className="flex h-3 w-3 items-center justify-center rounded-full bg-[var(--color-volt)]" />
-                  <span className="text-sm font-semibold uppercase tracking-wider">
-                    {trait}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Career Highlights */}
-      {captain.careerHighlights && captain.careerHighlights.length > 0 && (
-        <section className="border-t border-white/10 bg-[#0a0a0a] px-4 py-20">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="mb-10 text-3xl font-black uppercase tracking-[0.15em]">
-              Career Highlights
-            </h2>
-            <div className="space-y-6">
-              {captain.careerHighlights.map((highlight, index) => (
-                <div
-                  key={index}
-                  className="flex gap-6 rounded-2xl border border-white/10 bg-white/5 p-6"
-                >
-                  {highlight.year && (
-                    <div className="shrink-0 text-2xl font-black text-[var(--color-volt)]">
-                      {highlight.year}
-                    </div>
-                  )}
-                  <div>
-                    {highlight.title && (
-                      <h3 className="text-lg font-black uppercase tracking-wider">
-                        {highlight.title}
-                      </h3>
-                    )}
-                    {highlight.description && (
-                      <p className="mt-2 text-white/70">{highlight.description}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Clubs */}
-      {captain.clubs && captain.clubs.length > 0 && (
-        <section className="px-4 py-20">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="mb-8 text-3xl font-black uppercase tracking-[0.15em]">
-              Notable Clubs
-            </h2>
-            <div className="flex flex-wrap gap-3">
-              {captain.clubs.map((club, index) => (
-                <span
-                  key={index}
-                  className="rounded-full border border-white/20 bg-white/5 px-5 py-2 text-sm font-bold uppercase tracking-wider"
-                >
-                  {club}
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* CTA Section */}
-      <section className="border-t border-white/10 bg-black px-4 py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <h3 className="text-3xl font-black uppercase tracking-[0.15em]">
-            Play for {captain.name.split(" ")[0]}?
-          </h3>
-          <p className="mt-4 text-white/60">
-            Submit your player draft application and catch {captain.name.split(" ")[0]}&apos;s attention.
+      <section className="border-t border-white/10 bg-[#0a0a0a] px-6 py-20 md:px-10">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl font-black uppercase tracking-[0.12em] md:text-4xl">
+            Want to Play for {captain.name.split(" ")[0]}?
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-white/60">
+            Submit your player draft application and get noticed by our legendary captains.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/player-draft"
               className={cn(
                 "inline-flex items-center gap-2 rounded-full border-2 border-[var(--color-volt)] bg-[var(--color-volt)] px-8 py-4",
-                "text-sm font-black uppercase tracking-[0.3em] text-black",
+                "text-sm font-black uppercase tracking-[0.25em] text-black",
                 "transition-all duration-200 hover:-translate-y-1 hover:bg-transparent hover:text-[var(--color-volt)]"
               )}
             >
-              Start Application
+              Apply Now
               <span>→</span>
-            </Link>
-            <Link
-              href="/captains"
-              className={cn(
-                "inline-flex items-center gap-2 rounded-full border-2 border-white/20 px-8 py-4",
-                "text-sm font-black uppercase tracking-[0.3em] text-white",
-                "transition-all duration-200 hover:border-white hover:bg-white hover:text-black"
-              )}
-            >
-              View All Captains
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Other Captains */}
+      {otherCaptains.length > 0 && (
+        <section className="border-t border-white/10 px-6 py-20 md:px-10">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="mb-10 text-center text-2xl font-black uppercase tracking-[0.15em]">
+              Meet the Other Captains
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {otherCaptains.map((c) => (
+                <Link
+                  key={c._id}
+                  href={`/captains/${c.slug.current}`}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:border-[var(--color-volt)]/50 hover:bg-white/10"
+                >
+                  {c.nationalCaps && (
+                    <span className="mb-3 inline-block rounded-full bg-white/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider">
+                      {c.nationalCaps} Caps
+                    </span>
+                  )}
+                  <h3 className="text-lg font-black uppercase tracking-wider">
+                    {c.name}
+                  </h3>
+                  {c.oneLiner && (
+                    <p className="mt-2 text-xs text-white/50 line-clamp-2">
+                      {c.oneLiner}
+                    </p>
+                  )}
+                  <div className="mt-4 text-xs font-bold uppercase tracking-wider text-[var(--color-volt)] opacity-0 transition-opacity group-hover:opacity-100">
+                    View Profile →
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

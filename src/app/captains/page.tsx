@@ -1,10 +1,9 @@
 import { sanityFetch } from "@/sanity/lib/live";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { getImageUrl } from "@/lib/sanity-image";
 import { cn } from "@/lib/utils";
-import { getCaptainGradient, getInitials } from "@/lib/captain-utils";
+import CaptainCardMedia from "@/components/CaptainCardMedia";
 
 interface Captain {
   _id: string;
@@ -18,6 +17,7 @@ interface Captain {
     asset?: { _ref?: string };
     alt?: string;
   };
+  videoUrl?: string;
   position?: string;
   nationalCaps?: number;
 }
@@ -51,6 +51,7 @@ async function getCaptains(): Promise<Captain[]> {
         asset,
         alt
       },
+      videoUrl,
       position,
       nationalCaps
     }`,
@@ -74,7 +75,8 @@ async function getCaptains(): Promise<Captain[]> {
           photo {
             asset,
             alt
-          }
+          },
+          videoUrl
         }
       }
     }`,
@@ -98,6 +100,7 @@ async function getCaptains(): Promise<Captain[]> {
     summary: c.summary,
     superpower: c.superpower,
     photo: c.photo,
+    videoUrl: c.videoUrl,
   }));
 }
 
@@ -144,7 +147,6 @@ export default async function CaptainsPage() {
           {captains.length > 0 ? (
             <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
               {captains.map((captain) => {
-                const initials = getInitials(captain.name);
                 const photoUrl = captain.photo
                   ? getImageUrl(captain.photo, 800)
                   : null;
@@ -155,30 +157,18 @@ export default async function CaptainsPage() {
                     href={`/captains/${captain.slug?.current}`}
                     className="group relative flex flex-col overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.05] transition-all duration-300 hover:border-[var(--color-volt)]/50 hover:bg-white/[0.08]"
                   >
-                    {/* Photo */}
-                    <div className="relative aspect-[4/5] overflow-hidden">
-                      {photoUrl ? (
-                        <Image
-                          src={photoUrl}
-                          alt={captain.photo?.alt || captain.name}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div
-                          className="flex h-full w-full items-center justify-center"
-                          style={{ backgroundImage: getCaptainGradient(captain.name) }}
-                        >
-                          <span className="text-6xl font-black tracking-[0.3em] text-white/50">
-                            {initials}
-                          </span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
+                    {/* Photo/Video Media */}
+                    <div className="relative">
+                      <CaptainCardMedia
+                        photoUrl={photoUrl}
+                        videoUrl={captain.videoUrl}
+                        captainName={captain.name}
+                        photoAlt={captain.photo?.alt}
+                      />
+                      
                       {/* Stats Badge */}
                       {captain.nationalCaps && (
-                        <div className="absolute right-4 top-4 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-xs font-bold uppercase tracking-wider backdrop-blur">
+                        <div className="absolute right-4 top-4 z-10 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-xs font-bold uppercase tracking-wider backdrop-blur">
                           {captain.nationalCaps} Caps
                         </div>
                       )}
