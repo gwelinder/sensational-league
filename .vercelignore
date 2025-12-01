@@ -1,0 +1,8 @@
+# Wrangler local state (contains large video blobs)
+.wrangler
+
+# Other large/unnecessary files
+*.mp4
+*.mov
+*.avi
+*.webm
