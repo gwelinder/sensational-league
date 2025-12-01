@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import CaptainHeroVideo from "./CaptainHeroVideo";
+import { getImageUrl } from "@/lib/sanity-image";
+import CaptainHeroMedia from "./CaptainHeroMedia";
 
 interface Captain {
   _id: string;
@@ -14,6 +15,10 @@ interface Captain {
   oneLiner?: string;
   summary?: string;
   videoUrl?: string;
+  photo?: {
+    asset?: { _ref?: string };
+    alt?: string;
+  };
   nationalCaps?: number;
   position?: string;
   socialMedia?: {
@@ -35,6 +40,10 @@ async function getCaptain(slug: string): Promise<Captain | null> {
       oneLiner,
       summary,
       videoUrl,
+      photo {
+        asset,
+        alt
+      },
       nationalCaps,
       position,
       socialMedia {
@@ -122,19 +131,23 @@ export default async function CaptainPage({
   // Get other captains for navigation
   const otherCaptains = allCaptains.filter((c) => c.slug.current !== slug);
 
+  // Get photo URL for hero
+  const photoUrl = captain.photo ? getImageUrl(captain.photo, 1920) : null;
+
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Hero Video Section - Full viewport */}
+      {/* Hero Media Section - Full viewport */}
       <section className="relative h-screen w-full overflow-hidden">
-        {/* Video Background */}
-        {captain.videoUrl ? (
-          <CaptainHeroVideo videoUrl={captain.videoUrl} captainName={captain.name} />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
-        )}
+        {/* Photo/Video Background with play button */}
+        <CaptainHeroMedia
+          photoUrl={photoUrl}
+          videoUrl={captain.videoUrl}
+          captainName={captain.name}
+          photoAlt={captain.photo?.alt}
+        />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
         {/* Back Button - Top Left */}
         <div className="absolute left-6 top-28 z-20 md:left-10">

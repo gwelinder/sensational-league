@@ -124,8 +124,8 @@ export default function CaptainCardMedia({
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-      {/* Video play indicator */}
-      {videoUrl && (
+      {/* Video play indicator - only show if no photo (using video thumbnail) */}
+      {videoUrl && !photoUrl && (
         <div
           className={cn(
             "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300",
