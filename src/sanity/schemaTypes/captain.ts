@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { R2VideoInput } from "../components/R2VideoInput";
 
 export const captain = defineType({
   name: "captain",
@@ -62,9 +63,12 @@ export const captain = defineType({
     }),
     defineField({
       name: "videoUrl",
-      title: "Captain Video URL",
-      type: "url",
-      description: "CDN URL for the captain's intro video",
+      title: "Captain Video",
+      type: "string",
+      description: "Upload video to R2 (free bandwidth) or paste a URL",
+      components: {
+        input: R2VideoInput,
+      },
     }),
     defineField({
       name: "heroMediaType",
@@ -87,22 +91,24 @@ export const captain = defineType({
       type: "array",
       description: "Additional photos for the expanded section below the hero",
       of: [
-        {
+        defineField({
+          name: "galleryImage",
           type: "image",
+          title: "Gallery Image",
           options: { hotspot: true },
           fields: [
-            {
+            defineField({
               name: "alt",
               type: "string",
               title: "Alt text",
-            },
-            {
+            }),
+            defineField({
               name: "caption",
               type: "string",
               title: "Caption",
-            },
+            }),
           ],
-        },
+        }),
       ],
     }),
     defineField({

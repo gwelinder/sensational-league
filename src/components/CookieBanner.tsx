@@ -97,7 +97,7 @@ export default function CookieBanner() {
 
 	return (
 		<div className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-5xl rounded-t-xl border border-black/10 bg-white p-4 shadow-lg dark:border-white/10 dark:bg-black">
-			<p className="text-sm text-zinc-700 dark:text-zinc-300">
+			<p className="text-sm text-zinc-900 dark:text-zinc-300">
 				We use cookies to improve your experience and analyze site traffic. By
 				accepting, you help us understand how to serve you better.
 			</p>

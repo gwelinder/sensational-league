@@ -4,6 +4,28 @@ export const homePage = defineType({
   name: 'homePage',
   title: 'Home Page',
   type: 'document',
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FIELD GROUPS - Organize the editor into logical tabs for easier navigation
+  // ═══════════════════════════════════════════════════════════════════════════
+  groups: [
+    {
+      name: 'hero',
+      title: '🎬 Hero',
+      default: true,
+    },
+    {
+      name: 'sections',
+      title: '📑 Page Sections',
+    },
+    {
+      name: 'application',
+      title: '📝 Player Draft',
+    },
+    {
+      name: 'seo',
+      title: '🔍 SEO',
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
@@ -12,11 +34,13 @@ export const homePage = defineType({
       description: 'This is for internal reference only',
       initialValue: 'Home Page',
       validation: (Rule) => Rule.required(),
+      group: 'seo',
     }),
     defineField({
       name: 'seo',
       type: 'object',
       title: 'SEO Settings',
+      group: 'seo',
       fields: [
         {
           name: 'metaTitle',
@@ -39,6 +63,7 @@ export const homePage = defineType({
       name: 'hero',
       type: 'object',
       title: 'Hero Section',
+      group: 'hero',
       fields: [
         {
           name: 'logo',
@@ -256,6 +281,7 @@ export const homePage = defineType({
       name: 'pressCta',
       type: 'object',
       title: 'Press CTA',
+      group: 'hero',
       fields: [
         { name: 'label', type: 'string', title: 'Label', initialValue: 'Press release' },
         { name: 'emoji', type: 'string', title: 'Emoji/Icon', description: 'Optional emoji or short label to prepend' },
@@ -267,6 +293,7 @@ export const homePage = defineType({
       name: 'application',
       type: 'object',
       title: 'Player Draft Application',
+      group: 'application',
       fields: [
         defineField({
           name: 'card',
@@ -313,6 +340,7 @@ export const homePage = defineType({
       name: 'about',
       type: 'object',
       title: 'About Section',
+      group: 'sections',
       fields: [
         {
           name: 'title',
@@ -356,6 +384,7 @@ export const homePage = defineType({
       name: 'whySection',
       type: 'object',
       title: 'Why Sensational Section',
+      group: 'sections',
       fields: [
         { name: 'eyebrow', type: 'string', title: 'Eyebrow' },
         { name: 'title', type: 'string', title: 'Title' },
@@ -380,6 +409,7 @@ export const homePage = defineType({
       name: 'formatSection',
       type: 'object',
       title: 'Format Section',
+      group: 'sections',
       fields: [
         { name: 'eyebrow', type: 'string', title: 'Eyebrow' },
         { name: 'title', type: 'string', title: 'Title' },
@@ -406,60 +436,87 @@ export const homePage = defineType({
         }),
       ],
     }),
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CAPTAINS SECTION - Display settings for homepage
+    // Captain profiles are edited separately in Website Content > Captains
+    // ═══════════════════════════════════════════════════════════════════════════
     defineField({
       name: 'captainsSection',
       type: 'object',
       title: 'Captains Section',
+      description: 'Controls how captains appear on the homepage. To edit captain profiles (photos, bios, videos), go to Website Content → Captains.',
+      group: 'sections',
       fields: [
         {
           name: 'enabled',
           type: 'boolean',
-          title: 'Show captains section',
-          description: 'Toggle to display or hide the captains spotlight on the homepage and navigation.',
-          initialValue: false,
+          title: 'Show Captains Section',
+          description: 'Toggle to show/hide the captains spotlight on the homepage.',
+          initialValue: true,
         },
-        { name: 'eyebrow', type: 'string', title: 'Eyebrow', initialValue: 'Captains' },
-        { name: 'title', type: 'string', title: 'Title', initialValue: 'Meet Our Captains' },
-        { name: 'subtitle', type: 'text', title: 'Subtitle', rows: 3 },
-        { name: 'intro', type: 'text', title: 'Intro text', rows: 3 },
-        defineField({
-          name: 'captains',
-          type: 'array',
-          title: 'Captains',
-          of: [
-            {
-              type: 'object',
-              fields: [
-                { name: 'name', type: 'string', title: 'Name' },
-                { name: 'tagline', type: 'string', title: 'Tagline' },
-                { name: 'summary', type: 'text', title: 'Summary', rows: 3 },
-                { name: 'superpower', type: 'string', title: 'Superpower' },
-                { name: 'oneLiner', type: 'string', title: 'One-sentence highlight' },
-                { name: 'bio', type: 'text', title: 'Longer bio', rows: 4 },
-                {
-                  name: 'photo',
-                  type: 'image',
-                  title: 'Photo',
-                  options: { hotspot: true },
-                  fields: [{ name: 'alt', type: 'string', title: 'Alt text' }],
-                },
-                {
-                  name: 'videoUrl',
-                  type: 'url',
-                  title: 'Intro Video URL',
-                  description: 'MP4 or CDN URL served via Cloudflare R2/Worker',
-                },
-              ],
-            },
-          ],
-          validation: (Rule) => Rule.min(1),
-        }),
+        {
+          name: 'eyebrow',
+          type: 'string',
+          title: 'Eyebrow Text',
+          description: 'Small text above the title (e.g., "Meet the")',
+          initialValue: 'Meet the',
+        },
+        {
+          name: 'title',
+          type: 'string',
+          title: 'Section Title',
+          initialValue: 'Captains',
+        },
+        {
+          name: 'subtitle',
+          type: 'text',
+          title: 'Subtitle',
+          description: 'Brief description shown below the title',
+          rows: 2,
+        },
+        {
+          name: 'displayStyle',
+          type: 'string',
+          title: 'Display Style',
+          description: 'How to show the captains on the homepage',
+          options: {
+            list: [
+              { title: 'Grid (all captains)', value: 'grid' },
+              { title: 'Carousel (swipeable)', value: 'carousel' },
+              { title: 'Featured (highlight 3)', value: 'featured' },
+            ],
+            layout: 'radio',
+          },
+          initialValue: 'grid',
+        },
+        {
+          name: 'maxDisplay',
+          type: 'number',
+          title: 'Max Captains to Show',
+          description: 'Limit how many captains appear on homepage (leave empty for all)',
+          validation: (Rule) => Rule.min(1).max(12),
+        },
+        {
+          name: 'ctaText',
+          type: 'string',
+          title: 'CTA Button Text',
+          description: 'Text for the "view all" button',
+          initialValue: 'Meet All Captains',
+        },
+        {
+          name: 'ctaLink',
+          type: 'string',
+          title: 'CTA Link',
+          description: 'Where the button links to (default: /captains)',
+          initialValue: '/captains',
+        },
       ],
     }),
     defineField({
       name: 'impact',
       type: 'object',
       title: 'Impact Section',
+      group: 'sections',
       fields: [
         {
           name: 'headline',
@@ -489,6 +546,7 @@ export const homePage = defineType({
       name: 'cta',
       type: 'object',
       title: 'Call To Action',
+      group: 'sections',
       fields: [
         { name: 'headline', type: 'string', title: 'Headline' },
         { name: 'description', type: 'text', title: 'Description', rows: 3 },
@@ -500,6 +558,7 @@ export const homePage = defineType({
       type: 'array',
       title: 'Additional Homepage Sections',
       description: 'Add flexible sections for galleries, explainers, or player draft content',
+      group: 'sections',
       of: [
         { type: 'flexibleSection' },
         { type: 'contentSection' },

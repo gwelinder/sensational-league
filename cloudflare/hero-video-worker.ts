@@ -8,10 +8,12 @@ interface R2Object {
 interface R2Bucket {
 	head(key: string): Promise<R2Object | null>;
 	get(key: string, options?: { range?: { offset: number; length?: number } }): Promise<R2Object | null>;
+	put(key: string, value: ReadableStream | ArrayBuffer | string | null, options?: { httpMetadata?: { contentType?: string } }): Promise<void>;
 }
 
 interface Env {
 	HERO_VIDEOS: R2Bucket;
+	UPLOAD_API_KEY?: string;
 }
 
 type KnownVariant = "wide" | "vertical" | "square";
@@ -104,6 +106,13 @@ function parseRangeHeader(rangeValue: string, size: number) {
 	return { offset: start, length, end: Math.min(end, size - 1) };
 }
 
+const CORS_HEADERS = {
+	"Access-Control-Allow-Origin": "*",
+	"Access-Control-Allow-Methods": "GET, HEAD, PUT, POST, OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type, X-API-Key, X-Upload-Key",
+	"Access-Control-Max-Age": "86400",
+};
+
 const baseHeaders = {
 	"Access-Control-Allow-Origin": "*",
 	"Accept-Ranges": "bytes",
@@ -111,16 +120,83 @@ const baseHeaders = {
 	"Content-Type": "video/mp4",
 };
 
+async function handleUpload(request: Request, env: Env, pathname: string): Promise<Response> {
+	const apiKey = request.headers.get("X-API-Key") || request.headers.get("X-Upload-Key");
+
+	if (!env.UPLOAD_API_KEY) {
+		return new Response(JSON.stringify({ error: "Upload not configured - set UPLOAD_API_KEY secret" }), {
+			status: 500,
+			headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+		});
+	}
+
+	if (apiKey !== env.UPLOAD_API_KEY) {
+		return new Response(JSON.stringify({ error: "Invalid API key" }), {
+			status: 401,
+			headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+		});
+	}
+
+	const contentType = request.headers.get("Content-Type") || "video/mp4";
+
+	// Generate key if not provided or it's just a folder
+	let uploadKey = pathname.replace(/^\/+/, "");
+	if (!uploadKey || uploadKey.endsWith("/")) {
+		const ext = contentType.includes("video/mp4") ? "mp4"
+			: contentType.includes("video/webm") ? "webm"
+			: contentType.includes("video/quicktime") ? "mov"
+			: "mp4";
+		const folder = uploadKey || "captains/";
+		uploadKey = `${folder}${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+	}
+
+	try {
+		await env.HERO_VIDEOS.put(uploadKey, request.body, {
+			httpMetadata: { contentType },
+		});
+
+		const publicUrl = `https://sensational-hero-video.generaite.workers.dev/${uploadKey}`;
+
+		return new Response(JSON.stringify({
+			success: true,
+			key: uploadKey,
+			publicUrl,
+		}), {
+			status: 200,
+			headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+		});
+	} catch (err) {
+		return new Response(JSON.stringify({
+			error: "Upload failed",
+			details: err instanceof Error ? err.message : "Unknown error"
+		}), {
+			status: 500,
+			headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+		});
+	}
+}
+
 const worker = {
 	async fetch(request: Request, env: Env): Promise<Response> {
+		const url = new URL(request.url);
+
+		// Handle CORS preflight
+		if (request.method === "OPTIONS") {
+			return new Response(null, { headers: CORS_HEADERS });
+		}
+
+		// Handle uploads
+		if (request.method === "PUT" || request.method === "POST") {
+			return handleUpload(request, env, url.pathname);
+		}
+
 		if (request.method !== "GET" && request.method !== "HEAD") {
 			return new Response("Method Not Allowed", {
 				status: 405,
-				headers: { Allow: "GET, HEAD" },
+				headers: { ...CORS_HEADERS, Allow: "GET, HEAD, PUT, POST, OPTIONS" },
 			});
 		}
 
-		const url = new URL(request.url);
 		const candidates = buildCandidateKeys(url.pathname);
 		let selectedKey: string | null = null;
 		let head: R2Object | null = null;

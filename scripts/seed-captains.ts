@@ -41,6 +41,11 @@ const client = createClient({
 
 const HERO_VIDEO_CDN_BASE = "https://sensational-hero-video.generaite.workers.dev";
 
+// Helper to generate unique keys for Sanity arrays
+function generateKey(): string {
+	return Math.random().toString(36).substring(2, 10);
+}
+
 // The real 6 Sensational League captains
 const captains = [
 	{
@@ -65,11 +70,13 @@ const captains = [
 		],
 		careerHighlights: [
 			{
+				_key: generateKey(),
 				title: "5x Danish Champion",
 				year: "2015-2020",
 				description: "Won five Danish league titles with Brøndby IF",
 			},
 			{
+				_key: generateKey(),
 				title: "56 International Caps",
 				year: "2008-2018",
 				description: "Represented Denmark at World Cup and Euro qualifiers",
@@ -78,14 +85,17 @@ const captains = [
 		quote:
 			"Football gave me everything - now it's time to give back and create opportunities for the next generation.",
 		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/bettina`,
+		heroMediaType: "both",
 		featured: true,
 		order: 1,
 		bio: [
 			{
+				_key: generateKey(),
 				_type: "block",
 				style: "normal",
 				children: [
 					{
+						_key: generateKey(),
 						_type: "span",
 						text: "Bettina Falk is one of the most decorated defenders in Danish women's football history. Her career spanning over 15 years has seen her lift countless trophies and inspire a generation of young players.",
 					},
@@ -115,16 +125,19 @@ const captains = [
 		],
 		careerHighlights: [
 			{
+				_key: generateKey(),
 				title: "132 International Caps",
 				year: "2006-2020",
 				description: "One of Denmark's most capped players ever",
 			},
 			{
+				_key: generateKey(),
 				title: "EURO 2017 Silver Medal",
 				year: "2017",
 				description: "Led Denmark to the European Championship final",
 			},
 			{
+				_key: generateKey(),
 				title: "Champions League Winner",
 				year: "2016-2017",
 				description: "Won the Champions League with Olympique Lyon",
@@ -133,14 +146,17 @@ const captains = [
 		quote:
 			"The bigger the game, the calmer you need to be. That's when champions are made.",
 		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/line`,
+		heroMediaType: "both",
 		featured: true,
 		order: 2,
 		bio: [
 			{
+				_key: generateKey(),
 				_type: "block",
 				style: "normal",
 				children: [
 					{
+						_key: generateKey(),
 						_type: "span",
 						text: "Line Røddik Hansen's journey from Birkerød to conquering Europe is the stuff of legend. With 132 caps for Denmark and a career spanning Lyon, Barcelona, and Ajax, she brings unparalleled experience to Sensational League.",
 					},
@@ -170,11 +186,13 @@ const captains = [
 		],
 		careerHighlights: [
 			{
+				_key: generateKey(),
 				title: "133 International Caps",
 				year: "2006-2021",
 				description: "Denmark's most capped female player in history",
 			},
 			{
+				_key: generateKey(),
 				title: "UEFA EURO 2017 Best XI",
 				year: "2017",
 				description: "Selected as the best right-back at the European Championship",
@@ -183,14 +201,17 @@ const captains = [
 		quote:
 			"Every sprint, every tackle, every moment matters. That's how you build a legacy.",
 		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/theresa`,
+		heroMediaType: "both",
 		featured: true,
 		order: 3,
 		bio: [
 			{
+				_key: generateKey(),
 				_type: "block",
 				style: "normal",
 				children: [
 					{
+						_key: generateKey(),
 						_type: "span",
 						text: "Theresa Eslund is Denmark's most capped female player ever. Her relentless drive and tactical intelligence earned her a spot in the UEFA EURO 2017 Best XI, and she's ready to bring that same energy to Sensational League.",
 					},
@@ -220,11 +241,13 @@ const captains = [
 		],
 		careerHighlights: [
 			{
+				_key: generateKey(),
 				title: "International Career",
 				year: "2010-2020",
 				description: "Played professionally across 5 countries",
 			},
 			{
+				_key: generateKey(),
 				title: "PhD Researcher",
 				year: "2023",
 				description: "Earned doctorate while maintaining professional career",
@@ -233,14 +256,17 @@ const captains = [
 		quote:
 			"You can achieve anything if you're willing to work for it—on and off the pitch.",
 		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/nina`,
+		heroMediaType: "both",
 		featured: true,
 		order: 4,
 		bio: [
 			{
+				_key: generateKey(),
 				_type: "block",
 				style: "normal",
 				children: [
 					{
+						_key: generateKey(),
 						_type: "span",
 						text: "Nina Frausing Pedersen proves that elite football and academic excellence can go hand in hand. While playing for Liverpool and across Europe, she earned her PhD—embodying the Sensational League spirit of excellence in all pursuits.",
 					},
@@ -270,16 +296,19 @@ const captains = [
 		],
 		careerHighlights: [
 			{
+				_key: generateKey(),
 				title: "54 International Caps",
 				year: "2015-present",
 				description: "Regular starter for the Danish national team",
 			},
 			{
+				_key: generateKey(),
 				title: "Everton Career",
 				year: "2020-2023",
 				description: "49 appearances in the FA Women's Super League",
 			},
 			{
+				_key: generateKey(),
 				title: "TV Expert",
 				year: "2023-present",
 				description: "National TV football commentator and analyst",
@@ -288,14 +317,17 @@ const captains = [
 		quote:
 			"Football should be fun. When you play with joy, magic happens.",
 		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/nicoline`,
+		heroMediaType: "both",
 		featured: true,
 		order: 5,
 		bio: [
 			{
+				_key: generateKey(),
 				_type: "block",
 				style: "normal",
 				children: [
 					{
+						_key: generateKey(),
 						_type: "span",
 						text: "Nicoline Sørensen brings electric pace and creativity to every team she plays for. From Everton to the Danish national team, she's known for her ability to change games in an instant.",
 					},
@@ -325,16 +357,19 @@ const captains = [
 		],
 		careerHighlights: [
 			{
+				_key: generateKey(),
 				title: "54 International Caps",
 				year: "2014-2022",
 				description: "Key defender for Danish national team",
 			},
 			{
+				_key: generateKey(),
 				title: "NWSL Career",
 				year: "2022",
 				description: "Played for Portland Thorns in America's top league",
 			},
 			{
+				_key: generateKey(),
 				title: "Heart Health Advocate",
 				year: "2023-present",
 				description: "Leading voice for athlete cardiac screening after retirement",
@@ -343,14 +378,17 @@ const captains = [
 		quote:
 			"True strength is using your platform for something bigger than yourself.",
 		videoUrl: `${HERO_VIDEO_CDN_BASE}/captains/rikke`,
+		heroMediaType: "both",
 		featured: true,
 		order: 6,
 		bio: [
 			{
+				_key: generateKey(),
 				_type: "block",
 				style: "normal",
 				children: [
 					{
+						_key: generateKey(),
 						_type: "span",
 						text: "Rikke Sevecke's career took her from Denmark to France, England, and America's NWSL. After her playing career, she's become a powerful advocate for athlete heart health, using her platform to drive real change.",
 					},

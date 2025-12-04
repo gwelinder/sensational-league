@@ -158,6 +158,9 @@ export default async function CaptainPage({
   // Get photo URL for hero
   const photoUrl = captain.photo ? getImageUrl(captain.photo, 1920) : null;
 
+  // Get video URL - prefer uploaded file, fall back to URL field
+  const videoUrl = captain.videoUrl || null;
+
   // Get photo gallery URLs - filter out any photos without valid URLs
   const galleryPhotos = (captain.photoGallery || [])
     .map((photo) => {
@@ -176,7 +179,7 @@ export default async function CaptainPage({
         {/* Photo/Video Background with play button */}
         <CaptainHeroMedia
           photoUrl={photoUrl}
-          videoUrl={captain.videoUrl}
+          videoUrl={videoUrl}
           captainName={captain.name}
           photoAlt={captain.photo?.alt}
           heroMediaType={captain.heroMediaType}
@@ -267,8 +270,8 @@ export default async function CaptainPage({
                 <h2 className="mb-8 text-2xl font-black uppercase tracking-[0.12em] md:text-3xl">
                   About {captain.name.split(" ")[0]}
                 </h2>
-                <div className="prose prose-lg prose-invert max-w-none">
-                  <RenderPortableText value={captain.bio} />
+                <div className="max-w-none">
+                  <RenderPortableText value={captain.bio} variant="dark" />
                 </div>
               </div>
             )}

@@ -2,6 +2,7 @@ import type { SchemaTypeDefinition } from "sanity";
 import { blockContent } from "./blockContent";
 import { styledText } from "./styledText";
 import { homePage } from "./homePage";
+import { captainsPage } from "./captainsPage";
 import { playerDraftPage } from "./playerDraftPage";
 import { page } from "./page";
 import { policy } from "./policy";
@@ -9,6 +10,7 @@ import { pressRelease } from "./pressRelease";
 import { emailTemplate } from "./emailTemplate";
 import { siteSettings } from "./siteSettings";
 import { captain } from "./captain";
+import { designSettings } from "./designSettings";
 import { contributorSettings } from "./contributorSettings";
 import { logoImage } from "./objects/logoImage";
 import { logo } from "./logo";
@@ -58,7 +60,9 @@ export const schema: { types: SchemaTypeDefinition[] } = {
 	types: [
     // Documents
     siteSettings,
+    designSettings,
     homePage,
+    captainsPage,
     playerDraftPage,
     page,
     policy,
