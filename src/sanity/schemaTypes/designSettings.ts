@@ -203,6 +203,25 @@ export const designSettings = defineType({
           },
           initialValue: "0.15em",
         }),
+        defineField({
+          name: "bodyTextColor",
+          title: "Body Text Color (Dark BG)",
+          type: "string",
+          description: "Text color for content on dark backgrounds. Default: rgba(255,255,255,0.7)",
+          initialValue: "rgba(255,255,255,0.7)",
+        }),
+        defineField({
+          name: "linkColor",
+          title: "Link Color",
+          type: "string",
+          description: "Color for links in content. Leave empty for volt yellow",
+        }),
+        defineField({
+          name: "quoteAccentColor",
+          title: "Quote Accent Color",
+          type: "string",
+          description: "Border color for blockquotes. Leave empty for volt yellow",
+        }),
       ],
     }),
 

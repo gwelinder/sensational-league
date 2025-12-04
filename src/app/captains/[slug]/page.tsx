@@ -8,6 +8,7 @@ import { getImageUrl } from "@/lib/sanity-image";
 import CaptainHeroMedia from "./CaptainHeroMedia";
 import CaptainPhotoGallery from "@/components/CaptainPhotoGallery";
 import { RenderPortableText } from "@/lib/portable-text";
+import { getDesignSettings } from "@/lib/design-settings";
 import type { PortableTextBlock } from "@portabletext/types";
 
 interface GalleryPhoto {
@@ -143,9 +144,10 @@ export default async function CaptainPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const [captain, allCaptains] = await Promise.all([
+  const [captain, allCaptains, designSettings] = await Promise.all([
     getCaptain(slug),
     getAllCaptains(),
+    getDesignSettings(),
   ]);
 
   if (!captain) {
@@ -271,7 +273,7 @@ export default async function CaptainPage({
                   About {captain.name.split(" ")[0]}
                 </h2>
                 <div className="max-w-none">
-                  <RenderPortableText value={captain.bio} variant="dark" />
+                  <RenderPortableText value={captain.bio} variant="dark" designSettings={designSettings} />
                 </div>
               </div>
             )}

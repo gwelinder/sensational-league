@@ -21,6 +21,9 @@ export interface DesignSettings {
     headingStyle?: "uppercase" | "capitalize" | "none";
     headingWeight?: string;
     headingTracking?: string;
+    bodyTextColor?: string;
+    linkColor?: string;
+    quoteAccentColor?: string;
   };
   buttons?: {
     primaryStyle?: "filled" | "outline" | "ghost";
@@ -49,7 +52,10 @@ const DESIGN_SETTINGS_QUERY = `*[_type == "designSettings"][0] {
   typography {
     headingStyle,
     headingWeight,
-    headingTracking
+    headingTracking,
+    bodyTextColor,
+    linkColor,
+    quoteAccentColor
   },
   buttons {
     primaryStyle,
@@ -78,6 +84,9 @@ export const defaultDesignSettings: DesignSettings = {
     headingStyle: "uppercase",
     headingWeight: "900",
     headingTracking: "0.15em",
+    bodyTextColor: "rgba(255,255,255,0.7)",
+    linkColor: "#D4FF00",
+    quoteAccentColor: "#D4FF00",
   },
   buttons: {
     primaryStyle: "filled",
