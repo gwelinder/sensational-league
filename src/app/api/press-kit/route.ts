@@ -33,7 +33,8 @@ interface SharePointItem {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
 	try {
-		const siteId = process.env.SHAREPOINT_SITE_ID;
+		// Use the specific Site ID for SagaSportsGroup2 where the press kit assets are hosted
+		const siteId = "sagasportsgroup.sharepoint.com,8b875f1c-1f08-4b8a-b37d-3a27340cf260,5a74c6ee-da1e-4651-9c09-3fa9e67d327b";
 		const libraryId = process.env.SHAREPOINT_MEDIA_LIBRARY_ID;
 
 		if (!siteId || !libraryId) {
@@ -44,30 +45,36 @@ export async function GET(_request: NextRequest) {
 		}
 
 		const graphClient = getGraphClient();
+		let logosItems = { value: [] };
+		let photosItems = { value: [] };
 
-		// Get the "Logos" folder
-		const logosFolder = await graphClient
-			.api(`/sites/${siteId}/drives/${libraryId}/root:/Logos`)
-			.get();
+		// Get Logos
+		try {
+			const logosFolder = await graphClient
+				.api(`/sites/${siteId}/drives/${libraryId}/root:/BRAND%20%26%20MARKETING/LOGOS`)
+				.get();
+			logosItems = await graphClient
+				.api(`/sites/${siteId}/drives/${libraryId}/items/${logosFolder.id}/children`)
+				.get();
+		} catch (e) {
+			console.warn("Logos folder not found", e);
+		}
 
-		// Get files from Logos folder
-		const logosItems = await graphClient
-			.api(`/sites/${siteId}/drives/${libraryId}/items/${logosFolder.id}/children`)
-			.get();
-
-		// Get the "Photos" folder
-		const photosFolder = await graphClient
-			.api(`/sites/${siteId}/drives/${libraryId}/root:/Photos`)
-			.get();
-
-		// Get files from Photos folder
-		const photosItems = await graphClient
-			.api(`/sites/${siteId}/drives/${libraryId}/items/${photosFolder.id}/children`)
-			.get();
+		// Get Photos
+		try {
+			const photosFolder = await graphClient
+				.api(`/sites/${siteId}/drives/${libraryId}/root:/BRAND%20%26%20MARKETING/PHOTOS`)
+				.get();
+			photosItems = await graphClient
+				.api(`/sites/${siteId}/drives/${libraryId}/items/${photosFolder.id}/children`)
+				.get();
+		} catch (e) {
+			console.warn("Photos folder not found", e);
+		}
 
 		// Process logos (include thumbnails for display)
 		const logos: SharePointFile[] = await Promise.all(
-			logosItems.value
+			(logosItems.value || [])
 				.filter((item: SharePointItem) => item.file) // Only files, not folders
 				.map(async (item: SharePointItem) => {
 					// Get download URL
@@ -77,8 +84,8 @@ export async function GET(_request: NextRequest) {
 						.get();
 
 					// Try to get thumbnails in multiple sizes for images
-				let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
-				if (item.file?.mimeType?.startsWith("image/")) {
+					let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
+					if (item.file?.mimeType?.startsWith("image/")) {
 						try {
 							const thumbResponse = await graphClient
 								.api(`/sites/${siteId}/drives/${libraryId}/items/${item.id}/thumbnails`)
@@ -111,7 +118,7 @@ export async function GET(_request: NextRequest) {
 
 		// Process photos (include thumbnails for preview)
 		const photos: SharePointFile[] = await Promise.all(
-			photosItems.value
+			(photosItems.value || [])
 				.filter((item: SharePointItem) => item.file) // Only files, not folders
 				.map(async (item: SharePointItem) => {
 					// Get download URL
@@ -121,8 +128,8 @@ export async function GET(_request: NextRequest) {
 						.get();
 
 					// Try to get thumbnails in multiple sizes for preview
-				let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
-				if (item.file?.mimeType?.startsWith("image/")) {
+					let thumbnails: { small?: string; medium?: string; large?: string } | undefined;
+					if (item.file?.mimeType?.startsWith("image/")) {
 						try {
 							const thumbResponse = await graphClient
 								.api(`/sites/${siteId}/drives/${libraryId}/items/${item.id}/thumbnails`)
