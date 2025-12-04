@@ -9,6 +9,8 @@ interface CaptainHeroMediaProps {
   videoUrl?: string | null;
   captainName: string;
   photoAlt?: string;
+  /** Controls what to show: "photo" (photo only), "video" (video only), "both" (photo with video play button) */
+  heroMediaType?: "photo" | "video" | "both";
 }
 
 export default function CaptainHeroMedia({
@@ -16,7 +18,11 @@ export default function CaptainHeroMedia({
   videoUrl,
   captainName,
   photoAlt,
+  heroMediaType = "both", // Default to current behavior for backward compatibility
 }: CaptainHeroMediaProps) {
+  // Determine what media to show based on heroMediaType setting
+  const showPhoto = heroMediaType === "photo" || heroMediaType === "both";
+  const showVideo = (heroMediaType === "video" || heroMediaType === "both") && videoUrl;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -66,12 +72,13 @@ export default function CaptainHeroMedia({
 
   return (
     <>
-      {/* Photo Background - always visible until video plays */}
-      {photoUrl && (
+      {/* Photo Background - shown based on heroMediaType setting */}
+      {showPhoto && photoUrl && (
         <div
           className={cn(
             "absolute inset-0 transition-opacity duration-700",
-            isPlaying && isVideoLoaded ? "opacity-0" : "opacity-100"
+            // Only hide photo when video is playing (for "both" mode)
+            heroMediaType === "both" && isPlaying && isVideoLoaded ? "opacity-0" : "opacity-100"
           )}
         >
           <Image
@@ -85,20 +92,24 @@ export default function CaptainHeroMedia({
         </div>
       )}
 
-      {/* Fallback gradient if no photo */}
-      {!photoUrl && !isPlaying && (
+      {/* Fallback gradient if no photo and not showing video, or if video-only mode with no video */}
+      {!photoUrl && !showVideo && (
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
       )}
 
-      {/* Video Element - preloaded but hidden until play */}
-      {videoUrl && (
+      {/* Video Element - shown based on heroMediaType setting */}
+      {showVideo && (
         <video
           ref={videoRef}
           className={cn(
             "absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
-            isPlaying && isVideoLoaded ? "opacity-100" : "opacity-0"
+            // For "video" only mode, always show video (with play button overlay)
+            // For "both" mode, only show when playing
+            heroMediaType === "video"
+              ? isPlaying && isVideoLoaded ? "opacity-100" : "opacity-100"
+              : isPlaying && isVideoLoaded ? "opacity-100" : "opacity-0"
           )}
-          src={videoUrl}
+          src={videoUrl!}
           muted
           loop
           playsInline
@@ -106,11 +117,13 @@ export default function CaptainHeroMedia({
           onCanPlay={handleVideoLoaded}
           onEnded={handleVideoEnded}
           aria-label={`${captainName} captain video`}
+          // For video-only mode, show poster frame
+          poster={heroMediaType === "video" && photoUrl ? photoUrl : undefined}
         />
       )}
 
-      {/* Play/Pause Button - center */}
-      {videoUrl && (
+      {/* Play/Pause Button - only shown when video is available */}
+      {showVideo && (
         <button
           onClick={handlePlayClick}
           className={cn(
@@ -144,7 +157,7 @@ export default function CaptainHeroMedia({
       )}
 
       {/* Mute/Unmute Button - bottom right, only visible when playing */}
-      {videoUrl && isPlaying && (
+      {showVideo && isPlaying && (
         <button
           onClick={handleMuteToggle}
           className={cn(
@@ -195,8 +208,8 @@ export default function CaptainHeroMedia({
         </button>
       )}
 
-      {/* Video indicator label */}
-      {videoUrl && !isPlaying && (
+      {/* Video indicator label - only shown when video is available and not playing */}
+      {showVideo && !isPlaying && (
         <div className="absolute bottom-32 left-1/2 z-20 -translate-x-1/2 md:bottom-40">
           <span className="rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white/80 backdrop-blur-sm">
             Watch Video

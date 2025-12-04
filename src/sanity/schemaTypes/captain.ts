@@ -67,10 +67,50 @@ export const captain = defineType({
       description: "CDN URL for the captain's intro video",
     }),
     defineField({
-      name: "videoGallery",
-      title: "Video Gallery",
+      name: "heroMediaType",
+      title: "Hero Display",
+      type: "string",
+      description: "What to show in the hero section",
+      options: {
+        list: [
+          { title: "Photo only", value: "photo" },
+          { title: "Video only (with play button)", value: "video" },
+          { title: "Photo with video play button", value: "both" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "photo",
+    }),
+    defineField({
+      name: "photoGallery",
+      title: "Photo Gallery",
       type: "array",
-      description: "Additional videos showcasing the captain",
+      description: "Additional photos for the expanded section below the hero",
+      of: [
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alt text",
+            },
+            {
+              name: "caption",
+              type: "string",
+              title: "Caption",
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: "videoGallery",
+      title: "Video Gallery (Deprecated)",
+      type: "array",
+      description: "Not currently used - each captain has max 1 video via videoUrl field",
+      hidden: true,
       of: [
         {
           type: "object",

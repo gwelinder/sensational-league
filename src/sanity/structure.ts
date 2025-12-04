@@ -6,6 +6,18 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
+      // === CAPTAINS (TOP PRIORITY FOR EDITORS) ===
+      S.listItem()
+        .title('Captains')
+        .icon(() => '👑')
+        .child(
+          S.documentTypeList('captain')
+            .title('Captains')
+            .defaultOrdering([{ field: 'order', direction: 'asc' }])
+        ),
+
+      S.divider(),
+
       // === MAIN PAGES ===
       S.listItem()
         .title('Home Page')
@@ -25,19 +37,50 @@ export const structure: StructureResolver = (S) =>
             .schemaType('playerDraftPage')
             .documentId('playerDraftPage')
         ),
+
+      // === CONTENT ===
       S.listItem()
-        .title('Site Settings')
+        .title('Pages')
+        .icon(() => '📄')
+        .child(S.documentTypeList('page').title('Pages')),
+      S.listItem()
+        .title('Press Releases')
+        .icon(() => '📰')
+        .child(S.documentTypeList('pressRelease').title('Press Releases')),
+      S.listItem()
+        .title('Policies')
+        .icon(() => '📋')
+        .child(S.documentTypeList('policy').title('Policies')),
+
+      S.divider(),
+
+      // === SETTINGS & MEDIA ===
+      S.listItem()
+        .title('Settings & Media')
         .icon(() => '⚙️')
         .child(
-          S.editor()
-            .id('siteSettings')
-            .schemaType('siteSettings')
-            .documentId('siteSettings')
+          S.list()
+            .title('Settings & Media')
+            .items([
+              S.listItem()
+                .title('Site Settings')
+                .icon(() => '⚙️')
+                .child(
+                  S.editor()
+                    .id('siteSettings')
+                    .schemaType('siteSettings')
+                    .documentId('siteSettings')
+                ),
+              S.listItem()
+                .title('Logos')
+                .icon(() => '🖼️')
+                .child(S.documentTypeList('logo').title('Logos')),
+            ])
         ),
-      
+
       S.divider(),
-      
-      // === CDP (Customer Data Platform) ===
+
+      // === CDP (Customer Data Platform) - Collapsed ===
       S.listItem()
         .title('CDP')
         .icon(() => '📊')
@@ -102,8 +145,8 @@ export const structure: StructureResolver = (S) =>
                 ),
             ])
         ),
-      
-      // === LEAGUE MANAGEMENT ===
+
+      // === LEAGUE MANAGEMENT - Collapsed ===
       S.listItem()
         .title('League')
         .icon(() => '🏆')
@@ -141,24 +184,4 @@ export const structure: StructureResolver = (S) =>
                 .child(S.documentTypeList('event').title('Events')),
             ])
         ),
-      
-      S.divider(),
-      
-      // === CONTENT ===
-      S.listItem()
-        .title('Pages')
-        .icon(() => '📄')
-        .child(S.documentTypeList('page').title('Pages')),
-      S.listItem()
-        .title('Press Releases')
-        .icon(() => '📰')
-        .child(S.documentTypeList('pressRelease').title('Press Releases')),
-      S.listItem()
-        .title('Policies')
-        .icon(() => '📋')
-        .child(S.documentTypeList('policy').title('Policies')),
-      S.listItem()
-        .title('Logos')
-        .icon(() => '🖼️')
-        .child(S.documentTypeList('logo').title('Logos')),
     ])

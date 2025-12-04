@@ -6,6 +6,15 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getImageUrl } from "@/lib/sanity-image";
 import CaptainHeroMedia from "./CaptainHeroMedia";
+import CaptainPhotoGallery from "@/components/CaptainPhotoGallery";
+import { RenderPortableText } from "@/lib/portable-text";
+import type { PortableTextBlock } from "@portabletext/types";
+
+interface GalleryPhoto {
+  asset?: { _ref?: string };
+  alt?: string;
+  caption?: string;
+}
 
 interface Captain {
   _id: string;
@@ -24,6 +33,12 @@ interface Captain {
   socialMedia?: {
     instagram?: string;
   };
+  // Extended fields for expanded content
+  heroMediaType?: "photo" | "video" | "both";
+  bio?: PortableTextBlock[];
+  photoGallery?: GalleryPhoto[];
+  quote?: string;
+  teamVision?: string;
 }
 
 interface Params {
@@ -48,7 +63,16 @@ async function getCaptain(slug: string): Promise<Captain | null> {
       position,
       socialMedia {
         instagram
-      }
+      },
+      heroMediaType,
+      bio,
+      photoGallery[] {
+        asset,
+        alt,
+        caption
+      },
+      quote,
+      teamVision
     }`,
     params: { slug },
   });
@@ -134,6 +158,17 @@ export default async function CaptainPage({
   // Get photo URL for hero
   const photoUrl = captain.photo ? getImageUrl(captain.photo, 1920) : null;
 
+  // Get photo gallery URLs - filter out any photos without valid URLs
+  const galleryPhotos = (captain.photoGallery || [])
+    .map((photo) => {
+      const url = photo.asset ? getImageUrl(photo, 1200) : null;
+      return url ? { url, alt: photo.alt, caption: photo.caption } : null;
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  // Check if there's any extended content to show
+  const hasExtendedContent = captain.bio || galleryPhotos.length > 0 || captain.quote || captain.teamVision;
+
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Hero Media Section - Full viewport */}
@@ -144,6 +179,7 @@ export default async function CaptainPage({
           videoUrl={captain.videoUrl}
           captainName={captain.name}
           photoAlt={captain.photo?.alt}
+          heroMediaType={captain.heroMediaType}
         />
 
         {/* Gradient Overlay */}
@@ -211,13 +247,71 @@ export default async function CaptainPage({
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 animate-bounce">
-          <div className="h-8 w-5 rounded-full border-2 border-white/30">
-            <div className="mx-auto mt-1.5 h-2 w-1 rounded-full bg-white/50" />
+        {/* Scroll Indicator - only show if there's extended content below */}
+        {hasExtendedContent && (
+          <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 animate-bounce">
+            <div className="h-8 w-5 rounded-full border-2 border-white/30">
+              <div className="mx-auto mt-1.5 h-2 w-1 rounded-full bg-white/50" />
+            </div>
           </div>
-        </div>
+        )}
       </section>
+
+      {/* Extended Content Section - Bio, Quote, Photo Gallery */}
+      {hasExtendedContent && (
+        <section className="border-t border-white/10 bg-[#0a0a0a] px-6 py-16 md:px-10 md:py-24">
+          <div className="mx-auto max-w-4xl">
+            {/* Bio Section */}
+            {captain.bio && captain.bio.length > 0 && (
+              <div className="mb-16">
+                <h2 className="mb-8 text-2xl font-black uppercase tracking-[0.12em] md:text-3xl">
+                  About {captain.name.split(" ")[0]}
+                </h2>
+                <div className="prose prose-lg prose-invert max-w-none">
+                  <RenderPortableText value={captain.bio} />
+                </div>
+              </div>
+            )}
+
+            {/* Quote Section */}
+            {captain.quote && (
+              <div className="mb-16 border-l-4 border-[var(--color-volt)] pl-6 md:pl-8">
+                <blockquote className="text-xl italic leading-relaxed text-white/90 md:text-2xl">
+                  &ldquo;{captain.quote}&rdquo;
+                </blockquote>
+                <cite className="mt-4 block text-sm font-bold uppercase tracking-[0.2em] text-[var(--color-volt)]">
+                  — {captain.name}
+                </cite>
+              </div>
+            )}
+
+            {/* Team Vision Section */}
+            {captain.teamVision && (
+              <div className="mb-16">
+                <h2 className="mb-6 text-xl font-black uppercase tracking-[0.12em] md:text-2xl">
+                  Team Vision
+                </h2>
+                <p className="text-lg leading-relaxed text-white/80">
+                  {captain.teamVision}
+                </p>
+              </div>
+            )}
+
+            {/* Photo Gallery Section */}
+            {galleryPhotos.length > 0 && (
+              <div>
+                <h2 className="mb-8 text-2xl font-black uppercase tracking-[0.12em] md:text-3xl">
+                  Gallery
+                </h2>
+                <CaptainPhotoGallery
+                  photos={galleryPhotos}
+                  captainName={captain.name}
+                />
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="border-t border-white/10 bg-[#0a0a0a] px-6 py-20 md:px-10">
