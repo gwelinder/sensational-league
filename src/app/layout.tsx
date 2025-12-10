@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
@@ -13,6 +14,7 @@ import {
 	GoogleTagManager,
 	GoogleTagManagerNoScript,
 } from "@/components/GoogleTagManager";
+import { RouteChangeTracker } from "@/components/RouteChangeTracker";
 
 // GT Standard fonts are loaded via @font-face in globals.css
 // This provides better performance and brand consistency
@@ -139,6 +141,9 @@ export default async function RootLayout({
 				<GoogleTagManagerNoScript />
 				<SiteChrome>{children}</SiteChrome>
 				<GoogleTagManager />
+				<Suspense fallback={null}>
+					<RouteChangeTracker />
+				</Suspense>
 				<SanityLive />
 				{isEnabled && (
 					<>
