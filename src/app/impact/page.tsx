@@ -198,7 +198,7 @@ function calculateTeamImpactStats(team: Team) {
 }
 
 export const metadata: Metadata = {
-  title: "Impact - Sensational League",
+  title: "Impact",
   description:
     "See how Sensational League teams are making a difference through the Community Challenge. Football meets social impact.",
 };

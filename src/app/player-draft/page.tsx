@@ -10,7 +10,7 @@ const DEFAULT_TYPEFORM_URL =
 	process.env.NEXT_PUBLIC_TYPEFORM_PLAYERDRAFT_URL ||
 	`https://form.typeform.com/to/${DEFAULT_FORM_ID}`;
 const DEFAULT_APPLICATION_DEADLINE = "2026-01-01T23:59:59+01:00";
-const DEFAULT_PAGE_TITLE = "Player Draft | Sensational League";
+const DEFAULT_PAGE_TITLE = "Player Draft";
 const DEFAULT_PAGE_DESCRIPTION =
 	"Apply to join the Sensational League player draft and become part of the inaugural season launching in Copenhagen spring 2026.";
 const DEFAULT_HERO_LOCATION_LABEL = "Copenhagen • Spring 2026";

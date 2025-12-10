@@ -172,11 +172,11 @@ function TeamLogo({
 }
 
 export const metadata: Metadata = {
-  title: "Schedule - Sensational League",
+  title: "Schedule",
   description:
     "View the full match schedule for Sensational League. See upcoming fixtures, results, and live matches.",
   openGraph: {
-    title: "Schedule - Sensational League",
+    title: "Schedule",
     description: "Full match schedule for women's 7v7 football reimagined.",
     type: "website",
   },

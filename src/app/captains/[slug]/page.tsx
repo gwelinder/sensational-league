@@ -119,17 +119,17 @@ export async function generateMetadata({
 
   if (!captain) {
     return {
-      title: "Captain Not Found - Sensational League",
+      title: "Captain Not Found",
     };
   }
 
   return {
-    title: `${captain.name} - Captain | Sensational League`,
+    title: `${captain.name} - Captain`,
     description:
       captain.summary ||
       `Meet ${captain.name}, one of the legendary captains of Sensational League.`,
     openGraph: {
-      title: `${captain.name} - Sensational League Captain`,
+      title: `${captain.name} - Captain`,
       description: captain.summary || captain.tagline,
       type: "profile",
     },

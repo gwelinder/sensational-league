@@ -101,7 +101,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageContent = await getCaptainsPageContent();
 
   return {
-    title: pageContent.seo?.metaTitle || pageContent.title || "Captains - Sensational League",
+    title: pageContent.seo?.metaTitle || pageContent.title || "Captains",
     description: pageContent.seo?.metaDescription || pageContent.subtitle ||
       "Meet the legendary Danish football captains leading the Sensational League.",
   };

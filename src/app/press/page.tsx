@@ -74,10 +74,10 @@ export async function generateMetadata(): Promise<Metadata> {
     const isDraft = (await draftMode()).isEnabled;
     if (isDraft) {
         return {
-            title: "Press Release - Sensational League",
+            title: "Press",
             description: "Latest press releases from Sensational League",
             openGraph: {
-                title: "Press Release - Sensational League",
+                title: "Press",
                 description: "Latest press releases from Sensational League",
                 type: "website",
                 url: "https://sensationalleague.com/press",
@@ -94,7 +94,7 @@ export async function generateMetadata(): Promise<Metadata> {
             },
             twitter: {
                 card: "summary_large_image",
-                title: "Press Release - Sensational League",
+                title: "Press",
                 description: "Latest press releases from Sensational League",
                 images: [
                     {
@@ -110,10 +110,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 	if (!pressRelease) {
 		return {
-			title: "Press Release - Sensational League",
+			title: "Press",
 			description: "Latest press releases from Sensational League",
 			openGraph: {
-				title: "Press Release - Sensational League",
+				title: "Press",
 				description: "Latest press releases from Sensational League",
 				type: "website",
 				url: "https://sensationalleague.com/press",
@@ -130,7 +130,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			},
 			twitter: {
 				card: "summary_large_image",
-				title: "Press Release - Sensational League",
+				title: "Press",
 				description: "Latest press releases from Sensational League",
 				images: [{
 					url: "https://sensationalleague.com/Bettina,%20Majken%20og%20Rene%20Large.jpeg",

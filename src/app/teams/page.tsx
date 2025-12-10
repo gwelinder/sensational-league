@@ -89,11 +89,11 @@ async function getTeams(): Promise<Team[]> {
 }
 
 export const metadata: Metadata = {
-  title: "Teams - Sensational League",
+  title: "Teams",
   description:
     "Meet the teams of Sensational League - 7v7 women's football reimagined. Six squads competing for glory on and off the pitch.",
   openGraph: {
-    title: "Teams - Sensational League",
+    title: "Teams",
     description: "Meet the teams competing in women's 7v7 football reimagined.",
     type: "website",
   },

@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: PageProps) {
             description,
             robots: { index: false, follow: false },
             openGraph: {
-                title: `${title} | Sensational League`,
+                title,
                 description,
                 type: "article",
                 url: `https://sensationalleague.com/policies/${slug}`,
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: PageProps) {
             },
             twitter: {
                 card: "summary_large_image",
-                title: `${title} | Sensational League`,
+                title,
                 description,
                 images: ["/opengraph-image"],
             },
@@ -104,7 +104,7 @@ export async function generateMetadata({ params }: PageProps) {
 			follow: false,
 		},
 		openGraph: {
-			title: `${title} | Sensational League`,
+			title,
 			description,
 			type: "article",
 			url: `https://sensationalleague.com/policies/${slug}`,
@@ -120,7 +120,7 @@ export async function generateMetadata({ params }: PageProps) {
 		},
 		twitter: {
 			card: "summary_large_image",
-			title: `${title} | Sensational League`,
+			title,
 			description,
 			images: ["/opengraph-image"],
 		},
