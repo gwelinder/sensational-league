@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Static pages
-  // Policies are excluded from indexing per client request
+  // Hidden pages (impact, teams, schedule, policies, dashboard) are excluded until release
   return [
     {
       url: baseUrl,
@@ -50,24 +50,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/impact`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/teams`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/player-draft`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     ...captainUrls,
-    ...teamUrls,
+    // Team URLs excluded until teams page is released
   ]
 }

@@ -92,6 +92,7 @@ export const metadata: Metadata = {
   title: "Teams",
   description:
     "Meet the teams of Sensational League - 7v7 women's football reimagined. Six squads competing for glory on and off the pitch.",
+  robots: { index: false, follow: false },
   openGraph: {
     title: "Teams",
     description: "Meet the teams competing in women's 7v7 football reimagined.",

@@ -201,6 +201,7 @@ export const metadata: Metadata = {
   title: "Impact",
   description:
     "See how Sensational League teams are making a difference through the Community Challenge. Football meets social impact.",
+  robots: { index: false, follow: false },
 };
 
 export const revalidate = 3600;

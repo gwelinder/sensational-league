@@ -175,6 +175,7 @@ export const metadata: Metadata = {
   title: "Schedule",
   description:
     "View the full match schedule for Sensational League. See upcoming fixtures, results, and live matches.",
+  robots: { index: false, follow: false },
   openGraph: {
     title: "Schedule",
     description: "Full match schedule for women's 7v7 football reimagined.",
